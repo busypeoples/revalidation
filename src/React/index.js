@@ -2,7 +2,6 @@
 import React from 'react'
 
 import validate from '../'
-
 import {
   curry,
   map,
@@ -10,9 +9,14 @@ import {
   update
 } from '../utils/'
 
+function ValidationHOC(
+  initialState,
+  validationRules,
+  errorComponent,
+  Component
+) {
 
-const ValidationHOC = (initialState = {errors: []}, validationRules = [], errorComponent) => Component =>
-  class extends React.Component {
+  return class extends React.Component {
 
     constructor(props) {
       super(props)
@@ -27,16 +31,19 @@ const ValidationHOC = (initialState = {errors: []}, validationRules = [], errorC
     }
 
     render() {
+      const {form, errors} = this.state
+
       return (
         <Component
           {...this.props}
-          form={prop('form', this.state)}
-          errors={prop('errors', this.state)}
+          form={form}
+          errors={errors}
           onChange={this.onChange}
           updateState={this.updateState}
         />
       )
     }
+  }
 }
 
-export default ValidationHOC
+export default curry(ValidationHOC)
