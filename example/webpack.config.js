@@ -5,7 +5,7 @@ module.exports = {
   cache: true,
   devtool: 'source-map',
   entry: {
-    app: path.join(__dirname) + '/src/index.js'
+    app: path.join(__dirname) + '/app.js'
   },
   output: {
     path: path.join(__dirname) + '/public',
