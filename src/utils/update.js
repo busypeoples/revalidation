@@ -22,7 +22,7 @@ function update(path: Array<string|number>|number|string, val: any, obj: Object)
   const [idx, ...rest] = path
   if (path.length > 1) {
     const next = (obj && obj.hasOwnProperty(idx)) ? obj[idx] : (typeof idx === 'number') ? [] : {}
-    val = update(...rest, val, next)
+    val = update(rest, val, next)
   }
 
   return set(idx, val, obj)
