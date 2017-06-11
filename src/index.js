@@ -21,33 +21,29 @@ const validate = map(compose(sequence(Either.of), runPredicates))
 const makeValidationObject = merge((k, l, r) => [l, r])
 const getErrors = compose(validate, makeValidationObject)
 
-const ValidationHOC = (initialState, validationRules, ErrorComponent) => Component =>
+
+const ValidationHOC = (initialState = {errors: []}, validationRules = [], errorComponent) => Component =>
   class extends React.Component {
 
     constructor(props) {
       super(props)
       this.state = initialState
-      this.updateState = this.updateState.bind(this)
-    }
-
-    updateState(state) {
-      this.setState(state)
-    }
-
-    render() {
-      const onChange = curry((name, value) =>
-        this.updateState(state => {
+      this.onChange = curry((name, value) =>
+        this.setState(state => {
           const newState = update(['form', name], value, state)
-          const errors = map(ErrorComponent, getErrors(prop('form', newState), validationRules))
+          const errors = map(errorComponent, getErrors(prop('form', newState), validationRules))
           return update('errors', errors, newState)
         })
       )
+    }
+
+    render() {
       return (
         <Component
           {...this.props}
           form={prop('form', this.state)}
           errors={prop('errors', this.state)}
-          onChange={onChange}
+          onChange={this.onChange}
           updateState={this.updateState}
         />
       )
