@@ -1,6 +1,6 @@
 import compose from './compose'
 import curry from './curry'
-import either from './either'
+import Either from './either'
 import map from './map'
 import merge from './merge'
 import partial from './partial'
@@ -12,7 +12,7 @@ import update from './update'
 export {
   compose,
   curry,
-  either,
+  Either,
   map,
   merge,
   partial,
