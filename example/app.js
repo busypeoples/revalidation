@@ -3,8 +3,8 @@ import React, {Component} from 'react'
 import {render} from 'react-dom'
 import R from 'ramda'
 
-import HocValidate from '../src/'
-import ErrorComponent from '../src/ErrorComponent'
+import HocValidate from '../src/React/'
+import ErrorComponent from '../src/React/ErrorComponent'
 
 // helper
 const getValue = R.path(['target', 'value'])
