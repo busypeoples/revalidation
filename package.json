@@ -11,7 +11,7 @@
   },
   "scripts": {
     "build": "babel src -d lib",
-    "example": "NODE_ENV=development webpack-dev-server --inline --content-base example/",
+    "example": "NODE_ENV=development webpack-dev-server --inline --config example/webpack.config.js --content-base example/",
     "test": "mocha --compilers js:babel-core/register --recursive --colors"
   },
   "keywords": [
