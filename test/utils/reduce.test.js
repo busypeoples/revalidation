@@ -22,7 +22,7 @@ describe('reduce', () => {
 
   describe('Object input', () => {
 
-    it('should return `ABC` for reduce((xs, x) => `A`, {id: `B`, name: `C`})',
+    it('should return `ABC` for reduce((xs, x) => xs + x, `A`, {id: `B`, name: `C`})',
       () => {
         equal('ABC', reduce((xs, x) => xs + x, 'A', {id: 'B', name: 'C'}))
       }
