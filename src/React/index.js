@@ -1,13 +1,15 @@
 /* @flow */
 import React from 'react'
 
-import validate from '../'
+import createValidation from '../'
 import {
   curry,
   map,
   prop,
   update
 } from '../utils/'
+
+const validate = createValidation()
 
 function ValidationHOC(
   initialState,
