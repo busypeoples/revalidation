@@ -8,9 +8,10 @@ import {
   prop,
 } from '../src/utils/'
 
+const identity = r => r
 
 // configure a transformation that simply returns the original value
-const transform = r => r.isRight ? true : r.value
+const transform = r => r.fold(identity, () => true)
 const Validate = createValidation(transform)
 
 // Predicates
