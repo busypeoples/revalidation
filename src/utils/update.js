@@ -4,7 +4,7 @@ import reduce from './reduce'
 
 /**
  *
- * @param {string} prop the property to be updated
+ * @param {string} key the property to be updated
  * @param {*} val the new value to be applied
  * @param {Array|Object} obj the list or object to update on
  * @returns {Array|Object} returns an updated object or list
@@ -13,12 +13,12 @@ import reduce from './reduce'
  *    set(1, 3, [1, 2]) // [1, 3]
  *    set('id', 2, {id: 1}) // {id: 2}
  */
-function set(prop: string|number, val: any, obj: Object|Array<any>): Object|Array<any> {
+function set(key: string|number, val: any, obj: Object|Array<any>): Object|Array<any> {
   const cloned = reduce((o, v, k) => {
     o[k] = v
     return o
   }, Array.isArray(obj) ? [] : {}, obj)
-  cloned[prop] = val
+  cloned[key] = val
   return cloned
 }
 
