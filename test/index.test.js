@@ -59,7 +59,7 @@ describe('Validator', () => {
     deepEqual({name: notEmptyMsg('Name')}, result)
   })
 
-  it('should return the values when valid', () => {
+  it('should return true for field when valid', () => {
     const validationRules = {
       name: nameValidationRule,
     }
@@ -76,7 +76,7 @@ describe('Validator', () => {
     deepEqual({name: true, random: minimumMsg('Random')}, result)
   })
 
-  it('should handle multiple validations and return all values when valid', () => {
+  it('should handle multiple validations and return true for all fields when valid', () => {
     const validationRules = {
       name: nameValidationRule,
       random: randomValidationRule,
