@@ -2,7 +2,7 @@
 import React from 'react'
 
 import createErrorComponent from './createErrorComponent'
-import createValidation from '../'
+import createValidation from '../createValidation'
 import {
   assoc,
   assocPath,

@@ -3,3 +3,4 @@ lib
 dist
 npm-debug.log
 yarn-error.log
+example/node_modules

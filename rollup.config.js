@@ -34,6 +34,7 @@ var config = {
         'transform-object-rest-spread',
         'transform-flow-strip-types',
         'ramda',
+        'transform-react-jsx',
       ],
       exclude: 'node_modules/**'
     }),
