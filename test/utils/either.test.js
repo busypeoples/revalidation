@@ -4,7 +4,7 @@ import Either from '../../src/utils/either'
 
 const {Left, Right} = Either
 
-describe('either', () => {
+describe('utils/either', () => {
 
   it('should apply Left on cata', () => {
     const l = Left(2)

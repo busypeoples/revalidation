@@ -2,7 +2,7 @@ import { deepEqual } from 'assert'
 
 import merge from '../../src/utils/merge'
 
-describe('merge', () => {
+describe('utils/merge', () => {
 
   it('should merge two objects with same key according to the passed in function',
     () => {

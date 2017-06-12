@@ -4,7 +4,7 @@ import curry from '../../src/utils/curry'
 
 const fakeFn = (a, b, c) => a + b + c
 
-describe('curry', () => {
+describe('utils/curry', () => {
 
   it('should keep returning a function until all arguments are provided', () => {
     const curriedFn = curry(fakeFn)

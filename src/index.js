@@ -18,6 +18,6 @@ const runPredicates = ([input, validations]) =>
 
 const validator = map(compose(sequence(Either.of), runPredicates))
 const makeValidationObject = merge((k, l, r) => [l, r])
-const validate = compose(validator, makeValidationObject)
+const Validate = compose(validator, makeValidationObject)
 
-export default validate
+export default Validate

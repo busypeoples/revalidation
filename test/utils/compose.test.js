@@ -6,7 +6,7 @@ const multiply = (a) => a * a
 const add = (a, b) => a + b
 const composedFn = compose(multiply, add)
 
-describe('compose', () => {
+describe('utils/compose', () => {
 
   it('should return a funcion', () => {
     equal('function', typeof composedFn)

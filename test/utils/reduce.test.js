@@ -2,7 +2,7 @@ import { equal } from 'assert'
 
 import reduce from '../../src/utils/reduce'
 
-describe('reduce', () => {
+describe('utils/reduce', () => {
 
   describe('Array input', () => {
 

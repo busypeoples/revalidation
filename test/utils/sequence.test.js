@@ -16,7 +16,7 @@ const { Left, Right } = Either
 
 */
 
-describe('sequence', () => {
+describe('utils/sequence', () => {
 
   it('should convert [Right(1), Right(2), Right(3)] to Right([1, 2, 3]', () => {
     deepEqual(Right([1, 2, 3]), sequence(Either.of, [Right(1), Right(2), Right(3)]))

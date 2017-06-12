@@ -2,7 +2,7 @@ import { deepEqual } from 'assert'
 
 import update from '../../src/utils/update'
 
-describe('update', () => {
+describe('utils/update', () => {
 
   it('should update object', () => {
     deepEqual({a: 1}, update(['a'], 1, {a: 2}))

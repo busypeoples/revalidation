@@ -4,7 +4,7 @@ import map from '../../src/utils/map'
 
 const multiply = a => a * a
 
-describe('map', () => {
+describe('utils/map', () => {
 
   it('should apply a function on collection items', () => {
     const collection = [1, 2, 3]

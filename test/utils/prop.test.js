@@ -2,7 +2,7 @@ import { equal } from 'assert'
 
 import prop from '../../src/utils/prop'
 
-describe('prop', () => {
+describe('utils/prop', () => {
 
   it('should return 1 for prop id and object {id: 1}', () => {
     equal(1, prop('id', {id: 1}))

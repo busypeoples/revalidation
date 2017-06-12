@@ -4,7 +4,7 @@ import partial from '../../src/utils/partial'
 
 const fakeFn = (a, b, c) => a + b + c
 
-describe('partial', () => {
+describe('utils/partial', () => {
 
   it('should return a function if not all arguments are supplied', () => {
     const partialFn = partial(fakeFn, 1)
