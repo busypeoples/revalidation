@@ -4,7 +4,10 @@ import {render} from 'react-dom'
 import R from 'ramda'
 
 import HocValidate from '../src/React/'
-import ErrorComponent from '../src/React/ErrorComponent'
+
+
+// default ErrorComponent
+const ErrorComponent = ({errorMsg}) => <div className='error'>{errorMsg}</div>
 
 // helper
 const getValue = R.path(['target', 'value'])
@@ -52,7 +55,7 @@ const initialState = {form: {name: '', random: ''}}
 const enhanced = HocValidate(
   initialState,
   validationRules,
-  ErrorComponent(({errorMsg}) => <div className='error'>{errorMsg}</div>)
+  ErrorComponent
 )
 
 const Form = enhanced(StatelessFunction)

@@ -1,6 +1,8 @@
 /* @flow */
 import React from 'react'
 
+import createErrorComponent from './createErrorComponent'
+
 import createValidation from '../'
 import {
   curry,
@@ -9,7 +11,9 @@ import {
   update
 } from '../utils/'
 
-const validate = createValidation()
+
+// default ErrorComponent
+const DefaultErrorComponent = ({errorMsg}) => <div className='error'>{errorMsg}</div>
 
 function ValidationHOC(
   initialState,
@@ -17,6 +21,8 @@ function ValidationHOC(
   errorComponent,
   Component
 ) {
+
+  const validate = createValidation(createErrorComponent(errorComponent || DefaultErrorComponent))
 
   return class extends React.Component {
 
@@ -26,7 +32,7 @@ function ValidationHOC(
       this.onChange = curry((name, value) =>
         this.setState(state => {
           const newState = update(['form', name], value, state)
-          const errors = map(errorComponent, validate(prop('form', newState), validationRules))
+          const errors = validate(prop('form', newState), validationRules)
           return update('errors', errors, newState)
         })
       )

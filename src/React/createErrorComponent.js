@@ -3,7 +3,7 @@ import React from 'react'
 
 import curry from '../utils/curry'
 
-const ErrorComponent = curry((
+const createErrorComponent = (
   componentFn: Function,
   result: Object
 ) =>
@@ -11,6 +11,5 @@ const ErrorComponent = curry((
     Right: a => null,
     Left: errorMsg => componentFn({errorMsg})
   })
-)
 
-export default ErrorComponent
+export default curry(createErrorComponent)
