@@ -3,7 +3,7 @@ import React, {Component} from 'react'
 import {render} from 'react-dom'
 import R from 'ramda'
 
-import HocValidate from '../src/React/'
+import HocValidate from '../lib/React/'
 
 
 // default ErrorComponent

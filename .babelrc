@@ -1,4 +1,4 @@
 {
   "presets": ["es2015", "stage-0", "react"],
-  "plugins": ["transform-flow-strip-types", "transform-object-rest-spread"]
+  "plugins": ["transform-flow-strip-types", "transform-object-rest-spread", "ramda"]
 }

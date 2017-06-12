@@ -1,7 +1,7 @@
 /* @flow */
 import React from 'react'
 
-import curry from '../utils/curry'
+import { curry } from 'ramda'
 
 const createErrorComponent = (
   componentFn: Function,

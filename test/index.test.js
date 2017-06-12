@@ -6,7 +6,7 @@ import {
   curry,
   partial,
   prop,
-} from '../src/utils/'
+} from 'ramda'
 
 const identity = r => r
 

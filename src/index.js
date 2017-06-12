@@ -1,14 +1,16 @@
 /* @flow */
 import {
+  Either,
+} from './utils/'
+
+import {
   curry,
   compose,
-  Either,
   map,
-  merge,
   prop,
+  mergeWithKey,
   sequence,
-  update
-} from './utils/'
+} from 'ramda'
 
 const { Right, Left } = Either
 
@@ -19,7 +21,7 @@ const runPredicates = ([input, validations, all]) =>
   map(predFn => predFn(input, all), map(makePredicate, validations))
 
 const validator = transform => map(compose(transform, sequence(Either.of), runPredicates))
-const makeValidationObject =(input, validations) => merge((k, l, r) => [l, r, input], input, validations)
+const makeValidationObject = (input, validations) => mergeWithKey((k, l, r) => [l, r, input], input, validations)
 const createValidation = (transform: Function = identity) => compose(validator(transform), makeValidationObject)
 
 export default createValidation

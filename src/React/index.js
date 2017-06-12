@@ -4,11 +4,12 @@ import React from 'react'
 import createErrorComponent from './createErrorComponent'
 import createValidation from '../'
 import {
+  assoc,
+  assocPath,
   curry,
   map,
   prop,
-  update
-} from '../utils/'
+} from 'ramda'
 
 // default ErrorComponent
 const DefaultErrorComponent = ({errorMsg}) => <div className='error'>{errorMsg}</div>
@@ -36,9 +37,9 @@ function ValidationHOC(
       this.state = initialState
       this.onChange = curry((name, value) =>
         this.setState(state => {
-          const newState = update(['form', name], value, state)
+          const newState = assocPath(['form', name], value, state)
           const errors = validate(prop('form', newState), validationRules)
-          return update('errors', errors, newState)
+          return assoc('errors', errors, newState)
         })
       )
     }
