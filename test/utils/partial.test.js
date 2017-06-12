@@ -16,6 +16,10 @@ describe('utils/partial', () => {
     equal(6, result)
   })
 
+  it('should apply function when the rest arguments are provided', () => {
+    equal(6, partial(fakeFn, 1, 2)(3))
+  })
+
   it('should apply function when all arguments are provided', () => {
     equal(6, partial(fakeFn)(1, 2, 3))
   })
