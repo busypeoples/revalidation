@@ -1,6 +1,6 @@
 {
   "name": "validation-hoc",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Higher Order Component for Form Validation in React",
   "main": "lib/index.js",
   "author": "25th-floor",
