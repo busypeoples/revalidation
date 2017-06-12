@@ -2,7 +2,6 @@
 import React from 'react'
 
 import createErrorComponent from './createErrorComponent'
-
 import createValidation from '../'
 import {
   curry,
@@ -10,7 +9,6 @@ import {
   prop,
   update
 } from '../utils/'
-
 
 // default ErrorComponent
 const DefaultErrorComponent = ({errorMsg}) => <div className='error'>{errorMsg}</div>
@@ -25,6 +23,13 @@ function ValidationHOC(
   const validate = createValidation(createErrorComponent(errorComponent || DefaultErrorComponent))
 
   return class extends React.Component {
+
+    state: {
+      form: Object,
+      errors: Array<any>,
+    }
+
+    onChange: Function
 
     constructor(props) {
       super(props)
@@ -47,7 +52,6 @@ function ValidationHOC(
           form={form}
           errors={errors}
           onChange={this.onChange}
-          updateState={this.updateState}
         />
       )
     }
