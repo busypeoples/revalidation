@@ -12,12 +12,14 @@ import {
 
 const { Right, Left } = Either
 
-const makePredicate = ([predFn, e]) => a => predFn(a) ? Right(a) : Left(e)
-const runPredicates = ([input, validations]) =>
-  map(predFn => predFn(input), map(makePredicate, validations))
+const identity = r => r
 
-const validator = map(compose(sequence(Either.of), runPredicates))
-const makeValidationObject = merge((k, l, r) => [l, r])
-const Validate = compose(validator, makeValidationObject)
+const makePredicate = ([predFn, e]) => (a, all) => predFn(a, all) ? Right(a) : Left(e)
+const runPredicates = ([input, validations, all]) =>
+  map(predFn => predFn(input, all), map(makePredicate, validations))
 
-export default Validate
+const validator = transform => map(compose(transform, sequence(Either.of), runPredicates))
+const makeValidationObject =(input, validations) => merge((k, l, r) => [l, r, input], input, validations)
+const createValidation = (transform = identity) => compose(validator(transform), makeValidationObject)
+
+export default createValidation
