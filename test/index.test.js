@@ -1,6 +1,6 @@
 import { equal, deepEqual } from 'assert'
 
-import createValidation from '../src/'
+import createValidation from '../src/createValidation'
 import {
   compose,
   curry,
