@@ -1,3 +1,5 @@
+/* @flow */
+
 import compose from './compose'
 import curry from './curry'
 import Either from './either'

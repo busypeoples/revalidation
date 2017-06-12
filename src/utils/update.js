@@ -2,7 +2,18 @@
 import curry from './curry'
 import reduce from './reduce'
 
-function set(prop, val, obj) {
+/**
+ *
+ * @param {string} prop the property to be updated
+ * @param {*} val the new value to be applied
+ * @param {Array|Object} obj the list or object to update on
+ * @returns {Array|Object} returns an updated object or list
+ * @example
+ *
+ *    set(1, 3, [1, 2]) // [1, 3]
+ *    set('id', 2, {id: 1}) // {id: 2}
+ */
+function set(prop: string|number, val: any, obj: Object|Array<any>): Object|Array<any> {
   const cloned = reduce((o, v, k) => {
     o[k] = v
     return o
@@ -11,7 +22,20 @@ function set(prop, val, obj) {
   return cloned
 }
 
-function update(path: Array<string|number>|number|string, val: any, obj: Object) {
+/**
+ *
+ * @param {Array} path The path to find the value to be updated
+ * @param {*} val the new value to be applied
+ * @param {Array|Object} obj the list or object to update on
+ * @returns {Array|Object} returns an updated object or list
+ * @example
+ *
+ *    update(0, 3, [1, 2]) // [3, 2]
+ *    update([1, 2], 3, [1, [1, 2]]) // [1, [1, 2, 3]]
+ *    update(['a', 'b'], 2, {a: {b: 1}}) // {a: {b: 2}}
+ *
+ */
+function update(path: Array<string|number>|number|string, val: any, obj: Object|Array<any>): Object|Array<any> {
   if (typeof path === 'string' || typeof path === 'number') {
     return set(path, val, obj)
   }

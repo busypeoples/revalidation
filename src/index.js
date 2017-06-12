@@ -20,6 +20,6 @@ const runPredicates = ([input, validations, all]) =>
 
 const validator = transform => map(compose(transform, sequence(Either.of), runPredicates))
 const makeValidationObject =(input, validations) => merge((k, l, r) => [l, r, input], input, validations)
-const createValidation = (transform = identity) => compose(validator(transform), makeValidationObject)
+const createValidation = (transform: Function = identity) => compose(validator(transform), makeValidationObject)
 
 export default createValidation
