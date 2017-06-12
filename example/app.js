@@ -3,7 +3,7 @@ import React, {Component} from 'react'
 import {render} from 'react-dom'
 import R from 'ramda'
 
-import HocValidate from 'validation-hoc'
+import HocValidate from '../lib/'
 
 // default ErrorComponent
 const ErrorComponent = ({errorMsg}) => <div className='error'>{errorMsg}</div>
