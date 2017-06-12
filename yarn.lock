@@ -3632,10 +3632,6 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^2.0.0"
     inherits "^2.0.1"
 
-roll@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/roll/-/roll-1.2.0.tgz#f4b95051906955739ed3ef000a413955aab06a22"
-
 rollup-plugin-babel@^2.7.1:
   version "2.7.1"
   resolved "https://registry.yarnpkg.com/rollup-plugin-babel/-/rollup-plugin-babel-2.7.1.tgz#16528197b0f938a1536f44683c7a93d573182f57"
