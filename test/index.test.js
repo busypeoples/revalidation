@@ -12,7 +12,7 @@ const identity = r => r
 
 // configure a transformation that simply returns the original value
 const transform = r => r.fold(identity, () => true)
-const Validate = createValidation(transform)
+const validate = createValidation(transform)
 
 // Predicates
 
@@ -25,7 +25,7 @@ const isEqual = compareKey => (a, all) => a === all[compareKey]
 // Messages
 
 const notEmptyMsg = field => `${field} should not be empty.`
-const minimumMsg = field => `Minimum ${field} length of 3 is required.`
+const minimumMsg = (field, len) => `Minimum ${field} length of ${len} is required.`
 const capitalLetterMag = field => `${field} should contain at least one uppercase letter.`
 const equalMsg = (field1, field2) => `${field2} should be equal with ${field1}`
 
@@ -34,17 +34,17 @@ const equalMsg = (field1, field2) => `${field2} should be equal with ${field1}`
 const nameValidationRule = [[isNotEmpty, notEmptyMsg('Name')]]
 
 const randomValidationRule =  [
-  [ isLengthGreaterThan(2), minimumMsg('Random') ],
+  [ isLengthGreaterThan(2), minimumMsg('Random', 3) ],
   [ hasCapitalLetter, capitalLetterMag('Random') ],
 ]
 
 const passwordValidationRule =  [
-  [ isLengthGreaterThan(5), minimumMsg('Password') ],
+  [ isLengthGreaterThan(5), minimumMsg('Password', 6) ],
   [ hasCapitalLetter, capitalLetterMag('Password') ],
 ]
 
 const repeatPasswordValidationRule =  [
-  [ isLengthGreaterThan(5), minimumMsg('RepeatedPassword') ],
+  [ isLengthGreaterThan(5), minimumMsg('RepeatedPassword', 6) ],
   [ hasCapitalLetter, capitalLetterMag('RepeatedPassword') ],
   [ isEqual('password'), equalMsg('Password', 'RepeatPassword') ]
 ]
@@ -55,7 +55,7 @@ describe('Validator', () => {
     const validationRules = {
       name: nameValidationRule,
     }
-    const result = Validate({ name: ''}, validationRules)
+    const result = validate({name: ''}, validationRules)
     deepEqual({name: notEmptyMsg('Name')}, result)
   })
 
@@ -63,7 +63,7 @@ describe('Validator', () => {
     const validationRules = {
       name: nameValidationRule,
     }
-    const result = Validate({ name: 'foo'}, validationRules)
+    const result = validate({name: 'foo'}, validationRules)
     deepEqual({name: true}, result)
   })
 
@@ -72,8 +72,8 @@ describe('Validator', () => {
       name: nameValidationRule,
       random: randomValidationRule,
     }
-    const result = Validate({ name: 'foo', random:'A'}, validationRules)
-    deepEqual({name: true, random: minimumMsg('Random')}, result)
+    const result = validate({name: 'foo', random:'A'}, validationRules)
+    deepEqual({name: true, random: minimumMsg('Random', 3)}, result)
   })
 
   it('should handle multiple validations and return true for all fields when valid', () => {
@@ -81,7 +81,7 @@ describe('Validator', () => {
       name: nameValidationRule,
       random: randomValidationRule,
     }
-    const result = Validate({ name: 'foo', random:'Abcd'}, validationRules)
+    const result = validate({name: 'foo', random:'Abcd'}, validationRules)
     deepEqual({name: true, random: true}, result)
   })
 
@@ -90,7 +90,7 @@ describe('Validator', () => {
       password: passwordValidationRule,
       repeatPassword: repeatPasswordValidationRule,
     }
-    const result = Validate({ password: 'fooBar', repeatPassword:'fooBar'}, validationRules)
+    const result = validate({password: 'fooBar', repeatPassword:'fooBar'}, validationRules)
     deepEqual({password: true, repeatPassword: true}, result)
   })
 
@@ -99,9 +99,52 @@ describe('Validator', () => {
       password: passwordValidationRule,
       repeatPassword: repeatPasswordValidationRule,
     }
-    const result = Validate({ password: 'fooBar', repeatPassword:'fooBarBaz'}, validationRules)
+    const result = validate({password: 'fooBar', repeatPassword:'fooBarBaz'}, validationRules)
     deepEqual({password: true, repeatPassword: equalMsg('Password', 'RepeatPassword')}, result)
   })
 
-})
+  it('should skip validation if no predicate function is provided.', () => {
+    const validationRules = {
+      password: [],
+    }
+    const result = validate({password: 'fooBar'}, validationRules)
+    deepEqual({password: true}, result)
+  })
 
+
+  it('should skip validation if no predicate function is provided and other fields have rules.', () => {
+    const validationRules = {
+      password: [],
+      repeatPassword: repeatPasswordValidationRule,
+    }
+    const result = validate({password: 'fooBar', repeatPassword: 'fooBarBaz'}, validationRules)
+    deepEqual({password: true, repeatPassword: equalMsg('Password', 'RepeatPassword')}, result)
+  })
+
+  it('should skip validation if no predicate functions are provided.', () => {
+    const validationRules = {
+      password: [],
+      repeatPassword: [],
+    }
+    const result = validate({password: '', repeatPassword: ''}, validationRules)
+    deepEqual({password: true, repeatPassword: true}, result)
+  })
+
+  it('should neglect key ordering.', () => {
+    const validationRules = {
+      repeatPassword: repeatPasswordValidationRule,
+      password: passwordValidationRule,
+    }
+    const result = validate({password: 'fooBar', repeatPassword: 'foobarbaZ'}, validationRules)
+    deepEqual({password: true, repeatPassword: equalMsg('Password', 'RepeatPassword')}, result)
+  })
+
+  it('should skip missing validations.', () => {
+    const validationRules = {
+      password: passwordValidationRule,
+    }
+    const result = validate({password: 'fooBar', repeatPassword: 'foobarbaZ'}, validationRules)
+    deepEqual({password: true, repeatPassword: true}, result)
+  })
+
+})
