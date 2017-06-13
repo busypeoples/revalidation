@@ -6,13 +6,14 @@ import commonjs from 'rollup-plugin-commonjs'
 import flow from 'rollup-plugin-flow'
 
 var env = process.env.NODE_ENV
+
 var config = {
   entry: 'src/index.js',
-  moduleName: 'validation-hoc',
+  moduleName: 'ValidationHOC',
   exports: 'named',
   format: 'umd',
-  dest: 'dist/validation-hoc.min.js',
-  targets: env == 'production' ?
+  sourceMap: env !== 'production',
+  targets: (env == 'production') ?
   [
     { dest: 'dist/validation-hoc.min.js', format: 'umd' },
   ] :
@@ -20,11 +21,16 @@ var config = {
     { dest: 'dist/validation-hoc.js', format: 'umd' },
     { dest: 'dist/validation-hoc.es.js', format: 'es' },
   ],
+  globals: {
+    'react': 'React',
+    'react-dom': 'ReactDOM',
+  },
+  external: ['react', 'react-dom'],
   plugins: [
     flow(),
     commonjs(),
     nodeResolve({
-      jsnext: true
+      jsnext: true,
     }),
     babel({
       babelrc: false,
@@ -36,7 +42,7 @@ var config = {
         'ramda',
         'transform-react-jsx',
       ],
-      exclude: 'node_modules/**'
+      exclude: 'node_modules/**',
     }),
     replace({
       'process.env.NODE_ENV': JSON.stringify(env)
@@ -44,7 +50,7 @@ var config = {
   ]
 }
 
-if (env === 'production') {
+if (env === 'prod') {
   config.plugins.push(
     uglify({
       compress: {
