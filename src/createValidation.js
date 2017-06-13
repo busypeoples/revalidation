@@ -1,7 +1,5 @@
 /* @flow */
-import {
-  Either,
-} from './utils/'
+import Either from 'data.either'
 
 import {
   chain,

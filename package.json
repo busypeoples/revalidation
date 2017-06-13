@@ -57,6 +57,7 @@
     "webpack-dev-server": "^2.4.5"
   },
   "dependencies": {
+    "data.either": "^1.5.1",
     "ramda": "^0.24.1"
   },
   "peerDependencies": {
