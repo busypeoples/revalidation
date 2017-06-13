@@ -113,7 +113,7 @@ describe('Validator', () => {
   })
 
 
-  it('should skip validation if no predicate function is provided and other fields have rules.', () => {
+  it('should skip validation if no predicate function is provided and other fields have rules', () => {
     const validationRules = {
       password: [],
       repeatPassword: repeatPasswordValidationRule,
@@ -122,7 +122,7 @@ describe('Validator', () => {
     deepEqual({password: true, repeatPassword: equalMsg('Password', 'RepeatPassword')}, result)
   })
 
-  it('should skip validation if no predicate functions are provided.', () => {
+  it('should skip validation if no predicate functions are provided', () => {
     const validationRules = {
       password: [],
       repeatPassword: [],
@@ -131,7 +131,7 @@ describe('Validator', () => {
     deepEqual({password: true, repeatPassword: true}, result)
   })
 
-  it('should neglect key ordering.', () => {
+  it('should neglect key ordering', () => {
     const validationRules = {
       repeatPassword: repeatPasswordValidationRule,
       password: passwordValidationRule,
@@ -140,12 +140,21 @@ describe('Validator', () => {
     deepEqual({password: true, repeatPassword: equalMsg('Password', 'RepeatPassword')}, result)
   })
 
-  it('should skip missing validations.', () => {
+  it('should skip missing validations', () => {
     const validationRules = {
       password: passwordValidationRule,
     }
     const result = validate({password: 'fooBar', repeatPassword: 'foobarbaZ'}, validationRules)
     deepEqual({password: true, repeatPassword: true}, result)
+  })
+
+  it('should skip missing inputs', () => {
+    const validationRules = {
+      password: passwordValidationRule,
+      repeatPassword: repeatPasswordValidationRule,
+    }
+    const result = validate({password: 'fooBar'}, validationRules)
+    deepEqual({password: true}, result)
   })
 
 })

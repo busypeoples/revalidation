@@ -8,9 +8,11 @@ import {
   curry,
   compose,
   filter,
+  identity,
   ifElse,
   isEmpty,
   map,
+  pick,
   prop,
   merge,
   mergeWithKey,
@@ -18,8 +20,6 @@ import {
 } from 'ramda'
 
 const { Right, Left } = Either
-
-const identity = r => r
 
 /**
  *
@@ -39,8 +39,14 @@ const createDefaultValidation = map(i => [])
  *      {name: [], random: []},
  *      {name: [[x => x > 1, 'some msg']]}
  *    ) // {name: [[x => x > 1, 'some msg']], random: []})
+ *
+ *    createBaseValidation(
+ *      {name: []},
+ *      {name: [[x => x > 1, 'some msg']], random: [[x => x + 1, 'random msg']]}
+ *    ) // {name: [[x => x > 1, 'some msg']]}
  */
-const createBaseValidation = (input, validations) => merge(createDefaultValidation(input), validations)
+const createBaseValidation = (input, validations) =>
+  merge(createDefaultValidation(input), pick(Object.keys(input), validations))
 
 
 /**
