@@ -10,10 +10,10 @@ import {
  * @param obj the object to validate
  * @returns {boolean}
  */
-export default function isValid(obj: Object) {
-  return isEmpty(filter(i =>
+export default function isValid(obj: Object): boolean {
+  return isEmpty(filter(i => i &&
     (typeof i === 'string' ||
-     typeof i === 'function' ||
-     typeof i === 'object'), obj
+    typeof i === 'function' ||
+    typeof i === 'object'), obj
   ))
 }

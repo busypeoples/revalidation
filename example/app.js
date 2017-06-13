@@ -3,7 +3,7 @@ import React, {Component} from 'react'
 import {render} from 'react-dom'
 import R from 'ramda'
 
-import Revalidation from '../lib/'
+import Revalidation, {isValid} from '../lib/'
 
 // default ErrorComponent
 const ErrorComponent = ({errorMsg}) => <div className='error'>{errorMsg}</div>
@@ -17,7 +17,7 @@ const hasCapitalLetter = a => /[A-Z]/.test(a)
 const isGreaterThan = R.curry((len, a) => (a > len))
 const isLengthGreaterThan = len => R.compose(isGreaterThan(len), R.prop('length'))
 
-const StatelessFunction = ({ form, onChange, onSubmit, errors = {} }) =>
+const StatelessFunction = ({ form, onChange, onSubmit, errors = {} }) => console.log(errors, isValid(errors)) ||
   <div className='form'>
     <div className='formGroup'>
       <label>Name</label>
@@ -37,7 +37,10 @@ const StatelessFunction = ({ form, onChange, onSubmit, errors = {} }) =>
       />
       { errors.random }
     </div>
-    <button onClick={() => onSubmit(form)}>Submit</button>
+    <button
+      disabled={!isValid(errors)}
+      onClick={() => onSubmit(form)}
+    >Submit</button>
   </div>
 
 const validationRules = {
