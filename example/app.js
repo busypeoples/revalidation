@@ -1,72 +1,50 @@
 /* @flow */
-import React, {Component} from 'react'
-import {render} from 'react-dom'
+import React from 'react'
+import { render } from 'react-dom'
 import R from 'ramda'
 
-import Revalidation, {isValid} from '../lib/'
+import FormClass from './formClass'
+import StatelessFunctionForm from './statelessFunctionForm'
 
-// default ErrorComponent
-const ErrorComponent = ({errorMsg}) => <div className='error'>{errorMsg}</div>
+class Root extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {classExample: true}
+    this.onSubmit = this.onSubmit.bind(this)
+    this.changeView = this.changeView.bind(this)
+  }
 
-// helper
-const getValue = R.path(['target', 'value'])
+  onSubmit(values) {
+    console.log('updated form values', values)
+  }
 
-// validations
-const isNotEmpty = a => a.trim().length > 0
-const hasCapitalLetter = a => /[A-Z]/.test(a)
-const isGreaterThan = R.curry((len, a) => (a > len))
-const isLengthGreaterThan = len => R.compose(isGreaterThan(len), R.prop('length'))
+  changeView() {
+    this.setState(state => ({ classExample: !state.classExample }))
+  }
 
-const StatelessFunction = ({ form, onChange, onSubmit, errors = {} }) => console.log(errors, isValid(errors)) ||
-  <div className='form'>
-    <div className='formGroup'>
-      <label>Name</label>
-      <input
-        type='text'
-        value={form.name}
-        onChange={R.compose(onChange('name'), getValue)}
-      />
-      { errors.name }
-    </div>
-    <div className='formGroup'>
-      <label>Random</label>
-      <input
-        type='text'
-        value={form.random}
-        onChange={R.compose(onChange('random'), getValue)}
-      />
-      { errors.random }
-    </div>
-    <button
-      disabled={!isValid(errors)}
-      onClick={() => onSubmit(form)}
-    >Submit</button>
-  </div>
+  render() {
+    const { classExample } = this.state
+    const form = classExample
+      ? <FormClass onSubmit={this.onSubmit} />
+      : <StatelessFunctionForm onSubmit={this.onSubmit} />
 
-const validationRules = {
-  name: [
-    [isNotEmpty, 'Name should not be  empty.']
-  ],
-  random: [
-    [ isLengthGreaterThan(7), 'Minimum Random length of 8 is required.' ],
-    [ hasCapitalLetter, 'Random should contain at least one uppercase letter.' ],
-  ]
+    return (
+      <div>
+        <button onClick={this.changeView}>
+          { classExample
+            ? 'Show Stateless Function Example'
+            : 'Class Example'
+          }
+        </button>
+        <div>{form}</div>
+      </div>
+    )
+  }
 }
-const initialState = {form: {name: '', random: ''}}
-
-const enhanced = Revalidation(
-  initialState,
-  validationRules,
-  ErrorComponent
-)
-
-const Form = enhanced(StatelessFunction)
-
-const onSubmit = vals => console.log(vals)
 
 render(
   <div>
-    <Form onSubmit={onSubmit} />
+    <Root />
   </div>,
   document.getElementById('root')
 )
