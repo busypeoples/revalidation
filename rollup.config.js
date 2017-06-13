@@ -50,7 +50,7 @@ var config = {
   ]
 }
 
-if (env === 'prod') {
+if (env === 'production') {
   config.plugins.push(
     uglify({
       compress: {
