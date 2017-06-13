@@ -60,9 +60,25 @@ const makePredicate = ([predFn, e]) => (a, inputs) => predFn(a, inputs) ? Right(
 const runPredicates = ([input, validations, all]) =>
   map(predFn => predFn(input, all), map(makePredicate, validations))
 
-
+/**
+ * validator expects a transformation function to run on the results of the predicates and the sequence.
+ * Depending on what is needed, one can transform the Either result.
+ *
+ * @param {Function} transform to apply the transformation
+ */
 const validator = transform => map(compose(transform, sequence(Either.of), runPredicates))
+
+/**
+ *
+ * @param {Object} input the provided input object
+ * @param {Object} validations the validations for the input keys
+ */
 const makeValidationObject = (input, validations) => mergeWithKey((k, l, r) => [l, r, input], input, createBaseValidation(input, validations))
+
+/**
+ *
+ * @param transform
+ */
 const createValidation = (transform: Function = identity) => compose(validator(transform), makeValidationObject)
 
 export default createValidation
