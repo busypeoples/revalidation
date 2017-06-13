@@ -4,8 +4,12 @@ import {
 } from './utils/'
 
 import {
+  chain,
   curry,
   compose,
+  filter,
+  ifElse,
+  isEmpty,
   map,
   prop,
   merge,
@@ -48,7 +52,7 @@ const createBaseValidation = (input, validations) => merge(createDefaultValidati
  * @param {Function} predFn the predicate function to be run
  * @param {string} e the error message
  */
-const makePredicate = ([predFn, e]) => (a, inputs) => predFn(a, inputs) ? Right(a) : Left(e)
+const makePredicate = ([predFn, e]) => (a, inputs) => predFn(a, inputs) ? Left(a) : Right(e)
 
 /**
  * applies all predicates with the input value and inputs objects
@@ -66,7 +70,13 @@ const runPredicates = ([input, validations, all]) =>
  *
  * @param {Function} transform to apply the transformation
  */
-const validator = transform => map(compose(transform, sequence(Either.of), runPredicates))
+const validator = transform => map(compose(
+  transform,
+  chain(ifElse(isEmpty, Right, Left)),
+  sequence(Either.of),
+  filter(prop('isRight')),
+  runPredicates
+))
 
 /**
  *

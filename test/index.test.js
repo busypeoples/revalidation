@@ -4,6 +4,7 @@ import createValidation from '../src/createValidation'
 import {
   compose,
   curry,
+  head,
   partial,
   prop,
 } from 'ramda'
@@ -11,7 +12,7 @@ import {
 const identity = r => r
 
 // configure a transformation that simply returns the original value
-const transform = r => r.fold(identity, () => true)
+const transform = r => r.fold(head, () => true)
 const validate = createValidation(transform)
 
 // Predicates
