@@ -1,14 +1,14 @@
 /* @flow */
 import React from 'react'
 
+import isValid from '../utils/isValid'
 import createErrorComponent from './createErrorComponent'
 import createValidation from '../createValidation'
 import {
   assoc,
   assocPath,
   curry,
-  map,
-  prop,
+  prop
 } from 'ramda'
 
 // default ErrorComponent
@@ -34,25 +34,33 @@ function Revalidation(
 
     constructor(props) {
       super(props)
-      this.state = initialState
-      this.onChange = curry((name, value) =>
-        this.setState(state => {
-          const newState = assocPath(['form', name], value, state)
-          const errors = validate(prop('form', newState), validationRules)
-          return assoc('errors', errors, newState)
-        })
-      )
+      this.state = {form: props.form || initialState, errors: {}}
+      this.onChange = this.onChange.bind(this)
+    }
+
+    onChange(name) {
+      return value => this.setState(state => {
+        const updatedState = assocPath(['form', name], value, state)
+        const errors = validate(prop('form', updatedState), validationRules)
+        return assoc('errors', errors, updatedState)
+      })
+    }
+
+    validate(form) {
+      this.setState(state => ({ ...state, ...this.validation(form)}))
     }
 
     render() {
       const {form, errors} = this.state
+      const valid = isValid(validate(form, validationRules))
 
       return (
         <Component
           {...this.props}
           form={form}
           errors={errors}
-          onChange={this.onChange}
+          valid={valid}
+          validate={this.onChange}
         />
       )
     }
