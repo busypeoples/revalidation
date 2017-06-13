@@ -8,6 +8,8 @@ import {
   assoc,
   assocPath,
   curry,
+  merge,
+  path,
   prop
 } from 'ramda'
 
@@ -18,7 +20,8 @@ function Revalidation(
   initialState,
   validationRules,
   errorComponent,
-  Component
+  options,
+  Component,
 ) {
 
   const validate = createValidation(createErrorComponent(errorComponent || DefaultErrorComponent))
@@ -31,36 +34,51 @@ function Revalidation(
     }
 
     onChange: Function
+    validate: Function
+    validateAll: Function
 
     constructor(props) {
       super(props)
+      this.validateSingle = options ? options.validateSingle : false
       this.state = {form: props.form || initialState, errors: {}}
-      this.onChange = this.onChange.bind(this)
+      this.validate = this.validate.bind(this)
+      this.validateAll = this.validateAll.bind(this)
     }
 
-    onChange(name) {
+    validate(name) {
       return value => this.setState(state => {
         const updatedState = assocPath(['form', name], value, state)
         const errors = validate(prop('form', updatedState), validationRules)
+        if (this.validateSingle) {
+          return assocPath(['errors', name], errors[name], updatedState)
+        }
         return assoc('errors', errors, updatedState)
       })
     }
 
-    validate(form) {
-      this.setState(state => ({ ...state, ...this.validation(form)}))
+    validateAll(cb, form) {
+        this.setState(state => {
+          const errors = validate(prop('form', state), validationRules)
+          return assoc('errors', errors, state)
+        }, () => {if (isValid(this.state.errors)) cb(form || this.state.form)} )
     }
 
     render() {
       const {form, errors} = this.state
       const valid = isValid(validate(form, validationRules))
 
+      const reValidation = {
+        form,
+        errors,
+        valid,
+        validate: this.validate,
+        validateAll: this.validateAll
+      }
+
       return (
         <Component
           {...this.props}
-          form={form}
-          errors={errors}
-          valid={valid}
-          validate={this.onChange}
+          reValidation={reValidation}
         />
       )
     }
