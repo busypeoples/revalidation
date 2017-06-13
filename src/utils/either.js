@@ -50,6 +50,9 @@ Left.prototype = Object.assign({}, Either.prototype, {
   cata: function(p: Object) {
     return p.Left(this.value)
   },
+  chain: function(f) {
+    return this
+  },
   concat: function(o) {
     return this
   },
@@ -69,6 +72,9 @@ Right.prototype = Object.assign({}, Either.prototype, {
   },
   cata: function(p: Object) {
     return p.Right(this.value)
+  },
+  chain: function(f) {
+    return f(this.value)
   },
   concat: function(o) {
     const that = this
