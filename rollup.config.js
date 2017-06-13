@@ -9,17 +9,17 @@ var env = process.env.NODE_ENV
 
 var config = {
   entry: 'src/index.js',
-  moduleName: 'ValidationHOC',
+  moduleName: 'Revalidation',
   exports: 'named',
   format: 'umd',
   sourceMap: env !== 'production',
   targets: (env == 'production') ?
   [
-    { dest: 'dist/validation-hoc.min.js', format: 'umd' },
+    { dest: 'dist/revalidation.min.js', format: 'umd' },
   ] :
   [
-    { dest: 'dist/validation-hoc.js', format: 'umd' },
-    { dest: 'dist/validation-hoc.es.js', format: 'es' },
+    { dest: 'dist/revalidation.js', format: 'umd' },
+    { dest: 'dist/revalidation.es.js', format: 'es' },
   ],
   globals: {
     'react': 'React',

@@ -1,4 +1,4 @@
-# validation-hoc
+# Revalidation
 Higher Order Component for Validating Forms in React
 
 ### Getting started
@@ -8,9 +8,4 @@ yarn install
 npm run example
 ```
 
-#### This is work in progress
-
-
-#### TODO
-- Implement optimized Higher Order Component
-- Enable validating depending fields (f.e. check if password and repeat-password are equal)
+#### More Information soon.

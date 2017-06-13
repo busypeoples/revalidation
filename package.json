@@ -1,13 +1,13 @@
 {
-  "name": "validation-hoc",
-  "version": "0.2.0",
+  "name": "revalidation",
+  "version": "0.3.0",
   "description": "Higher Order Component for Form Validation in React",
   "main": "lib/index.js",
   "author": "25th-floor",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/25th-floor/validation-hoc.git"
+    "url": "git+https://github.com/25th-floor/revalidation.git"
   },
   "scripts": {
     "clean": "rimraf lib dist",

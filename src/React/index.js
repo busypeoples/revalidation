@@ -14,7 +14,7 @@ import {
 // default ErrorComponent
 const DefaultErrorComponent = ({errorMsg}) => <div className='error'>{errorMsg}</div>
 
-function ValidationHOC(
+function Revalidation(
   initialState,
   validationRules,
   errorComponent,
@@ -59,4 +59,4 @@ function ValidationHOC(
   }
 }
 
-export default curry(ValidationHOC)
+export default curry(Revalidation)
