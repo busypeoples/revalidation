@@ -1,7 +1,7 @@
 import React from 'react'
 import { compose } from 'ramda'
 
-import Revalidation from '../src/'
+import Revalidation from 'revalidation'
 import helpers from './helpers'
 
 const {
