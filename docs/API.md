@@ -34,7 +34,7 @@ const {
   hasCapitalLetter,
   } = helpers
 
-const ErrorComponent = ({errorMsg}) => <div className='error'>{head(errorMsg)}</div>
+const ErrorComponent = ({errorMsgs}) => <div className='error'>{head(errorMsgs)}</div>
 
 const getValue = e => e.target.value
 
@@ -130,9 +130,9 @@ If no `data` provided is, the current form state will be passed in.
 
 `errors` *(Object)*: The object containing the errors. Depending on the provided error callback the error might have a structure like this f.e.
 ```js
-// errorCallback = ({errorMsg}) => errorMsg
+// errorCallback = ({errorMsgs}) => errorMsgs
 {name: [], random: ['something is missing', 'invalid data']}
 
-// errorCallback = ({errorMsg}) => <div>errorMsg[0]</div>
+// errorCallback = ({errorMsgs}) => <div>errorMsgs[0]</div>
 {name: [], random: [<div>something is missing</div>]}
 ```

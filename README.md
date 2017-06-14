@@ -123,7 +123,7 @@ The error component is simply telling Revalidation how to render the error messa
 For example we only want to display one error at a time.
 
 ```javascript
-const ErrorComponent = ({errorMsg}) => <div className='error'>{head(errorMsg)}</div>
+const ErrorComponent = ({errorMsgs}) => <div className='error'>{head(errorMsgs)}</div>
 ```
 
 Revalidate will only render the error component when a field is invalid and the ___errorMsg___ prop is always an array. So in this

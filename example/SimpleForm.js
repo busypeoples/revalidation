@@ -11,7 +11,7 @@ const {
   hasCapitalLetter,
   } = helpers
 
-const ErrorComponent = ({errorMsg}) => <div className='error'>{head(errorMsg)}</div>
+const ErrorComponent = ({errorMsgs}) => <div className='error'>{head(errorMsgs)}</div>
 
 const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}, onSubmit }) =>
   (

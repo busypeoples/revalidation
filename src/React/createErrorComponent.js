@@ -9,7 +9,7 @@ const createErrorComponent = (
 ) =>
   result.cata({
     Right: a => null,
-    Left: errorMsg => componentFn({errorMsg})
+    Left: errorMsgs => componentFn({errorMsgs})
   })
 
 export default curry(createErrorComponent)

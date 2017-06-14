@@ -14,7 +14,7 @@ import {
 } from 'ramda'
 
 // default ErrorComponent
-const DefaultErrorComponent = ({errorMsg}) => <div className='error'>{errorMsg}</div>
+const DefaultErrorComponent = ({errorMsgs}) => <div className='error'>{errorMsgs}</div>
 
 function Revalidation(
   initialState,
