@@ -14,7 +14,6 @@
     "build": "npm run build:lib && npm run build:dist",
     "build:lib": "babel src -d lib",
     "build:dist": "NODE_ENV=production rollup -c",
-    "example": "NODE_ENV=development webpack-dev-server --inline --config example/webpack.config.js --content-base example/",
     "test": "mocha --compilers js:babel-core/register --recursive --colors",
     "flow": "flow check",
     "lint": "eslint src",
@@ -40,7 +39,6 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "flow-bin": "^0.47.0",
-    "lerna": "^2.0.0-rc.5",
     "mocha": "^3.4.2",
     "prop-types": "^15.5.10",
     "react": "^15.5.4",
@@ -52,9 +50,7 @@
     "rollup-plugin-flow": "^1.1.1",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-replace": "^1.1.1",
-    "rollup-plugin-uglify": "^2.0.1",
-    "webpack": "^2.6.1",
-    "webpack-dev-server": "^2.4.5"
+    "rollup-plugin-uglify": "^2.0.1"
   },
   "dependencies": {
     "data.either": "^1.5.1",
