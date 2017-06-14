@@ -26,7 +26,7 @@ function Revalidation(
 
   const validate = createValidation(createErrorComponent(errorComponent || DefaultErrorComponent))
 
-  return class extends React.Component {
+  const RevalidationHOC = class extends React.Component {
 
     state: {
       form: Object,
@@ -40,7 +40,7 @@ function Revalidation(
     constructor(props) {
       super(props)
       this.validateSingle = options ? options.validateSingle : false
-      this.state = {form: props.form || initialState, errors: {}}
+      this.state = {form: merge(initialState, props.form), errors: {}}
       this.validate = this.validate.bind(this)
       this.validateAll = this.validateAll.bind(this)
     }
@@ -56,11 +56,11 @@ function Revalidation(
       })
     }
 
-    validateAll(cb, form) {
+    validateAll(cb, data) {
         this.setState(state => {
           const errors = validate(prop('form', state), validationRules)
           return assoc('errors', errors, state)
-        }, () => {if (isValid(this.state.errors)) cb(form || this.state.form)} )
+        }, () => { if (isValid(this.state.errors)) cb(data || this.state.form)} )
     }
 
     render() {
@@ -83,6 +83,12 @@ function Revalidation(
       )
     }
   }
+
+  RevalidationHOC.defaultProps = {
+    form: {},
+  }
+
+  return RevalidationHOC
 }
 
 export default curry(Revalidation)
