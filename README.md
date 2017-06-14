@@ -198,7 +198,7 @@ Another aspect is that the form props can als be provided when rendering the enh
 Either define an initial state or use form props to define an actual form state. Revalidation will check for props first
 and then fallback to the initial state when none is found.
 
-Also check the ___examples___ for more detailed insight into how to build more advanced forms, f.e. validating dependent fields.
+Also check the [example](https://github.com/25th-floor/revalidation/tree/master/example) for more detailed insight into how to build more advanced forms, f.e. validating dependent fields.
 
 Clone the repository go to the examples folder and run the following commands:
 ```js
