@@ -1,15 +1,13 @@
 /* @flow */
-import React from 'react'
-
 import { curry } from 'ramda'
 
 const createErrorComponent = (
   componentFn: Function,
-  result: Object
+  result: Object // eslint-disable-line comma-dangle
 ) =>
   result.cata({
-    Right: a => null,
-    Left: errorMsgs => componentFn({errorMsgs})
+    Right: () => null,
+    Left: errorMsgs => componentFn({ errorMsgs }),
   })
 
 export default curry(createErrorComponent)

@@ -14,6 +14,6 @@ export default function isValid(obj: Object): boolean {
   return isEmpty(filter(i => i &&
     (typeof i === 'string' ||
     typeof i === 'function' ||
-    typeof i === 'object'), obj
+    typeof i === 'object'), obj // eslint-disable-line comma-dangle
   ))
 }

@@ -1,33 +1,30 @@
 /* @flow */
 import React from 'react'
-
-import isValid from '../utils/isValid'
-import createErrorComponent from './createErrorComponent'
-import createValidation from '../createValidation'
 import {
   assoc,
   assocPath,
   curry,
   merge,
-  path,
-  prop
+  prop,
 } from 'ramda'
 
+import isValid from '../utils/isValid'
+import createErrorComponent from './createErrorComponent'
+import createValidation from '../createValidation'
+
 // default ErrorComponent
-const DefaultErrorComponent = ({errorMsgs}) => <div className='error'>{errorMsgs}</div>
+const DefaultErrorComponent = ({ errorMsgs }) => <div className='error'>{ errorMsgs }</div>
 
 function Revalidation(
   initialState,
   validationRules,
   errorComponent,
   options,
-  Component,
+  Component // eslint-disable-line no-unused-vars, comma-dangle
 ) {
-
   const validate = createValidation(createErrorComponent(errorComponent || DefaultErrorComponent))
 
   const RevalidationHOC = class extends React.Component {
-
     state: {
       form: Object,
       errors: Array<any>,
@@ -40,7 +37,7 @@ function Revalidation(
     constructor(props) {
       super(props)
       this.validateSingle = options ? options.validateSingle : false
-      this.state = {form: merge(initialState, props.form), errors: {}}
+      this.state = { form: merge(initialState, props.form), errors: {} }
       this.validate = this.validate.bind(this)
       this.validateAll = this.validateAll.bind(this)
     }
@@ -57,14 +54,14 @@ function Revalidation(
     }
 
     validateAll(cb, data) {
-        this.setState(state => {
-          const errors = validate(prop('form', state), validationRules)
-          return assoc('errors', errors, state)
-        }, () => { if (isValid(this.state.errors)) cb(data || this.state.form)} )
+      this.setState(state => {
+        const errors = validate(prop('form', state), validationRules)
+        return assoc('errors', errors, state)
+      }, () => { if (isValid(this.state.errors)) cb(data || this.state.form) })
     }
 
     render() {
-      const {form, errors} = this.state
+      const { form, errors } = this.state
       const valid = isValid(validate(form, validationRules))
 
       const reValidation = {
@@ -72,7 +69,7 @@ function Revalidation(
         errors,
         valid,
         validate: this.validate,
-        validateAll: this.validateAll
+        validateAll: this.validateAll,
       }
 
       return (

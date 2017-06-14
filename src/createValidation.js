@@ -3,7 +3,6 @@ import Either from 'data.either'
 
 import {
   chain,
-  curry,
   compose,
   filter,
   identity,
@@ -25,7 +24,7 @@ const { Right, Left } = Either
  * createDefaultValidation({'name': '1', 'random': '2'})
  * outputs: {name: [], random: []}
  */
-const createDefaultValidation = map(i => [])
+const createDefaultValidation = map(() => [])
 
 /**
  *
@@ -79,7 +78,7 @@ const validator = transform => map(compose(
   chain(ifElse(isEmpty, Right, Left)),
   sequence(Either.of),
   filter(prop('isRight')),
-  runPredicates
+  runPredicates // eslint-disable-line comma-dangle
 ))
 
 /**

@@ -1,7 +1,7 @@
 /* @flow */
 
-import Either from './either'
+import isValid from './isValid'
 
-export {
-  Either,
+export default {
+  isValid,
 }
