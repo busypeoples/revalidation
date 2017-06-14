@@ -15,7 +15,7 @@
     "build:lib": "babel src -d lib",
     "build:dist": "NODE_ENV=production rollup -c",
     "build:demo": "NODE_ENV=production webpack --config example/webpack.config.demo.js",
-    "test": "mocha --compilers js:babel-core/register --recursive --colors",
+    "test": "npm run lint && mocha --compilers js:babel-core/register --recursive --colors",
     "flow": "flow check",
     "lint": "eslint src",
     "prepublish": "npm run clean && npm run build"
