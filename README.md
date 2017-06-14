@@ -206,6 +206,9 @@ yarn install
 npm start.
 ```
 
+### Demo
+Check the live [demo](http://revalidation.oss.25th-floor.com/example/demo/)
+
 ### Further Information
 
 For a deeper understanding of the underlying ideas and concepts:
