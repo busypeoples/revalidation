@@ -222,7 +222,10 @@ Original idea and support by [Stefan Oestreicher](https://twitter.com/thinkfunct
 
 #### More
 __Revalidation__ is under development. The underlying validation library will be extracted into a standalone package in the near 
-future. More options will be added in the near future.
+future.
+
+#### Documentation
+[API](docs/API.md)
 
 ### License
 
