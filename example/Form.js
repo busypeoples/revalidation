@@ -1,5 +1,5 @@
 import React from 'react'
-import { compose } from 'ramda'
+import { compose, head } from 'ramda'
 import Revalidation from 'revalidation'
 
 import helpers from './helpers'
@@ -11,8 +11,7 @@ const {
   hasCapitalLetter,
   } = helpers
 
-// default ErrorComponent
-const ErrorComponent = ({errorMsg}) => <div className='error'>{errorMsg[0]}</div>
+const ErrorComponent = ({errorMsg}) => <div className='error'>{head(errorMsg)}</div>
 
 const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}, onSubmit }) =>
   (
@@ -24,25 +23,25 @@ const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}
           value={form.name}
           onChange={compose(validate('name'), getValue)}
         />
-        { errors.name }
+        <div className='errorPlaceholder'>{ errors.name }</div>
       </div>
       <div className='formGroup'>
         <label>Password</label>
         <input
-          type='hidden'
+          type='password'
           value={form.password}
           onChange={compose(validate('password'), getValue)}
         />
-        { errors.password }
+        <div className='errorPlaceholder'>{ errors.password }</div>
       </div>
       <div className='formGroup'>
         <label>Repeat Password</label>
         <input
-          type='hidden'
+          type='password'
           value={form.repeatPassword}
           onChange={compose(validate('repeatPassword'), getValue)}
         />
-        { errors.repeatPassword }
+        <div className='errorPlaceholder'>{ errors.repeatPassword }</div>
       </div>
       <div className='formGroup'>
         <label>Random</label>
@@ -51,7 +50,7 @@ const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}
           value={form.random}
           onChange={compose(validate('random'), getValue)}
         />
-        { errors.random }
+        <div className='errorPlaceholder'>{ errors.random }</div>
       </div>
       <button onClick={() => validateAll(onSubmit)}>Submit</button>
     </div>
@@ -92,7 +91,7 @@ const validationRules = {
 
 }
 
-const initialState = {}
+const initialState = {name: '', password: '', repeatPassword: '', random: ''}
 
 const enhanced = Revalidation(
   initialState,
