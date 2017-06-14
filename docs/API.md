@@ -11,9 +11,15 @@ Creates an enhanced React Component containing validation and state keeping capa
  
 3. `errorCallback` *(Function)*: The callback function to be called when errors exist for a key. f.e. `({errorMsg}) => <div>{errorMsg[0]}</div>`. A prop errorMsg is passed into the function. Anything can be returned at this point, f.e. a React Component, a boolean, the array itself.
 
-4. `options` *(Object)*: Currently only a single option available: `singleValue`. if you need validation per field you can set the option to true. `{singleValue: true}` 
+4. `options` *(Object)*: Currently there are two options available: `singleValue` and `instantValidation`. 
+
+    - `singleValue`: if you need validation per field you can set the option to true (default is false). `{singleValue: true}` 
+    - `instantValidation`: if you need instant validation as soon as props have changed set to true (default is false). `{instantValidation: true}` 
 
 5. `Component` *(React Component)*: The React Component that will be enhanced with validation and state keeping functionality.
+
+__NOTE:__ Enabling to override the `rules` and `options` via props might be added to Revalidation at some point, as to enable 
+dynamic changes.
 
 #### Returns
 
@@ -107,7 +113,7 @@ The following properties are provided by reValidation.
       )
 ```
 
-`valid` *(Boolean)*: A computed validation state. Useful when initializing the form and needing disable a submit for example.
+`valid` *(Boolean)*: A computed validation state. Useful when initializing the form and needing to disable a submit f.e.
 ```js
 <button {...{disabled : !valid}} onClick={() => submit()}>Submit</button>
 ```
