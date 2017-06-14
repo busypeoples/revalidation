@@ -1225,6 +1225,10 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
+data.either@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/data.either/-/data.either-1.5.1.tgz#71f9dbfc8fe3ab0112e52e443470bcd526f50b47"
+
 date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
@@ -2692,10 +2696,11 @@ requires-port@1.0.x, requires-port@1.x.x:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
 
-revalidation@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/revalidation/-/revalidation-0.5.0.tgz#935556bc58b03486b0b274db40d9879b4cdb2274"
+revalidation@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/revalidation/-/revalidation-0.6.0.tgz#25976d696bf8f038fea5f58ff72450ea9a0fd6d1"
   dependencies:
+    data.either "^1.5.1"
     ramda "^0.24.1"
 
 right-align@^0.1.1:

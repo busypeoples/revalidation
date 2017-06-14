@@ -24,6 +24,6 @@
   },
   "dependencies": {
     "ramda": "^0.24.1",
-    "revalidation": "^0.5.0"
+    "revalidation": "^0.6.0"
   }
 }
