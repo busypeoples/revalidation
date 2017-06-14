@@ -30,16 +30,31 @@ function Revalidation(
       errors: Array<any>,
     }
 
+    validateSingle: boolean
+    instantValidation: boolean
     onChange: Function
     validate: Function
     validateAll: Function
 
     constructor(props) {
       super(props)
-      this.validateSingle = options ? options.validateSingle : false
+      const { validateSingle = false, instantValidation = false } = options
+      this.validateSingle = validateSingle
+      this.instantValidation = instantValidation
       this.state = { form: merge(initialState, props.form), errors: {} }
       this.validate = this.validate.bind(this)
       this.validateAll = this.validateAll.bind(this)
+    }
+
+    componentWillReceiveProps({ form }) {
+      this.setState(({ form: formState, errors }) => {
+        const updatedForm = merge(formState, form)
+        const updateErrors = this.instantValidation ? validate(updatedForm, validationRules) : errors
+        return {
+          form: updatedForm,
+          errors: updateErrors,
+        }
+      })
     }
 
     validate(name) {
@@ -54,10 +69,11 @@ function Revalidation(
     }
 
     validateAll(cb, data) {
+      const { form, errors } = this.state
       this.setState(state => {
-        const errors = validate(prop('form', state), validationRules)
-        return assoc('errors', errors, state)
-      }, () => { if (isValid(this.state.errors)) cb(data || this.state.form) })
+        const updateErrors = validate(prop('form', state), validationRules)
+        return assoc('errors', updateErrors, state)
+      }, () => { if (isValid(errors)) cb(data || form) })
     }
 
     render() {
