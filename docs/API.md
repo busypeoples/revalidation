@@ -17,7 +17,7 @@ Creates an enhanced React Component containing validation and state keeping capa
 
 #### Returns
 
-`Higher Order React Component`: The provided component will be enhanced with a [`reValidation`](#reValidation) prop.
+`Higher Order React Component`: The provided component will be enhanced with a [`reValidation`](#revalidation) prop.
 
 #### Example
 
