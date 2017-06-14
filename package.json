@@ -11,9 +11,10 @@
   },
   "scripts": {
     "clean": "rimraf lib dist",
-    "build": "npm run build:lib && npm run build:dist",
+    "build": "npm run build:lib && npm run build:dist && npm run build:demo",
     "build:lib": "babel src -d lib",
     "build:dist": "NODE_ENV=production rollup -c",
+    "build:demo": "NODE_ENV=production webpack --config example/webpack.config.demo.js",
     "test": "mocha --compilers js:babel-core/register --recursive --colors",
     "flow": "flow check",
     "lint": "eslint src",
@@ -50,7 +51,8 @@
     "rollup-plugin-flow": "^1.1.1",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-replace": "^1.1.1",
-    "rollup-plugin-uglify": "^2.0.1"
+    "rollup-plugin-uglify": "^2.0.1",
+    "webpack": "^2.6.1"
   },
   "dependencies": {
     "data.either": "^1.5.1",
