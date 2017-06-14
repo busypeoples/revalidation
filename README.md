@@ -230,6 +230,8 @@ future.
 #### Documentation
 [API](docs/API.md)
 
+[FAQ](docs/FAQ.md)
+
 ### License
 
 MIT
