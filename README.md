@@ -206,6 +206,19 @@ yarn install
 npm start.
 ```
 
+### Further Information
+
+For a deeper understanding of the underlying ideas and concepts:
+
+[Form Validation As A Higher Order Component Pt.1](https://medium.com/javascript-inside/form-validation-as-a-higher-order-component-pt-1-83ac8fd6c1f0)
+
+[Form Validation As A Higher Order Component Pt.2](https://medium.com/javascript-inside/form-validation-as-a-higher-order-component-pt-2-1edb7881870d)
+
+
+### Credits
+Written by [A.Sharif](https://twitter.com/sharifsbeat)
+
+Original idea and support by [Stefan Oestreicher](https://twitter.com/thinkfunctional)
 
 #### More
 __Revalidation__ is under development. The underlying validation library will be extracted into a standalone package in the near 
