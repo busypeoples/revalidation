@@ -213,5 +213,5 @@ future. More options will be added in the near future.
 
 ### License
 
-IT
+MIT
 
