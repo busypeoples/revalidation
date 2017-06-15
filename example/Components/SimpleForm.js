@@ -13,7 +13,7 @@ const {
 
 const ErrorComponent = ({errorMsgs}) => <div className='error'>{head(errorMsgs)}</div>
 
-const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}, onSubmit }) =>
+const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}, onSubmit, disableButtonOption = false }) =>
   (
     <div className='form'>
       <div className='formGroup'>
@@ -36,7 +36,10 @@ const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}
         />
         <div className='errorPlaceholder'>{ errors.random }</div>
       </div>
-      <button onClick={() => validateAll(onSubmit)}>Submit</button>
+      <button
+        {...{disabled: disableButtonOption && !valid ? 'disabled': false  }}
+        className={disableButtonOption && !valid? 'inactive' : 'active' }
+        onClick={() => validateAll(onSubmit)}>Submit</button>
     </div>
   )
 

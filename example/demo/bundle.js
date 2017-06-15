@@ -10870,6 +10870,8 @@ var _head = __webpack_require__(72);
 
 var _head2 = _interopRequireDefault(_head);
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _react = __webpack_require__(13);
 
 var _react2 = _interopRequireDefault(_react);
@@ -10907,7 +10909,9 @@ var Form = function Form(_ref2) {
       _ref2$reValidation$er = _ref2$reValidation.errors,
       errors = _ref2$reValidation$er === undefined ? {} : _ref2$reValidation$er,
       validateAll = _ref2$reValidation.validateAll,
-      onSubmit = _ref2.onSubmit;
+      onSubmit = _ref2.onSubmit,
+      _ref2$disableButtonOp = _ref2.disableButtonOption,
+      disableButtonOption = _ref2$disableButtonOp === undefined ? false : _ref2$disableButtonOp;
   return _react2.default.createElement(
     'div',
     { className: 'form' },
@@ -10953,9 +10957,11 @@ var Form = function Form(_ref2) {
     ),
     _react2.default.createElement(
       'button',
-      { onClick: function onClick() {
+      _extends({ disabled: disableButtonOption && !valid ? 'disabled' : false }, {
+        className: disableButtonOption && !valid ? 'inactive' : 'active',
+        onClick: function onClick() {
           return validateAll(onSubmit);
-        } },
+        } }),
       'Submit'
     )
   );
@@ -24752,6 +24758,12 @@ var Root = function (_React$Component) {
             onSubmit: this.onSubmit,
             form: _extends({}, initState, formValues)
           });
+        case 4:
+          return _react2.default.createElement(_SimpleForm2.default, {
+            onSubmit: this.onSubmit,
+            form: _extends({ name: '', random: '' }, formValues),
+            disableButtonOption: true
+          });
         default:
           return _react2.default.createElement(_SimpleForm2.default, {
             onSubmit: this.onSubmit,
@@ -24810,6 +24822,16 @@ var Root = function (_React$Component) {
               'div',
               {
                 onClick: function onClick() {
+                  return _this2.changeExample(4);
+                },
+                className: getClassName(4)
+              },
+              'Basic (Disable Submit Button if Invalid)'
+            ),
+            _react2.default.createElement(
+              'div',
+              {
+                onClick: function onClick() {
                   return _this2.changeExample(2);
                 },
                 className: getClassName(2)
@@ -24850,7 +24872,7 @@ var Root = function (_React$Component) {
             )
           ),
           selectedForm,
-          example !== 1 && _react2.default.createElement(
+          (example === 2 || example == 3) && _react2.default.createElement(
             'button',
             { onClick: this.updateProps },
             'Update Props'

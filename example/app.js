@@ -58,6 +58,14 @@ class Root extends React.Component {
             form={{...initState, ...formValues}}
           />
         )
+      case 4:
+        return (
+          <SimpleForm
+            onSubmit={this.onSubmit}
+            form={{...{ name: '', random: ''}, ...formValues}}
+            disableButtonOption
+          />
+        )
       default:
         return (
           <SimpleForm
@@ -85,10 +93,16 @@ class Root extends React.Component {
         <div id="example">
           <div className="switch">
             <div
-              onClick={() => this.changeExample(1)}
-              className={getClassName(1)}
+            onClick={() => this.changeExample(1)}
+            className={getClassName(1)}
+          >
+            Basic
+          </div>
+            <div
+              onClick={() => this.changeExample(4)}
+              className={getClassName(4)}
             >
-              Basic
+              Basic (Disable Submit Button if Invalid)
             </div>
             <div
               onClick={() => this.changeExample(2)}
@@ -115,7 +129,7 @@ class Root extends React.Component {
             <pre>{message}</pre>
           </div>
           {selectedForm}
-          { example !== 1 && <button onClick={this.updateProps}>Update Props</button> }
+          { (example === 2 || example == 3) && <button onClick={this.updateProps}>Update Props</button> }
         </div>
       </div>
     )
