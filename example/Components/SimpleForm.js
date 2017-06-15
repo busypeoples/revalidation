@@ -1,8 +1,8 @@
 import React from 'react'
-import { compose, head } from 'ramda'
 import Revalidation from 'revalidation'
+import { compose, head } from 'ramda'
 
-import helpers from './helpers'
+import helpers from '../helpers'
 
 const {
   getValue,
