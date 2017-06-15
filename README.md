@@ -109,7 +109,7 @@ const validationRules = {
 
 Further more we know about the inital form state, which could be empty field values.
 
-```javascript```
+```javascript
 const initialState = {password: '', random: ''}
 ```
 
