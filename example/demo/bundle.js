@@ -10227,7 +10227,7 @@ var Right = _data2.default.Right,
  * outputs: {name: [], random: []}
  */
 
-var createDefaultValidation = (0, _map2.default)(function (i) {
+var createDefaultValidation = (0, _map2.default)(function () {
   return [];
 }
 
@@ -10295,7 +10295,8 @@ var createDefaultValidation = (0, _map2.default)(function (i) {
    */
   );
 };var validator = function validator(transform) {
-  return (0, _map2.default)((0, _compose2.default)(transform, (0, _chain2.default)((0, _ifElse2.default)(_isEmpty2.default, Right, Left)), (0, _sequence2.default)(_data2.default.of), (0, _filter2.default)((0, _prop2.default)('isRight')), runPredicates)
+  return (0, _map2.default)((0, _compose2.default)(transform, (0, _chain2.default)((0, _ifElse2.default)(_isEmpty2.default, Right, Left)), (0, _sequence2.default)(_data2.default.of), (0, _filter2.default)((0, _prop2.default)('isRight')), runPredicates // eslint-disable-line comma-dangle
+  )
 
   /**
    *
@@ -10354,7 +10355,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function isValid(obj) {
   return (0, _isEmpty2.default)((0, _filter2.default)(function (i) {
     return i && (typeof i === 'string' || typeof i === 'function' || (typeof i === 'undefined' ? 'undefined' : _typeof(i)) === 'object');
-  }, obj));
+  }, obj // eslint-disable-line comma-dangle
+  ));
 }
 
 /***/ }),
@@ -24457,15 +24459,12 @@ var _curry = __webpack_require__(41);
 
 var _curry2 = _interopRequireDefault(_curry);
 
-var _react = __webpack_require__(13);
-
-var _react2 = _interopRequireDefault(_react);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var createErrorComponent = function createErrorComponent(componentFn, result) {
+var createErrorComponent = function createErrorComponent(componentFn, result // eslint-disable-line comma-dangle
+) {
   return result.cata({
-    Right: function Right(a) {
+    Right: function Right() {
       return null;
     },
     Left: function Left(errorMsgs) {
@@ -24544,35 +24543,63 @@ var DefaultErrorComponent = function DefaultErrorComponent(_ref) {
   );
 };
 
-function Revalidation(initialState, validationRules, errorComponent, options, Component) {
+function Revalidation(initialState, validationRules, errorComponent, options, Component // eslint-disable-line no-unused-vars, comma-dangle
+) {
+  var _class, _temp;
 
   var _validate = (0, _createValidation2.default)((0, _createErrorComponent2.default)(errorComponent || DefaultErrorComponent));
 
-  var RevalidationHOC = function (_React$Component) {
-    _inherits(RevalidationHOC, _React$Component);
+  return _temp = _class = function (_React$Component) {
+    _inherits(_class, _React$Component);
 
-    function RevalidationHOC(props) {
-      _classCallCheck(this, RevalidationHOC);
+    function _class(props) {
+      _classCallCheck(this, _class);
 
-      var _this = _possibleConstructorReturn(this, (RevalidationHOC.__proto__ || Object.getPrototypeOf(RevalidationHOC)).call(this, props));
+      var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, props));
 
-      _this.validateSingle = options ? options.validateSingle : false;
-      _this.state = { form: (0, _merge2.default)(initialState, props.form), errors: {} };
+      var _options$validateSing = options.validateSingle,
+          validateSingle = _options$validateSing === undefined ? false : _options$validateSing,
+          _options$instantValid = options.instantValidation,
+          instantValidation = _options$instantValid === undefined ? false : _options$instantValid;
+      var form = props.form;
+
+      _this.validateSingle = validateSingle;
+      _this.instantValidation = instantValidation;
+      _this.state = { form: (0, _merge2.default)(initialState, form), errors: {} };
       _this.validate = _this.validate.bind(_this);
       _this.validateAll = _this.validateAll.bind(_this);
       return _this;
     }
 
-    _createClass(RevalidationHOC, [{
-      key: 'validate',
-      value: function validate(name) {
+    _createClass(_class, [{
+      key: 'componentWillReceiveProps',
+      value: function componentWillReceiveProps(_ref2) {
         var _this2 = this;
 
+        var form = _ref2.form;
+
+        this.setState(function (_ref3) {
+          var formState = _ref3.form,
+              errors = _ref3.errors;
+
+          var updatedForm = (0, _merge2.default)(formState, form);
+          var updateErrors = _this2.instantValidation ? _validate(updatedForm, validationRules) : errors;
+          return {
+            form: updatedForm,
+            errors: updateErrors
+          };
+        });
+      }
+    }, {
+      key: 'validate',
+      value: function validate(name) {
+        var _this3 = this;
+
         return function (value) {
-          return _this2.setState(function (state) {
+          return _this3.setState(function (state) {
             var updatedState = (0, _assocPath2.default)(['form', name], value, state);
             var errors = _validate((0, _prop2.default)('form', updatedState), validationRules);
-            if (_this2.validateSingle) {
+            if (_this3.validateSingle) {
               return (0, _assocPath2.default)(['errors', name], errors[name], updatedState);
             }
             return (0, _assoc2.default)('errors', errors, updatedState);
@@ -24582,21 +24609,23 @@ function Revalidation(initialState, validationRules, errorComponent, options, Co
     }, {
       key: 'validateAll',
       value: function validateAll(cb, data) {
-        var _this3 = this;
+        var _state = this.state,
+            form = _state.form,
+            errors = _state.errors;
 
         this.setState(function (state) {
-          var errors = _validate((0, _prop2.default)('form', state), validationRules);
-          return (0, _assoc2.default)('errors', errors, state);
+          var updateErrors = _validate((0, _prop2.default)('form', state), validationRules);
+          return (0, _assoc2.default)('errors', updateErrors, state);
         }, function () {
-          if ((0, _isValid2.default)(_this3.state.errors)) cb(data || _this3.state.form);
+          if ((0, _isValid2.default)(errors) && cb) cb(data || form);
         });
       }
     }, {
       key: 'render',
       value: function render() {
-        var _state = this.state,
-            form = _state.form,
-            errors = _state.errors;
+        var _state2 = this.state,
+            form = _state2.form,
+            errors = _state2.errors;
 
         var valid = (0, _isValid2.default)(_validate(form, validationRules));
 
@@ -24614,14 +24643,10 @@ function Revalidation(initialState, validationRules, errorComponent, options, Co
       }
     }]);
 
-    return RevalidationHOC;
-  }(_react2.default.Component);
-
-  RevalidationHOC.defaultProps = {
+    return _class;
+  }(_react2.default.Component), _class.defaultProps = {
     form: {}
-  };
-
-  return RevalidationHOC;
+  }, _temp;
 }
 
 exports.default = (0, _curry2.default)(Revalidation);
