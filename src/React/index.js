@@ -15,19 +15,25 @@ import createValidation from '../createValidation'
 // default ErrorComponent
 const DefaultErrorComponent = ({ errorMsgs }) => <div className='error'>{ errorMsgs }</div>
 
+type ReactComponent<A> = (props: A) => ?React$Element<any> | Class<React$Component<any, A, any>>
+
 function Revalidation(
-  initialState,
-  validationRules,
-  errorComponent,
-  options,
-  Component // eslint-disable-line no-unused-vars, comma-dangle
-) {
+  initialState: Object,
+  validationRules: Object,
+  errorComponent: Function,
+  options: Object,
+  Component: any // eslint-disable-line no-unused-vars, comma-dangle
+): Class<React$Component<any, *, any>> {
   const validate = createValidation(createErrorComponent(errorComponent || DefaultErrorComponent))
 
-  const RevalidationHOC = class extends React.Component {
+  return class extends React.Component {
     state: {
       form: Object,
-      errors: Array<any>,
+      errors: Object,
+    }
+
+    defaultProps: {
+      form: Object,
     }
 
     validateSingle: boolean
@@ -35,6 +41,10 @@ function Revalidation(
     onChange: Function
     validate: Function
     validateAll: Function
+
+    static defaultProps = {
+      form: {}
+    }
 
     constructor(props) {
       super(props)
@@ -68,12 +78,12 @@ function Revalidation(
       })
     }
 
-    validateAll(cb, data) {
+    validateAll(cb: Function, data: Object) {
       const { form, errors } = this.state
       this.setState(state => {
         const updateErrors = validate(prop('form', state), validationRules)
         return assoc('errors', updateErrors, state)
-      }, () => { if (isValid(errors)) cb(data || form) })
+      }, () => { if (isValid(errors) && cb) cb(data || form) })
     }
 
     render() {
@@ -96,12 +106,6 @@ function Revalidation(
       )
     }
   }
-
-  RevalidationHOC.defaultProps = {
-    form: {},
-  }
-
-  return RevalidationHOC
 }
 
 export default curry(Revalidation)
