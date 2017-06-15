@@ -38,7 +38,6 @@ function Revalidation(
 
     validateSingle: boolean
     instantValidation: boolean
-    onChange: Function
     validate: Function
     validateAll: Function
 
@@ -49,9 +48,10 @@ function Revalidation(
     constructor(props) {
       super(props)
       const { validateSingle = false, instantValidation = false } = options
+      const { form } = props
       this.validateSingle = validateSingle
       this.instantValidation = instantValidation
-      this.state = { form: merge(initialState, props.form), errors: {} }
+      this.state = { form: merge(initialState, form), errors: {} }
       this.validate = this.validate.bind(this)
       this.validateAll = this.validateAll.bind(this)
     }
@@ -67,7 +67,7 @@ function Revalidation(
       })
     }
 
-    validate(name) {
+    validate(name: string): Function {
       return value => this.setState(state => {
         const updatedState = assocPath(['form', name], value, state)
         const errors = validate(prop('form', updatedState), validationRules)
@@ -78,7 +78,7 @@ function Revalidation(
       })
     }
 
-    validateAll(cb: Function, data: Object) {
+    validateAll(cb: Function, data: Object): void {
       const { form, errors } = this.state
       this.setState(state => {
         const updateErrors = validate(prop('form', state), validationRules)
