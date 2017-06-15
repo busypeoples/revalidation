@@ -18,6 +18,11 @@ const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}
   )
 ```
 
+#### How can I prevent empty optional fields from being validated?
+Don't provide any validation rules for the optional field.
+Revalidation only runs the validation against defined validation rules for given input.
+If no validation rules are provided the field will always be valid by default. 
+
 #### How can I prevent Revalidation from validating all the fields as soon as I edit the first field?
 Via the options object set the `validateSingle` option to true.
 ```js
