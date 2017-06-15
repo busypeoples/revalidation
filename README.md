@@ -114,7 +114,8 @@ const initialState = {password: '', random: ''}
 ```
 
 Now that we have everything in place, we import Revalidation.
-```javascript
+
+```js
 import Revalidation from 'revalidation'
 ```
 
@@ -154,7 +155,7 @@ export default enhanced(Form)
 ```
 
 This enables us to rewrite our Form component, which accepts a ___reValidation___ prop now.
-```javascript
+```js
 
 const getValue = e => e.target.value
 
@@ -193,6 +194,7 @@ reValidtion returns an object containing:
 
 Where and how to display the errors and when and how to validate is responsibilty of the form not Revalidation.
 Another aspect is that the form props can als be provided when rendering the enhanced Form component.
+
 ```javascript
 <Form
     onSubmit={this.onSubmit}
