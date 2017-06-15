@@ -34,7 +34,7 @@ var config = {
     }),
     babel({
       babelrc: false,
-      presets: [["es2015", { "modules": false }]],
+      presets: [["es2015", { "modules": false }], "stage-0"],
       plugins: [
         "external-helpers",
         'transform-object-rest-spread',
