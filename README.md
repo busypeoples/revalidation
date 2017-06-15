@@ -129,11 +129,16 @@ const ErrorComponent = ({errorMsgs}) => <div className='error'>{head(errorMsgs)}
 Revalidate will only render the error component when a field is invalid and the ___errorMsg___ prop is always an array. So in this
 case we want to access and render the first error message.
 
-The options object currently only has one option: ___validateSingle___. This is useful if we only want to validate one field
-at a time.
+The options object currently supports two options: ___validateSingle___ and ___instantValidation___. 
+
+* ___validateSingle___: Is useful if when we only want to validate one field a time. (default: false)
+* ___instantValidation___: Set to true if new prop form values should be validated instantly. (default: false)
+    
 ```javascript 
 const option1 = {validateSingle: false} // validate all fields as soon as the first field changes f.e.
 const option2 = {validateSingle: true} // validate per changed values. 
+const option3 = {instantValidation: false} // ignore validating any passed in props updates, f.e. only validating on submit click.
+const option4 = {instantValidation: true} // validate as soon as passed in props have been updated. 
 ```
 
 Finally we enhance the Form component.
