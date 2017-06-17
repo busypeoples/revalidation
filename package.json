@@ -11,7 +11,7 @@
   },
   "scripts": {
     "clean": "rimraf lib dist",
-    "build": "npm run build:lib && npm run build:dist && npm run build:demo",
+    "build": "npm run build:lib && npm run build:dist",
     "build:lib": "babel src -d lib",
     "build:dist": "NODE_ENV=production rollup -c",
     "build:demo": "NODE_ENV=production webpack --config example/webpack.config.demo.js",
