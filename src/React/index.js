@@ -15,15 +15,13 @@ import createValidation from '../createValidation'
 // default ErrorComponent
 const DefaultErrorComponent = ({ errorMsgs }) => <div className='error'>{ errorMsgs }</div>
 
-type ReactComponent<A> = (props: A) => ?React$Element<any> | Class<React$Component<any, A, any>>
-
 function Revalidation(
   initialState: Object,
   validationRules: Object,
   errorComponent: Function,
   options: Object,
   Component: any // eslint-disable-line no-unused-vars, comma-dangle
-): Class<React$Component<any, *, any>> {
+): any {
   const validate = createValidation(createErrorComponent(errorComponent || DefaultErrorComponent))
 
   return class extends React.Component {
@@ -42,7 +40,7 @@ function Revalidation(
     validateAll: Function
 
     static defaultProps = {
-      form: {}
+      form: {},
     }
 
     constructor(props) {
