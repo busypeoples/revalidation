@@ -77,11 +77,10 @@ function Revalidation(
     }
 
     validateAll(cb: Function, data: Object): void {
-      const { form, errors } = this.state
       this.setState(state => {
         const updateErrors = validate(prop('form', state), validationRules)
         return assoc('errors', updateErrors, state)
-      }, () => { if (isValid(errors) && cb) cb(data || form) })
+      }, () => { if (isValid(this.state.errors) && cb) cb(data || this.state.form) })
     }
 
     render() {
