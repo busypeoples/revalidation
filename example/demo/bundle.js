@@ -24615,23 +24615,21 @@ function Revalidation(initialState, validationRules, errorComponent, options, Co
     }, {
       key: 'validateAll',
       value: function validateAll(cb, data) {
-        var _state = this.state,
-            form = _state.form,
-            errors = _state.errors;
+        var _this4 = this;
 
         this.setState(function (state) {
           var updateErrors = _validate((0, _prop2.default)('form', state), validationRules);
           return (0, _assoc2.default)('errors', updateErrors, state);
         }, function () {
-          if ((0, _isValid2.default)(errors) && cb) cb(data || form);
+          if ((0, _isValid2.default)(_this4.state.errors) && cb) cb(data || _this4.state.form);
         });
       }
     }, {
       key: 'render',
       value: function render() {
-        var _state2 = this.state,
-            form = _state2.form,
-            errors = _state2.errors;
+        var _state = this.state,
+            form = _state.form,
+            errors = _state.errors;
 
         var valid = (0, _isValid2.default)(_validate(form, validationRules));
 
