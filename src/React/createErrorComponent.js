@@ -5,9 +5,6 @@ const createErrorComponent = (
   componentFn: Function,
   result: Object // eslint-disable-line comma-dangle
 ) =>
-  result.cata({
-    Right: () => null,
-    Left: errorMsgs => componentFn({ errorMsgs }),
-  })
+  componentFn({ errorMsgs: result })
 
 export default curry(createErrorComponent)

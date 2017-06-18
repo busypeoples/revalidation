@@ -60,8 +60,8 @@
     "webpack": "^2.6.1"
   },
   "dependencies": {
-    "data.either": "^1.5.1",
-    "ramda": "^0.24.1"
+    "ramda": "^0.24.1",
+    "spected": "^0.3.0"
   },
   "peerDependencies": {
     "react": "*",

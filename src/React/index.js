@@ -7,10 +7,10 @@ import {
   merge,
   prop,
 } from 'ramda'
+import { validate as createValidation } from 'spected'
 
 import isValid from '../utils/isValid'
 import createErrorComponent from './createErrorComponent'
-import createValidation from '../createValidation'
 
 // default ErrorComponent
 const DefaultErrorComponent = ({ errorMsgs }) => <div className='error'>{ errorMsgs }</div>
@@ -22,7 +22,7 @@ function Revalidation(
   options: Object,
   Component: any // eslint-disable-line no-unused-vars, comma-dangle
 ): any {
-  const validate = createValidation(createErrorComponent(errorComponent || DefaultErrorComponent))
+  const validate = createValidation(() => null, createErrorComponent(errorComponent || DefaultErrorComponent))
 
   return class extends React.Component {
     state: {
@@ -57,7 +57,7 @@ function Revalidation(
     componentWillReceiveProps({ form }) {
       this.setState(({ form: formState, errors }) => {
         const updatedForm = merge(formState, form)
-        const updateErrors = this.instantValidation ? validate(updatedForm, validationRules) : errors
+        const updateErrors = this.instantValidation ? validate(validationRules, updatedForm) : errors
         return {
           form: updatedForm,
           errors: updateErrors,
@@ -68,7 +68,7 @@ function Revalidation(
     validate(name: string): Function {
       return value => this.setState(state => {
         const updatedState = assocPath(['form', name], value, state)
-        const errors = validate(prop('form', updatedState), validationRules)
+        const errors = validate(validationRules, prop('form', updatedState))
         if (this.validateSingle) {
           return assocPath(['errors', name], errors[name], updatedState)
         }
@@ -78,14 +78,14 @@ function Revalidation(
 
     validateAll(cb: Function, data: Object): void {
       this.setState(state => {
-        const updateErrors = validate(prop('form', state), validationRules)
+        const updateErrors = validate(validationRules, prop('form', state))
         return assoc('errors', updateErrors, state)
       }, () => { if (isValid(this.state.errors) && cb) cb(data || this.state.form) })
     }
 
     render() {
       const { form, errors } = this.state
-      const valid = isValid(validate(form, validationRules))
+      const valid = isValid(validate(validationRules, form))
 
       const reValidation = {
         form,

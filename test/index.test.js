@@ -3,7 +3,7 @@
 import { equal } from 'assert'
 import React from 'react' // eslint-disable-line no-unused-vars
 import ShallowRenderer from 'react-test-renderer/shallow'
-import Revalidation from '../../src'
+import Revalidation from '../src/'
 
 const isNotEmpty = a => a.trim().length > 0
 
