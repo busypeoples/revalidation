@@ -53,9 +53,9 @@ const createBaseValidation = (input, validations) =>
  * if predicate function is truthy an Either.Right is rerturned else an Else.Left
  *
  * @param {Function} predFn the predicate function to be run
- * @param {string} e the error message
+ * @param {string|Function} e the error message or a function that returns the error message
  */
-const makePredicate = ([predFn, e]) => (a, inputs) => predFn(a, inputs) ? Left(a) : Right(e)
+const makePredicate = ([predFn, e]) => (a, inputs) => predFn(a, inputs) ? Left(a) : Right(typeof e === 'function' ? e(a) : e)
 
 /**
  * applies all predicates with the input value and inputs objects
