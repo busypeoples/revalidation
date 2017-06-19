@@ -50,7 +50,7 @@ function Revalidation(
       this.validateSingle = validateSingle
       this.instantValidation = instantValidation
       this.state = { form: merge(initialState, form), errors: {} }
-      this.validate = this.validate.bind(this)
+      this.validate = curry(this.validate.bind(this))
       this.validateAll = this.validateAll.bind(this)
     }
 
@@ -65,8 +65,8 @@ function Revalidation(
       })
     }
 
-    validate(name: string): Function {
-      return value => this.setState(state => {
+    validate(name: string, value: any): Function {
+      this.setState(state => {
         const updatedState = assocPath(['form', name], value, state)
         const errors = validate(prop('form', updatedState), validationRules)
         if (this.validateSingle) {
