@@ -2873,9 +2873,9 @@ requires-port@1.0.x, requires-port@1.x.x:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
 
-revalidation@^0.8.1:
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/revalidation/-/revalidation-0.8.1.tgz#3a9f2115c34e9cc4d76c85a7c4fbc24d523dfdfd"
+revalidation@^0.8.2:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/revalidation/-/revalidation-0.8.2.tgz#da347a887a5b4e3f302aa1b785bfa6b6e7145a5c"
   dependencies:
     data.either "^1.5.1"
     ramda "^0.24.1"
