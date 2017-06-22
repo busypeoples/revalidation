@@ -44,4 +44,8 @@ describe('utils/isValid', () => {
     ok(!isValid([{}]))
   })
 
+  it('isValid should return true when passing in an undefined value', () => {
+    ok(isValid(undefined))
+  })
+
 })
