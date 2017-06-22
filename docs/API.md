@@ -1,5 +1,5 @@
 # API
-## `Revalidation(initialState, rules, errorCallback, options, Component)`
+## `Revalidation(initialState, rules, options, Component)`
 
 Creates an enhanced React Component containing validation and state keeping capabilities.
 
@@ -9,9 +9,7 @@ Creates an enhanced React Component containing validation and state keeping capa
 
 2. `rules` *(Object)*: An object of rules, consisting of arrays containing predicate function / error message tuple, f.e. `{name: [[a => a.length > 2, 'Minimum length 3.']]}`
  
-3. `errorCallback` *(Function)*: The callback function to be called when errors exist for a key. f.e. `({errorMsg}) => <div>{errorMsg[0]}</div>`. A prop errorMsg is passed into the function. Anything can be returned at this point, f.e. a React Component, a boolean, the array itself.
-
-4. `options` *(Object)*: Currently there are two options available: `singleValue` and `instantValidation`. 
+3. `options` *(Object)*: Currently there are two options available: `singleValue` and `instantValidation`. 
 
     - `singleValue`: if you need validation per field you can set the option to true (default is false). `{singleValue: true}` 
     - `instantValidation`: if you need instant validation as soon as props have changed set to true (default is false). `{instantValidation: true}` 
@@ -29,7 +27,7 @@ dynamic changes.
 
 ```js
 import React from 'react'
-import Revalidation from 'revalidation'
+import Revalidation, { isValid } from 'revalidation'
 import { head } from 'ramda'
 
 import helpers from './helpers'
@@ -38,9 +36,10 @@ const {
   isNotEmpty,
   isLengthGreaterThan,
   hasCapitalLetter,
-  } = helpers
+} = helpers
 
-const ErrorComponent = ({errorMsgs}) => <div className='error'>{head(errorMsgs)}</div>
+const displayErrors = (errorMsgs) => 
+  isValid(errorMsgs) ? null : <div className='error'>{head(errorMsgs)}</div>
 
 const getValue = e => e.target.value
 
@@ -63,7 +62,7 @@ const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}
           value={form.random}
           onChange={e => (validate('random', getValue(e))}
         />
-        { errors.random }
+        { displayErrors(errors.random) }
       </div>
       <button onClick={() => validateAll(onSubmit)}>Submit</button>
     </div>
@@ -84,7 +83,6 @@ const initialState = {}
 const enhanced = Revalidation(
   initialState,
   validationRules,
-  ErrorComponent,
   {validateSingle: true}
 )
 
@@ -134,11 +132,31 @@ If no `data` provided is, the current form state will be passed in.
 <button onClick={() => validateAll(onSubmit)}>Submit</button>
 ```
 
-`errors` *(Object)*: The object containing the errors. Depending on the provided error callback the error might have a structure like this f.e.
-```js
-// errorCallback = ({errorMsgs}) => errorMsgs
-{name: [], random: ['something is missing', 'invalid data']}
+`errors` *(Object)*: The object containing the errors. How to display the errors isn't up to __Revalidation__.
 
-// errorCallback = ({errorMsgs}) => <div>errorMsgs[0]</div>
-{name: [], random: [<div>something is missing</div>]}
+Every field is mapped to list of error messages.
+
+```
+{
+  name: [],
+  random: ['Minimum Random length of 8 is required.']
+}
+```
+
+Display the error messages as needed. This approach enables to define field specific error messages if needed.
+
+```js
+
+const displayErrors = (errorMsgs) => 
+  isValid(errorMsgs) ? null : <div className='error'>{head(errorMsgs)}</div>
+
+ <div className='formGroup'>
+  <label>Random</label>
+  <input
+    type='text'
+    value={form.random}
+    onChange={e => (validate('random', getValue(e))}
+  />
+  { displayErrors(errors.random) }
+</div>
 ```

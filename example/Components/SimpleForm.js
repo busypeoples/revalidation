@@ -1,8 +1,9 @@
 import React from 'react'
-import Revalidation from 'revalidation'
+import Revalidation, { isValid } from '../../src/'
 import { compose, head } from 'ramda'
 
 import helpers from '../helpers'
+import createErrorMessage from './createErrorMessage'
 
 const {
   getValue,
@@ -11,8 +12,6 @@ const {
   hasCapitalLetter,
   } = helpers
 
-const ErrorComponent = ({errorMsgs}) => <div className='error'>{head(errorMsgs)}</div>
-
 const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}, onSubmit, disableButtonOption = false }) =>
   (
     <div className='form'>
@@ -20,26 +19,27 @@ const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}
         <label>Name</label>
         <input
           type='text'
-          className={errors.name ? 'error' : ''}
+          className={isValid(errors.name) ? '' : 'error'}
           value={form.name}
           onChange={compose(validate('name'), getValue)}
         />
-        <div className='errorPlaceholder'>{ errors.name }</div>
+        <div className='errorPlaceholder'>{ createErrorMessage(errors.name) }</div>
       </div>
       <div className='formGroup'>
         <label>Random</label>
         <input
           type='text'
-          className={errors.random ? 'error' : ''}
+          className={isValid(errors.random) ? '' : 'error'}
           value={form.random}
           onChange={compose(validate('random'), getValue)}
         />
-        <div className='errorPlaceholder'>{ errors.random }</div>
+        <div className='errorPlaceholder'>{ createErrorMessage(errors.random) }</div>
       </div>
       <button
-        {...{disabled: disableButtonOption && !valid ? 'disabled': false  }}
+        {...{disabled: disableButtonOption && !valid ? 'disabled' : false}}
         className={disableButtonOption && !valid? 'inactive' : 'active' }
-        onClick={() => validateAll(onSubmit)}>Submit</button>
+        onClick={() => validateAll(onSubmit)}>Submit
+      </button>
     </div>
   )
 
@@ -58,7 +58,6 @@ const initialState = {}
 const enhanced = Revalidation(
   initialState,
   validationRules,
-  ErrorComponent,
   {validateSingle: true}
 )
 
