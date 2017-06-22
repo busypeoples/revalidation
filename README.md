@@ -4,7 +4,7 @@
 
 
 __Revalidation__ lets you write your forms as __stateless function components__, taking care of managing the local form state
-as well as the validation. Revalidation also works with classes and will support other __React__ like libraries __Preact__ or __Inferno__
+as well as the validation. Revalidation also works with classes and will support other React-like libraries like __Preact__ or __Inferno__
 in the future.
 
 
@@ -119,16 +119,7 @@ Now that we have everything in place, we import Revalidation.
 import Revalidation from 'revalidation'
 ```
 
-Revalidation needs the initial state, the validation rules, an error component and an options object as well as the Form component itself.
-The error component is simply telling Revalidation how to render the error messages.
-For example we only want to display one error at a time.
-
-```javascript
-const ErrorComponent = ({errorMsgs}) => <div className='error'>{head(errorMsgs)}</div>
-```
-
-Revalidate will only render the error component when a field is invalid and the ___errorMsg___ prop is always an array. So in this
-case we want to access and render the first error message.
+Revalidation needs the initial state, the validation rules and an options object as well as the Form component itself.
 
 The options object currently supports two options: ___validateSingle___ and ___instantValidation___. 
 
@@ -147,7 +138,6 @@ Finally we enhance the Form component.
 const enhanced = Revalidation(
   initialState,
   validationRules,
-  ErrorComponent,
   {validateSingle: false}
 )
 
@@ -156,6 +146,11 @@ export default enhanced(Form)
 
 This enables us to rewrite our Form component, which accepts a ___reValidation___ prop now.
 ```js
+
+const getValue = e => e.target.value
+
+const displayErrors = (errorMsgs) => 
+  isValid(errorMsgs) ? null : <div className='error'>{head(errorMsgs)}</div>
 
 const getValue = e => e.target.value
 
@@ -169,7 +164,7 @@ const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}
           value={form.name}
           onChange={e => validate('name', getValue(e))}
         />
-        { errors.name }
+        { displayErrors(errors.name) }
       </div>
       <div className='formGroup'>
         <label>Random</label>
@@ -178,7 +173,7 @@ const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}
           value={form.random}
           onChange={e => (validate('random', getValue(e))}
         />
-        { errors.random }
+        { displayErrors(errors.random) }
       </div>
       <button onClick={() => validateAll(onSubmit)}>Submit</button>
     </div>
