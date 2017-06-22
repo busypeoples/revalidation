@@ -3,7 +3,7 @@
 import { equal } from 'assert'
 import React from 'react' // eslint-disable-line no-unused-vars
 import ShallowRenderer from 'react-test-renderer/shallow'
-import Revalidation from '../src/'
+import Revalidation, { isValid } from '../src/'
 
 const isNotEmpty = a => a.trim().length > 0
 
@@ -13,8 +13,8 @@ const validationRules = {
   name: [[isNotEmpty, 'Name should not be empty']],
 }
 
-const ErrorComponent = ({ errorMsgs }) =>
-  <div className='error'>{errorMsgs && errorMsgs[0]}</div>
+const displayErrors = (errorMsgs) =>
+  isValid(errorMsgs) ? null : <div className='error'>{errorMsgs[0]}</div>
 
 const Form = ({
   reValidation: { form, validate, errors = {}, validateAll },
@@ -28,7 +28,7 @@ const Form = ({
         value={form.name}
         onChange={e => validate('name', getValue(e))}
       />
-      {errors.name}
+      {displayErrors(errors.name)}
     </div>
     <button onClick={() => validateAll(onSubmit)}>Submit</button>
   </div>
@@ -38,7 +38,6 @@ const initialState = { name: '' }
 const enhanced = Revalidation(
   initialState,
   validationRules,
-  ErrorComponent,
   { validateSingle: false },
 )
 

@@ -10,7 +10,7 @@ import {
  * @param obj the object to validate
  * @returns {boolean}
  */
-export default function isValid(obj: Object): boolean {
+export default function isValid(obj: Object = {}): boolean {
   return isEmpty(filter(i => i &&
     (typeof i === 'string' ||
     typeof i === 'function' ||
