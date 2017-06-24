@@ -32,11 +32,11 @@ export default function updateSyncErrors ([state, effects]: StateEffects, type: 
   const updateState = cond([
     [
       type => (((type === UPDATE_FIELD && validateSingle) || type === VALIDATE_FIELD) && name !== ''),
-      always([assocPath(['errors', name], errors[name], state), effects])
+      always([assocPath(['errors', name], errors[name], state), effects]),
     ],
     [
       type => (type === UPDATE_ALL || type === VALIDATE_ALL),
-      always([assoc('errors', errors, state), effects])
+      always([assoc('errors', errors, state), effects]),
     ],
     [T, always([state, effects])],
   ])
