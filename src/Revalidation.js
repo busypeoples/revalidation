@@ -3,6 +3,7 @@
 import React, { createElement } from 'react'
 import {
   curry,
+  isEmpty,
   map,
   reduce,
 } from 'ramda'
@@ -74,9 +75,13 @@ function revalidation(
           return updatedState
         },
         () => {
-          map(f => f().then(x => this.setState(x, () => {
+          if (isEmpty(effects)) {
             if (isValid(this.state.errors) && cb) cb(data || this.state.form)
-          })), effects)
+          } else {
+            map(f => f().then(x => this.setState(x, () => {
+              if (isValid(this.state.errors) && cb) cb(data || this.state.form)
+            })), effects)
+          }
         } // eslint-disable-line comma-dangle
       )
     }
