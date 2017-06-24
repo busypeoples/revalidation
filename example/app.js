@@ -37,8 +37,9 @@ class Root extends React.Component {
     }))
   }
 
-  getForm(example, formValues) {
+  getForm(example, formValues = {}) {
     const initState = { name: '', password: '', repeatPassword: '', random: '' }
+    const updatedValues = {...initState, ...formValues}
     switch (example) {
       case 0:
         return (
@@ -59,7 +60,7 @@ class Root extends React.Component {
         return (<Form
           onSubmit={this.onSubmit}
           initialState={initState}
-          validateSingle={false}
+          updateForm={updatedValues}
           instantValidation={false}
           rules={validationRules}
         />
@@ -72,6 +73,7 @@ class Root extends React.Component {
             rules={validationRules}
             validateSingle={false}
             instantValidation={true}
+            updateForm={updatedValues}
           />
         )
       case 4:
