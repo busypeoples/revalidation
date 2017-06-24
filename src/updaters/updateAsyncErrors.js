@@ -36,9 +36,9 @@ const runLazyPromises = promises => Promise.all(map(promise => promise(), promis
  */
 const flatErrorMsgs = reduce((xs, x) => x ? xs.concat(x) : xs, [])
 
-export default function updateAsyncErrors([state, effects]: StateEffects, type: string, { name = '', value, validateSingle, asyncRules }: EnhancedProps) {
+export default function updateAsyncErrors([state, effects]: StateEffects, type: string, { name = '', value, instantValidation, validateSingle, asyncRules }: EnhancedProps) {
   if (!asyncRules) return [state, effects]
-
+  if (!instantValidation && type !== 'VALIDATE_ALL') return [state, effects]
   if ((type === UPDATE_FIELD || type === VALIDATE_FIELD)
     && validateSingle
     && prop(name, asyncRules)

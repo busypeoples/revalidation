@@ -20,12 +20,12 @@ import type { EnhancedProps, StateEffects } from './types'
  * @param state
  * @param effects
  * @param type
- * @param name
- * @param rules
- * @param validateSingle
- * @returns {*[]}
+ * @param enhancedProps
+ * @returns {*}
  */
-export default function updateSyncErrors ([state, effects]: StateEffects, type: string, { name = '', rules, validateSingle }: EnhancedProps) {
+export default function updateSyncErrors ([state, effects]: StateEffects, type: string, enhancedProps: EnhancedProps) {
+  const { name = '', rules, instantValidation, validateSingle } = enhancedProps
+  if (!instantValidation && type !== 'VALIDATE_ALL') return [state, effects]
   const errors = validate(rules, prop('form', state))
 
   /* eslint-disable no-shadow */
