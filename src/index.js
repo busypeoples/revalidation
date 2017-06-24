@@ -1,8 +1,8 @@
 /* @flow */
-import ValidationHOC from './React/'
+import revalidation from './Revalidation'
 import isValid from './utils/isValid'
 
-export default ValidationHOC
+export default revalidation
 
 export {
   isValid,

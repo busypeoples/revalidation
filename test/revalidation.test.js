@@ -35,20 +35,17 @@ const Form = ({
 
 const initialState = { name: '' }
 
-const enhanced = Revalidation(
-  initialState,
-  validationRules,
-  { validateSingle: false },
-)
+const EnhancedForm = Revalidation(Form) // eslint-disable-line no-unused-vars
 
-const EnhancedForm = enhanced(Form) // eslint-disable-line no-unused-vars
-
-describe('React/index', () => {
+describe('revalidation', () => {
   it('callback passed to `validateAll` is not called when the form has errors', () => {
     const renderer = new ShallowRenderer()
     let wasCallbackCalled = false
     renderer.render(
       <EnhancedForm
+        initialState={initialState}
+        rules={validationRules}
+        validateSingle={false}
         onSubmit={() => {
           wasCallbackCalled = true
         }}
