@@ -119,6 +119,7 @@ function revalidation(
 
     render() {
       const { form, errors, pending } = this.state
+      /* eslint-disable no-unused-vars */
       const { rules, asyncRules, initialState, updateForm, validateSingle, instantValidation, ...rest } = this.props
       const valid = isValid(validate(rules, form)) && isValid(errors)
 
