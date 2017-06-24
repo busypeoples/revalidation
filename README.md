@@ -24,8 +24,42 @@ we also might need to display errors according to the fact if the input validate
 furthermore we need to figure out if the validation is instant or only after clicking 
 on a submit button and so on and so forth.
 
-__Revalidation__ takes care of running your predicate functions against defined field inputs, by separating the validation from the input.
+### Why Revalidation?
+There are a number of solutions already available in __React__ land, each with there own approach on how to tackle aforementioned problems.
+__Revalidation__ is another approach on taming the problems that come with forms by only doing two things: managing the 
+local form component state and validating against a defined set of rules. There is no real configuration and very 
+little is hidden away from user land. This approach has pros and cons obviously. The benefit we gain, but declaring an initial state 
+and a set of rules is that we can reuse parts of the spec and compose those specs to bigger specs. The downside is that 
+Revalidation doesn't abstract away the form handling itself. The only configurations available are `validateSingle` and
+`instantValidation`, while the first enables to define if the predicates functions are against all fields or only that one updated,
+the latter enables to turn dynamic validation on and off all together. This is it. Everything is up to the form implementer.
+
+__Revalidation__ enhances the wrapped Component by passing a `reValidation` prop containing a number of properties and functions
+to manage the state. There are no automatic field updates, validations or onsubmit actions, Revalidation doesn't how 
+the form is implemented or how it should handlde user interactions.
+
+Let's see an example to get a better idea on how this could work. 
 For example we would like to define a number of validation rules for two inputs, _name_ and _random_.
+More often that not, inside an `updateValue(name, value)` f.e, we might start to hard code some rules and verify them against 
+the provided input:
+
+```js
+
+updateValue(name, value) {
+    if (name === 'lastName') {
+        if (hasCapitalLetter(lastName)) {
+           // then do something 
+        }
+    }
+    
+    // etc...
+}
+
+```
+
+This example might be exaggerated but you get the idea. 
+Revalidation takes care of running your predicate functions against defined field inputs, enabling to decouple the actual input from the predicates.
+
 
 ```javascript
 const validationRules = {
@@ -121,30 +155,34 @@ import Revalidation from 'revalidation'
 
 Revalidation needs the initial state, the validation rules and an options object as well as the Form component itself.
 
-The options object currently supports two options: ___validateSingle___ and ___instantValidation___. 
+The are currently two options supported: ___validateSingle___ and ___instantValidation___. 
 
-* ___validateSingle___: Is useful if when we only want to validate one field a time. (default: false)
-* ___instantValidation___: Set to true if new prop form values should be validated instantly. (default: false)
+* ___validateSingle___: Is useful if when we only want to validate one field a time. (default: true)
+* ___instantValidation___: Set to true if any changes should be validated instantly. (default: true)
+__NOTE:__ If `instantValidation` is set to false, then `validateSingle` will have no effect, no matter if turned on or off, as 
+the validation will happen when submitting the complete form via `validateAll`.
     
-```javascript 
-const option1 = {validateSingle: false} // validate all fields as soon as the first field changes f.e.
-const option2 = {validateSingle: true} // validate per changed values. 
-const option3 = {instantValidation: false} // ignore validating any passed in props updates, f.e. only validating on submit click.
-const option4 = {instantValidation: true} // validate as soon as passed in props have been updated. 
-```
 
-Finally we enhance the Form component.
-```javascript
-const enhanced = Revalidation(
-  initialState,
-  validationRules,
-  {validateSingle: false}
-)
+Finally we enhance the Form component. Revalidation only needs the Component everything else is defined via props.
 
-export default enhanced(Form)
+```js
+
+const enhancedForm = revalidation(Form)
+
+// inside render f.e.
+
+<EnhancedForm
+  onSubmit={this.onSubmit} // pass any additional props down...
+  initialState={initialState}
+  rules={validationRules}
+  validateSingle={true}
+  instantValidation={true}
+/>
+
 ```
 
 This enables us to rewrite our Form component, which accepts a ___reValidation___ prop now.
+
 ```js
 
 const getValue = e => e.target.value
@@ -154,7 +192,7 @@ const displayErrors = (errorMsgs) =>
 
 const getValue = e => e.target.value
 
-const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}, onSubmit }) =>
+const Form = ({ reValidation : {form, updateValue, updateState, valid, errors = {}, validateAll}, onSubmit }) =>
   (
     <div className='form'>
       <div className='formGroup'>
@@ -182,23 +220,60 @@ const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}
 
 reValidtion returns an object containing:
 - __form__: form values
-- __validate__: validation function expecting form name and value, f.e. `validate('name', 'foo')` 
-- __valid__: caclulated validation state, f.e. initially disabling the submit button when a form is rendered.
-- __errors__: the errors object either containing nothing or a error component for every defined form field.
-- __validateAll__: validate all fields at once, also accepts a callback function that will be called incase of a valid state.
+- __updateValue__: a function expecting form name and value, f.e. `updateValue('name', 'foo')` 
+- __updateState__: a function expecting all the form values, f.e. Useful when wanting to reset the form. Depending on the setting either a validation will occur or not. 
+
+
+```js
+ <button onClick={() => updateState({ name: '', random: '' })}>Reset</button>
+```
+
+- __valid__: calculated validation state, f.e. initially disabling the submit button when a form is rendered.
+- __errors__: the errors object containing an array for every form field.
+- __validateAll__: validates all fields at once, also accepts a callback function that will be called in case of a valid state.
 
 Where and how to display the errors and when and how to validate is responsibilty of the form not Revalidation.
-Another aspect is that the form props can als be provided when rendering the enhanced Form component.
+Another aspect is that the form props can be updated when needed.
+
+__NOTE:__ `updateForm` should be used carefully and only when needed. Make sure to reset or remove `updateForm` after
+applying the new form values. 
+
 
 ```javascript
 <Form
     onSubmit={this.onSubmit}
-    form={{name: 'foobar', random: ''}}
+    updateForm={{name: 'foobar', random: ''}}
 />
 ```
 
 Either define an initial state or use form props to define an actual form state. Revalidation will check for props first
 and then fallback to the initial state when none is found.
+
+__Revalidation__ also enables to define asynchronous predicate functions via the `asyncRules` prop. Any predicates containing 
+side effects have to be declared explicitly via the prop.
+ 
+```js
+
+// isUnusedUserName is function returning a promise and sends a request to validate if the username is available f.e.
+
+const asyncRules = {name: [[isUnusedUserName, 'Username is not available']]}
+ 
+<EnhancedSubmitForm
+  onSubmit={this.onSubmit}
+  rules={validationRules}
+  initialState={initialState}
+  asyncRules={asyncRules}
+  userNameExists={this.usernameExists}
+  validateSingle={true}
+  instantValidation={true}
+/>
+
+```
+
+__NOTE:__ A sensible approach with asynchronous validation functions is useful, Revalidation will not run any effects against 
+an input field if any synchronous predicates have failed already. Needed consideration include: when to run the side effects
+(dynamically or on submit) and how often to trigger an async validation (immediately on every change or debounced) 
+
 
 Also check the [example](https://github.com/25th-floor/revalidation/tree/master/example) for more detailed insight into how to build more advanced forms, f.e. validating dependent fields.
 
