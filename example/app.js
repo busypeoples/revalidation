@@ -1,15 +1,18 @@
+/* eslint-disable no-nested-ternary, no-unused-vars, no-undef */
+
 import React from 'react'
 import { render } from 'react-dom'
-import R from 'ramda'
 
 import SimpleForm from './Components/SimpleForm'
-import AdvancedForm from './Components/Advanced'
-import AdvancedInstantValidationForm from './Components/AdvancedInstantValidation'
+import Form from './Components/Form'
+import AsyncForm from './Components/AsyncForm'
+import validationRules, { basicValidationRules } from './validationRules'
+
 
 class Root extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { example: 1, message: '', formValues: {name: '', random: ''} }
+    this.state = { example: 0, message: '', formValues: { name: '', random: '' } }
     this.onSubmit = this.onSubmit.bind(this)
     this.changeExample = this.changeExample.bind(this)
     this.updateProps = this.updateProps.bind(this)
@@ -18,51 +21,65 @@ class Root extends React.Component {
 
   onSubmit(formValues) {
     const message = `Just updated: ${JSON.stringify(formValues, null, 4)}`
-    this.setState(state => ({ formValues, message }))
+    this.setState(() => ({ formValues, message }))
   }
 
   changeExample(example) {
     if (example === this.state.example) {
       return
     }
-    this.setState(state => ({ example, message: '', formValues: {} }))
+    this.setState(() => ({ example, message: '', formValues: {} }))
   }
 
   updateProps() {
-    this.setState(state => ({
-      formValues: {name: 'foobarBaz', random: 'n'}
+    this.setState(() => ({
+      formValues: { name: 'foobarBaz', random: 'n' },
     }))
   }
 
   getForm(example, formValues) {
-    const initState = { name: '', password: '', repeatPassword: '', random: ''}
+    const initState = { name: '', password: '', repeatPassword: '', random: '' }
     switch (example) {
+      case 0:
+        return (
+          <AsyncForm />
+        )
+
       case 1:
         return (
           <SimpleForm
             onSubmit={this.onSubmit}
-            form={{...{ name: '', random: ''}, ...formValues}}
+            initialState={initState}
+            rules={basicValidationRules}
+            validateSingle={true}
           />
         )
 
       case 2:
-        return (<AdvancedForm
-            onSubmit={this.onSubmit}
-            form={{...initState, ...formValues}}
-          />
+        return (<Form
+          onSubmit={this.onSubmit}
+          initialState={initState}
+          validateSingle={false}
+          instantValidation={false}
+          rules={validationRules}
+        />
         )
       case 3:
         return (
-          <AdvancedInstantValidationForm
+          <Form
             onSubmit={this.onSubmit}
-            form={{...initState, ...formValues}}
+            initialState={initState}
+            rules={validationRules}
+            validateSingle={false}
+            instantValidation={true}
           />
         )
       case 4:
         return (
           <SimpleForm
             onSubmit={this.onSubmit}
-            form={{...{ name: '', random: ''}, ...formValues}}
+            initialState={initState}
+            rules={basicValidationRules}
             disableButtonOption
           />
         )
@@ -70,7 +87,9 @@ class Root extends React.Component {
         return (
           <SimpleForm
             onSubmit={this.onSubmit}
-            form={formValues}
+            initialState={{ ...{ name: '', random: '' }, ...formValues }}
+            rules={basicValidationRules}
+            validateSingle={true}
           />
         )
     }
@@ -81,10 +100,10 @@ class Root extends React.Component {
     const selectedForm = this.getForm(example, formValues)
     const getClassName = id => (example === id) ? 'selected' : ''
     const getConfig = id => (id === 1)
-      ? {validateSingle: true}
+      ? { validateSingle: true }
       : (id === 2)
-      ? {validateSingle: false, instantValidation: false}
-      : {validateSingle: false, instantValidation: true}
+        ? { validateSingle: false, instantValidation: false }
+        : { validateSingle: false, instantValidation: true }
 
     return (
       <div id="main">
@@ -93,11 +112,17 @@ class Root extends React.Component {
         <div id="example">
           <div className="switch">
             <div
-            onClick={() => this.changeExample(1)}
-            className={getClassName(1)}
-          >
+              onClick={() => this.changeExample(1)}
+              className={getClassName(0)}
+            >
+              Async Example
+            </div>
+            <div
+              onClick={() => this.changeExample(1)}
+              className={getClassName(1)}
+            >
             Basic
-          </div>
+            </div>
             <div
               onClick={() => this.changeExample(4)}
               className={getClassName(4)}
@@ -129,7 +154,7 @@ class Root extends React.Component {
             <pre>{message}</pre>
           </div>
           {selectedForm}
-          { (example === 2 || example == 3) && <button onClick={this.updateProps}>Update Props</button> }
+          { (example === 2 || example === 3) && <button onClick={this.updateProps}>Update Props</button> }
         </div>
       </div>
     )
@@ -140,5 +165,5 @@ render(
   <div>
     <Root />
   </div>,
-  document.getElementById('app')
+  document.getElementById('app'),
 )

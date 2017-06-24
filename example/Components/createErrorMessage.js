@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react'
 import { head } from 'ramda'
 import { isValid } from '../../src/'

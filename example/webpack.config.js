@@ -1,17 +1,17 @@
-var path = require('path');
-var webpack = require('webpack');
+const path = require('path')
+const webpack = require('webpack')
 
 module.exports = {
   cache: true,
   devtool: 'source-map',
   entry: {
-    app: path.join(__dirname) + '/app.js'
+    app: `${path.join(__dirname)}/app.js`,
   },
   output: {
-    path: path.join(__dirname) + '/public',
+    path: `${path.join(__dirname)}/public`,
     publicPath: '/',
     filename: 'bundle.js',
-    chunkFilename: '[chunkhash].js'
+    chunkFilename: '[chunkhash].js',
   },
   module: {
     loaders: [
@@ -19,7 +19,7 @@ module.exports = {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: /(node_modules|dist)/,
-      }
-    ]
-  }
+      },
+    ],
+  },
 }
