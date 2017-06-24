@@ -46,17 +46,18 @@ function revalidation(
     }
 
     props:{
-      initialState?: Object,
-      state: Object,
+      initialState: Object,
       rules: Object,
+      asyncRules?: Object,
       validateSingle?: boolean,
       instantValidation?: boolean,
+      updateForm?: Object
     }
 
     static defaultProps = {
       initialState: {},
       validateSingle: true,
-      instantValidation: false,
+      instantValidation: true,
     }
 
     updateFns: Array<Function> = [updateFormValues, updateSyncErrors, updateAsyncErrors]
@@ -64,6 +65,12 @@ function revalidation(
     constructor(props) {
       super(props)
       this.state = { form: props.initialState, errors: {}, pending: false }
+    }
+
+    componentWillReceiveProps({ updateForm }) {
+      if (updateForm) {
+        this.updateState(updateForm)
+      }
     }
 
     validateAll = (cb: Function, data: Object):void => {
@@ -112,7 +119,8 @@ function revalidation(
 
     render() {
       const { form, errors, pending } = this.state
-      const valid = isValid(validate(this.props.rules, form)) && isValid(errors)
+      const { rules, asyncRules, initialState, updateForm, validateSingle, instantValidation, ...rest } = this.props
+      const valid = isValid(validate(rules, form)) && isValid(errors)
 
       const reValidation = {
         form,
@@ -125,7 +133,7 @@ function revalidation(
       }
 
       return createElement(Component, {
-        ...this.props,
+        ...rest,
         reValidation,
       })
     }
