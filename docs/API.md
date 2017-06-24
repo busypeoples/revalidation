@@ -68,6 +68,12 @@ const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}
     </div>
   )
 
+const EnhancedForm = Revalidation(Form)
+
+// ...usage
+
+const initialState = {name: '', random: ''}
+
 const validationRules = {
   name: [
     [isNotEmpty, 'Name should not be  empty.']
@@ -78,15 +84,14 @@ const validationRules = {
   ]
 }
 
-const initialState = {}
 
-const enhanced = Revalidation(
-  initialState,
-  validationRules,
-  {validateSingle: true}
-)
+<EnhancedForm 
+    initialState={initialState}
+    rules={validationRules}
+    validateSingle
+/>
 
-export default enhanced(Form)
+
 ```
 
 #### reValidation 

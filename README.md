@@ -226,8 +226,9 @@ Written by [A.Sharif](https://twitter.com/sharifsbeat)
 Original idea and support by [Stefan Oestreicher](https://twitter.com/thinkfunctional)
 
 #### More
-__Revalidation__ is under development. The underlying validation library will be extracted into a standalone package in the near 
-future.
+__Revalidation__ is under development. 
+
+The underlying synchronous validation is handled via [__Spected__](https://github.com/25th-floor/spected)
 
 #### Documentation
 [API](docs/API.md)
