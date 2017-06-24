@@ -1,27 +1,46 @@
 # API
-## `Revalidation(initialState, rules, options, Component)`
+## `Revalidation(Component)`
 
 Creates an enhanced React Component containing validation and state keeping capabilities.
 
 #### Arguments
+1. `Component` *(React Component)*: The React Component that will be enhanced with validation and state keeping functionality.
 
-1. `initialState` *(Object)*: The initial state, will be merged with props `form` if they available.
-
-2. `rules` *(Object)*: An object of rules, consisting of arrays containing predicate function / error message tuple, f.e. `{name: [[a => a.length > 2, 'Minimum length 3.']]}`
- 
-3. `options` *(Object)*: Currently there are two options available: `singleValue` and `instantValidation`. 
-
-    - `singleValue`: if you need validation per field you can set the option to true (default is false). `{singleValue: true}` 
-    - `instantValidation`: if you need instant validation as soon as props have changed set to true (default is false). `{instantValidation: true}` 
-
-5. `Component` *(React Component)*: The React Component that will be enhanced with validation and state keeping functionality.
-
-__NOTE:__ Enabling to override the `rules` and `options` via props might be added to Revalidation at some point, as to enable 
-dynamic changes.
 
 #### Returns
 
+#### &lt;HigherOrderComponentForm />
+
 `Higher Order React Component`: The provided component will be enhanced with a [`reValidation`](#revalidation) prop.
+
+
+
+#### Props
+- __`initialState`__ *(Object)*: 
+
+    The initial state, make sure to provide defaults for all form fields.
+
+- __`rules`__ *(Object)*: 
+
+    An object of rules, consisting of arrays containing predicate function / error message tuple, f.e. `{name: [[a => a.length > 2, 'Minimum length 3.']]}`
+ 
+- __`singleValue`__ *(Function)*: 
+
+    if you need validation per field you can set the option to true (default is true).
+
+- __`instantValidation`__: *(Function)*: 
+
+    if you need instant validation as soon as props have changed set to true (default is true).
+
+- __`asyncRules`__ *(Object)*: 
+
+    An object of asynchronous rules, consisting of arrays containing predicate function / error message tuple, f.e. `{name: [[doSomethingAsync, 'Minimum length 3.']]}`
+
+- __`updateForm`__ *(Object)*: 
+
+    Overrides the current form values. Only use in situations where `setState` isn't enough, add and remove `the updateForm` before and after 
+updating the form values to avoid destroying the local component state when the component will receive new props. To initialize the 
+state use `initialState`. `updateForm` is ignored when the Component is initially mounted.
 
 #### Example
 
@@ -99,69 +118,93 @@ An additional prop `reValidation` is provided to the enhanced component.
 
 The following properties are provided by reValidation.
 
-`form` *(Object)*: Containing the current form values. f.e. input field name can be accessed by `form.name`
-```js
-    const Form = ({ reValidation : {form, onSubmit }) =>
-      (
-        <div className='form'>
-          <div className='formGroup'>
-            <label>Name</label>
-            <input
-              type='text'
-              value={form.name}
-            />
-          </div>
-          <button onClick={() => validateAll(onSubmit)}>Submit</button>
-        </div>
-      )
-```
+- __`form`__ *(Object)*: 
+    
+    Containing the current form values. f.e. input field name can be accessed via `form.name`
 
-`valid` *(Boolean)*: A computed validation state. Useful when initializing the form and needing to disable a submit f.e.
-```js
-<button {...{disabled : !valid}} onClick={() => submit()}>Submit</button>
-```
+    ```js
+        const Form = ({ reValidation : {form, onSubmit }) =>
+          (
+            <div className='form'>
+              <div className='formGroup'>
+                <label>Name</label>
+                <input
+                  type='text'
+                  value={form.name}
+                />
+              </div>
+              <button onClick={() => validateAll(onSubmit)}>Submit</button>
+            </div>
+          )
+    ```
 
-`validate(key, value)` *(Function)*: Apply any changes to a field value and validate.
-```js
-<input
-    type='text'
-    value={form.name}
-    onChange={e => validate('name', e.targetValue)}
-/>
-```
+- __`valid`__ *(Boolean)*: 
+    
+    A computed validation state. Useful when initializing the form and needing to disable a submit f.e.
+    
+    ```js
+    <button {...{disabled : !valid}} onClick={() => submit()}>Submit</button>
+    ```
 
-`validateAll([cb], [data])` *(Function)*: Function for validating all fields. For example when submitting a form.
-To enable an action after successful validation, provide a success `callback`, optionally specific `data` can be passed to the callback.
-If no `data` provided is, the current form state will be passed in.
-```js
-<button onClick={() => validateAll(onSubmit)}>Submit</button>
-```
+- __`updateValue(key, value)`__ *(Function)*: 
 
-`errors` *(Object)*: The object containing the errors. How to display the errors isn't up to __Revalidation__.
+    Apply any changes to a field value and validate.
+    
+    ```js
+    <input
+        type='text'
+        value={form.name}
+        onChange={e => updateValue('name', e.targetValue)}
+    />
+    ```
 
-Every field is mapped to list of error messages.
+- __`updateState(form)`__ *(Function)*: 
 
-```
-{
-  name: [],
-  random: ['Minimum Random length of 8 is required.']
-}
-```
+   Udpate the complete form state, f.e. implementing a clear function.
 
-Display the error messages as needed. This approach enables to define field specific error messages if needed.
+    ```js
+     <button onClick={() => updateState({ name: '', random: '' })}>Reset</button>
+    ```
 
-```js
+- __`validateAll([cb], [data])`__ *(Function)*: 
 
-const displayErrors = (errorMsgs) => 
-  isValid(errorMsgs) ? null : <div className='error'>{head(errorMsgs)}</div>
+    Function for validating all fields. For example when submitting a form.
+    To enable an action after successful validation, provide a success `callback`, optionally specific `data` can be passed to the callback.
+    If no `data` provided is, the current form state will be passed in.
+    
+    ```js
+    <button onClick={() => validateAll(onSubmit)}>Submit</button>
+    ```
 
- <div className='formGroup'>
-  <label>Random</label>
-  <input
-    type='text'
-    value={form.random}
-    onChange={e => (validate('random', getValue(e))}
-  />
-  { displayErrors(errors.random) }
-</div>
-```
+- __`errors`__ *(Object)*: 
+    
+    The object containing the errors. How to display the errors isn't up to __Revalidation__.
+    
+    Initially `errors` might be an empty object, this is the case when no validation has run. 
+
+    Every field is mapped to list of error messages.
+    
+    ```
+    {
+      name: [],
+      random: ['Minimum Random length of 8 is required.']
+    }
+    ```
+
+    Display the error messages as needed. This approach enables to define field specific error messages if needed.
+    
+    ```js
+    
+    const displayErrors = (errorMsgs) => 
+      isValid(errorMsgs) ? null : <div className='error'>{head(errorMsgs)}</div>
+    
+     <div className='formGroup'>
+      <label>Random</label>
+      <input
+        type='text'
+        value={form.random}
+        onChange={e => (validate('random', getValue(e))}
+      />
+      { displayErrors(errors.random) }
+    </div>
+    ```
