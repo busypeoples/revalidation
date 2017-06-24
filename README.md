@@ -300,6 +300,8 @@ Written by [A.Sharif](https://twitter.com/sharifsbeat)
 
 Original idea and support by [Stefan Oestreicher](https://twitter.com/thinkfunctional)
 
+Very special thanks to [Alex Booker](https://twitter.com/bookercodes) for providing input on the API and creating use cases. 
+
 #### More
 __Revalidation__ is under development. 
 
