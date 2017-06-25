@@ -208,3 +208,23 @@ The following properties are provided by reValidation.
       { displayErrors(errors.random) }
     </div>
     ```
+
+
+===
+
+#### Helpers
+
+##### isValid
+
+Use `isValid` to check if errors exist for an input. 
+
+```js
+
+<input
+  type='text'
+  className={isValid(errors.name) ? '' : 'error'}
+  value={form.name}
+  onChange={compose(updateValue('name'), getValue)}
+/>
+
+```
