@@ -109,9 +109,14 @@ function revalidation(
     updateState = (newState: Object) => {
       let effects = []
       let updatedState = []
+      const getType = ({ instantValidation, validateSingle }) => console.log(instantValidation) ||
+        instantValidation
+          ? [UPDATE_ALL, VALIDATE_ALL]
+          : [UPDATE_ALL]
+
       this.setState(
         (state, props) => {
-          [updatedState, effects] = runUpdates(this.updateFns, state, [UPDATE_ALL, VALIDATE_ALL], { ...props, value: newState })
+          [updatedState, effects] = runUpdates(this.updateFns, state, getType(props), { ...props, value: newState })
           return updatedState
         },
         () => map(f => f().fork(() => {}, x => this.setState(x)), effects) // eslint-disable-line comma-dangle
