@@ -11,17 +11,18 @@ import {
 
 import validate from '../validate'
 
-import { UPDATE_FIELD, UPDATE_ALL, VALIDATE_FIELD, VALIDATE_ALL } from '../constants'
+import { UPDATE_FIELD, UPDATE_ALL, VALIDATE_FIELD, VALIDATE_ALL, VALIDATE_FIELD_ONLY } from '../constants'
 
 import type { EnhancedProps, StateEffects } from './types'
 
+
 /**
  *
- * @param state
- * @param effects
- * @param type
- * @param enhancedProps
- * @returns {*}
+ * @param {[Object, Array]} state a tuple containing
+ * @param {Array} effects
+ * @param {String} type
+ * @param {Object} enhancedProps
+ * @returns {[Object, Array]}
  */
 export default function updateSyncErrors ([state, effects]: StateEffects, type: string, enhancedProps: EnhancedProps) {
   const { name = '', rules, instantValidation, validateSingle } = enhancedProps
@@ -31,7 +32,7 @@ export default function updateSyncErrors ([state, effects]: StateEffects, type: 
   /* eslint-disable no-shadow */
   const updateState = cond([
     [
-      type => (((type === UPDATE_FIELD && validateSingle) || type === VALIDATE_FIELD) && name !== ''),
+      type => (((type === UPDATE_FIELD && validateSingle) || type === VALIDATE_FIELD || type === VALIDATE_FIELD_ONLY) && name !== ''),
       always([assocPath(['errors', name], errors[name], state), effects]),
     ],
     [
