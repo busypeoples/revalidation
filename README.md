@@ -46,13 +46,12 @@ the provided input:
 ```js
 
 updateValue(name, value) {
-    if (name === 'lastName') {
-        if (hasCapitalLetter(lastName)) {
-           // then do something 
-        }
+  if (name === 'lastName') {
+    if (hasCapitalLetter(lastName)) {
+      // then do something 
     }
-    
-    // etc...
+  }  
+  // etc...
 }
 
 ```
@@ -152,18 +151,20 @@ Now that we have everything in place, we import Revalidation.
 ```js
 import Revalidation from 'revalidation'
 ```
+Revalidation only needs the Component and returns a Higher Order Component accepting the following props: 
 
-Revalidation needs the initial state, the validation rules and an options object as well as the Form component itself.
+- __`initialState`__ *(Object)*
 
-The are currently two options supported: ___validateSingle___ and ___instantValidation___. 
+- __`rules`__ *(Object)*
 
-* ___validateSingle___: Is useful if when we only want to validate one field a time. (default: true)
-* ___instantValidation___: Set to true if any changes should be validated instantly. (default: true)
-__NOTE:__ If `instantValidation` is set to false, then `validateSingle` will have no effect, no matter if turned on or off, as 
-the validation will happen when submitting the complete form via `validateAll`.
-    
+- __`singleValue`__ *(Function)*
 
-Finally we enhance the Form component. Revalidation only needs the Component everything else is defined via props.
+- __`instantValidation`__: *(Function)*
+
+- __`asyncRules`__ *(Object)*
+
+- __`updateForm`__ *(Object)*
+
 
 ```js
 
@@ -223,10 +224,10 @@ reValidtion returns an object containing:
 - __updateValue__: a function expecting form name and value, f.e. `updateValue('name', 'foo')` 
 - __updateState__: a function expecting all the form values, f.e. Useful when wanting to reset the form. Depending on the setting either a validation will occur or not. 
 
-
-```js
- <button onClick={() => updateState({ name: '', random: '' })}>Reset</button>
-```
+    
+    ```js
+     <button onClick={() => updateState({ name: '', random: '' })}>Reset</button>
+    ```
 
 - __valid__: calculated validation state, f.e. initially disabling the submit button when a form is rendered.
 - __errors__: the errors object containing an array for every form field.
@@ -241,8 +242,8 @@ applying the new form values.
 
 ```javascript
 <Form
-    onSubmit={this.onSubmit}
-    updateForm={{name: 'foobar', random: ''}}
+  onSubmit={this.onSubmit}
+  updateForm={{name: 'foobar', random: ''}}
 />
 ```
 
