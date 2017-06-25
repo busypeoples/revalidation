@@ -17,13 +17,13 @@ describe('updaters/updateFormValues', () => {
     deepEqual(expected, result)
   })
 
-  it('should not change the form state a validate field only action has been triggered', () => {
+  it('should not change the form state when action=VALIDATE_FIELD', () => {
     const expected = [{form: {name: 'foo', random: 'bar'}}, []]
     const result = updateFormValues([{form:{name: 'foo', random: 'bar'}}, []], VALIDATE_FIELD, {value: {name: '', random: ''}})
     deepEqual(expected, result)
   })
 
-  it('should not change the form state a validate all action has been triggered', () => {
+  it('should not change the form state when action=VALIDATE_ALL', () => {
     const expected = [{form: {name: 'foo', random: 'bar'}}, []]
     const result = updateFormValues([{form:{name: 'foo', random: 'bar'}}, []], VALIDATE_ALL, {value: {name: '', random: ''}})
     deepEqual(expected, result)

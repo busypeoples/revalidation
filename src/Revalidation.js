@@ -18,7 +18,7 @@ import updateFormValues from './updaters/updateFormValues'
 import updateSyncErrors from './updaters/updateSyncErrors'
 import updateAsyncErrors from './updaters/updateAsyncErrors'
 
-import { UPDATE_FIELD, UPDATE_ALL, VALIDATE_ALL } from './constants'
+import { UPDATE_FIELD, UPDATE_ALL, VALIDATE_FIELD, VALIDATE_ALL } from './constants'
 
 /**
  * Calculates the new state to be set depending on the actions triggered via the form.
@@ -91,7 +91,7 @@ function revalidation(
       let updatedState = []
       this.setState(
         (state, props) => {
-          [updatedState, effects] = runUpdates(this.updateFns, state, VALIDATE_ALL, { ...props })
+          [updatedState, effects] = runUpdates(this.updateFns, state, [VALIDATE_ALL], { ...props })
           return updatedState
         },
         () => {
@@ -111,19 +111,26 @@ function revalidation(
       let updatedState = []
       this.setState(
         (state, props) => {
-          [updatedState, effects] = runUpdates(this.updateFns, state, UPDATE_ALL, { ...props, value: newState })
+          [updatedState, effects] = runUpdates(this.updateFns, state, [UPDATE_ALL, VALIDATE_ALL], { ...props, value: newState })
           return updatedState
         },
         () => map(f => f().fork(() => {}, x => this.setState(x)), effects) // eslint-disable-line comma-dangle
       )
     }
 
-    updateValue = curry((name:string, value:any, type: string = UPDATE_FIELD):void => {
+    updateValue = curry((name:string, value:any, type: string = null):void => {
       let effects = []
       let updatedState = []
+      const getType = ({ instantValidation, validateSingle }) =>
+        instantValidation
+          ? validateSingle
+            ? [UPDATE_FIELD, VALIDATE_FIELD]
+            : [UPDATE_FIELD, VALIDATE_ALL]
+          : [UPDATE_FIELD]
+
       this.setState(
         (state, props) => {
-          [updatedState, effects] = runUpdates(this.updateFns, state, type, { ...props, name, value })
+          [updatedState, effects] = runUpdates(this.updateFns, state, type ? [type] : getType(props), { ...props, name, value })
           return updatedState
         },
         () => map(f => f().fork(() => {}, result => this.setState(result)), effects) // eslint-disable-line comma-dangle

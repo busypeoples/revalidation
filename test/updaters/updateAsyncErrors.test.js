@@ -19,20 +19,16 @@ describe('updaters/updateAsyncErrors', () => {
   it('should skip validation when no asyncRules are defined', () => {
     const expected = [{form: {name: 'foobar'}, errors: {}}, []]
 
-    deepEqual(expected, updateAsyncErrors([{form: {name: 'foobar'}, errors: {}}, []], UPDATE_FIELD, {
-      validateSingle: true,
-      instantValidation: true,
+    deepEqual(expected, updateAsyncErrors([{form: {name: 'foobar'}, errors: {}}, []], VALIDATE_FIELD, {
       name: 'name'
     }))
   })
 
-  it('should return an empty array when field value is valid and validateSingle=true and asyncRules are defined', () => {
+  it('should return an empty array when field value is valid, asyncRules are defined and action=VALIDATE_FIELD', () => {
     const expected = {form: {name: 'foobar'}, pending: false, errors: { name: [] }}
 
-    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foobar'}, errors: {}}, []], UPDATE_FIELD, {
+    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foobar'}, errors: {}}, []], VALIDATE_FIELD, {
       asyncRules,
-      validateSingle: true,
-      instantValidation: true,
       name: 'name',
       value: 'foobar',
     })
@@ -46,10 +42,8 @@ describe('updaters/updateAsyncErrors', () => {
   it('should return an array containing the error messages when field value is invalid', () => {
     const expected = {form: {name: 'bar'}, pending: false, errors: {name: ['Minimum length is four.']}}
 
-    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'bar'}, errors: {}}, []], UPDATE_FIELD, {
+    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'bar'}, errors: {}}, []], VALIDATE_FIELD, {
       asyncRules,
-      validateSingle: true,
-      instantValidation: true,
       name: 'name',
       value: 'foo',
     })
@@ -60,13 +54,11 @@ describe('updaters/updateAsyncErrors', () => {
 
   })
 
-  it('should skip validating when validateSingle=false and a field has been updated', () => {
+  it('should skip validating when action=UPDATE_FIELD', () => {
     const expected = {form: {name: 'foo'}, pending: false, errors: {}}
 
     const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foo'}, errors: {}}, []], UPDATE_FIELD, {
       asyncRules,
-      validateSingle: false,
-      instantValidation: true,
       name: 'name',
       value: 'foo',
     })
@@ -75,13 +67,12 @@ describe('updaters/updateAsyncErrors', () => {
 
   })
 
-  it('should return an empty array when field value is valid and validateSingle=true and a VALIDATE_FIELD has been triggered', () => {
+  it('should return an empty array when field value is valid and action=VALIDATE_FIELD', () => {
     const expected = {form: {name: 'foobar'}, pending: false, errors: {name: []}}
 
     const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foobar'}, errors: {}}, []], VALIDATE_FIELD, {
       asyncRules,
       validateSingle: true,
-      instantValidation: true,
       name: 'name',
       value: 'foobar',
     })
@@ -98,9 +89,8 @@ describe('updaters/updateAsyncErrors', () => {
       errors: {name: ['Minimum length is four.'], random: ['Minimum length is seven.']}
     }
 
-    const [state, [runPromises]]  = updateAsyncErrors([{form: {name: 'foo', random: 'random'}, errors: {}}, []], UPDATE_ALL, {
+    const [state, [runPromises]]  = updateAsyncErrors([{form: {name: 'foo', random: 'random'}, errors: {}}, []], VALIDATE_ALL, {
       asyncRules,
-      instantValidation: true,
     })
 
     return runPromises().fork(() => {}, result => {
@@ -109,7 +99,7 @@ describe('updaters/updateAsyncErrors', () => {
     })
   })
 
-  it('should validate all fields when a VALIDATE_ALL action has been triggered', () => {
+  it('should validate all fields when action=VALIDATE_ALL', () => {
     const expected  = {
       form: {name: 'foo', random: 'random'},
       pending: false,
@@ -118,7 +108,6 @@ describe('updaters/updateAsyncErrors', () => {
 
     const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foo', random: 'random'}, errors: {}}, []], VALIDATE_ALL, {
       asyncRules,
-      instantValidation: true,
     })
 
     return runPromises().fork(() => {}, result => {
@@ -126,7 +115,7 @@ describe('updaters/updateAsyncErrors', () => {
     })
   })
 
-  it('should skip validation when instantValidation is false and action !== VALIDATE_ALL', () => {
+  it('should skip validation when instantValidation action !== UPDATE_ALL', () => {
     const expected = {
       form: {name: 'foo', random: 'random'},
       pending: false,
@@ -135,13 +124,12 @@ describe('updaters/updateAsyncErrors', () => {
 
     const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foo', random: 'random'}, errors: {}}, []], UPDATE_ALL, {
       asyncRules,
-      instantValidation: false
     })
 
     equal(null, runPromises)
   })
 
-  it('should skip validation when instantValidation=true and action !== VALIDATE_ALL and fail sync error messages exists.', () => {
+  it('should skip validation when action !== VALIDATE_ALL and failed sync error messages exists.', () => {
     const expected = {
       form: {name: 'foo', random: 'random'},
       pending: false,
@@ -150,7 +138,6 @@ describe('updaters/updateAsyncErrors', () => {
 
     const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foo', random: 'random'}, errors: {}}, []], UPDATE_FIELD, {
       asyncRules,
-      instantValidation: true,
       name: 'name',
       value: 'foo',
     })

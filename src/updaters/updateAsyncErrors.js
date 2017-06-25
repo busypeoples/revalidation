@@ -4,6 +4,7 @@ import Task from 'data.task'
 import {
   assoc,
   concat,
+  contains,
   keys,
   map,
   mapObjIndexed,
@@ -18,11 +19,8 @@ import {
 } from 'ramda'
 
 import isValid from '../utils/isValid'
-
-
-import { UPDATE_FIELD, UPDATE_ALL, VALIDATE_FIELD, VALIDATE_ALL, VALIDATE_FIELD_ONLY } from '../constants'
-
 import type { EnhancedProps, StateEffects } from './types'
+import { VALIDATE_FIELD, VALIDATE_ALL } from '../constants'
 
 /**
  * Converts a list of promises into a list of Tasks that when run will either return null or the error message
@@ -47,28 +45,24 @@ const flatErrorMsgs = reduce((xs, x) => x ? concat(xs, [x]) : xs, [])
  *
  * @param {[Object, Array]} state a tuple containing
  * @param {Array} effects
- * @param {String} type
+ * @param {Array} type
  * @param {Object} enhancedProps
  * @returns {[Object, Array]}
  */
 export default function updateAsyncErrors(
   [state, effects]: StateEffects,
-  type: string,
+  type: Array<string>,
   {
     name = '',
     value,
-    instantValidation,
-    validateSingle,
     asyncRules,
   }: EnhancedProps // eslint-disable-line comma-dangle, indent
 ) {
   if (!asyncRules) return [state, effects]
-  if (!instantValidation && type !== 'VALIDATE_ALL') return [state, effects]
 
-  if ((type === UPDATE_FIELD || type === VALIDATE_FIELD || type === VALIDATE_FIELD_ONLY)
-    && validateSingle
+  if (contains(VALIDATE_FIELD, type)
     && prop(name, asyncRules)
-    && (isValid(pathOr([], ['error', name], state)))) {
+    && (isValid(pathOr([], ['errors', name], state)))) {
     const updatedState = assoc('pending', true, state)
     const promises = createLazyPromises(asyncRules[name], value, prop('form', state))
 
@@ -85,7 +79,7 @@ export default function updateAsyncErrors(
     return [updatedState, concat(effects, [runPromises])]
   }
 
-  if (type === UPDATE_ALL || type === VALIDATE_ALL) {
+  if (contains(VALIDATE_ALL, type)) {
     const updatedState = assoc('pending', true, state)
     const promises: Object = mapObjIndexed((rules, key) =>
       createLazyPromises(rules, path(['form', key], state)), asyncRules)
