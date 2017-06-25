@@ -109,10 +109,8 @@ function revalidation(
     updateState = (newState: Object) => {
       let effects = []
       let updatedState = []
-      const getType = ({ instantValidation, validateSingle }) => console.log(instantValidation) ||
-        instantValidation
-          ? [UPDATE_ALL, VALIDATE_ALL]
-          : [UPDATE_ALL]
+      const getType = ({ instantValidation }) =>
+        instantValidation ? [UPDATE_ALL, VALIDATE_ALL] : [UPDATE_ALL]
 
       this.setState(
         (state, props) => {
