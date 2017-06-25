@@ -3,7 +3,7 @@
 import { equal } from 'assert'
 import React from 'react' // eslint-disable-line no-unused-vars
 import ShallowRenderer from 'react-test-renderer/shallow'
-import Revalidation from '../src/'
+import Revalidation, { isValid } from '../src/'
 
 const isNotEmpty = a => a.trim().length > 0
 
@@ -13,8 +13,8 @@ const validationRules = {
   name: [[isNotEmpty, 'Name should not be empty']],
 }
 
-const ErrorComponent = ({ errorMsgs }) =>
-  <div className='error'>{errorMsgs && errorMsgs[0]}</div>
+const displayErrors = (errorMsgs) =>
+  isValid(errorMsgs) ? null : <div className='error'>{errorMsgs[0]}</div>
 
 const Form = ({
   reValidation: { form, validate, errors = {}, validateAll },
@@ -28,28 +28,24 @@ const Form = ({
         value={form.name}
         onChange={e => validate('name', getValue(e))}
       />
-      {errors.name}
+      {displayErrors(errors.name)}
     </div>
     <button onClick={() => validateAll(onSubmit)}>Submit</button>
   </div>
 
 const initialState = { name: '' }
 
-const enhanced = Revalidation(
-  initialState,
-  validationRules,
-  ErrorComponent,
-  { validateSingle: false },
-)
+const EnhancedForm = Revalidation(Form) // eslint-disable-line no-unused-vars
 
-const EnhancedForm = enhanced(Form) // eslint-disable-line no-unused-vars
-
-describe('React/index', () => {
+describe('revalidation', () => {
   it('callback passed to `validateAll` is not called when the form has errors', () => {
     const renderer = new ShallowRenderer()
     let wasCallbackCalled = false
     renderer.render(
       <EnhancedForm
+        initialState={initialState}
+        rules={validationRules}
+        validateSingle={false}
         onSubmit={() => {
           wasCallbackCalled = true
         }}

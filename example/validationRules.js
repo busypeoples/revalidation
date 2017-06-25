@@ -4,7 +4,7 @@ const {
   isNotEmpty,
   isLengthGreaterThan,
   hasCapitalLetter,
-  } = helpers
+} = helpers
 
 // validation function
 
@@ -25,17 +25,21 @@ const passwordValidationRule = [
 const repeatPasswordValidationRule = [
   [isLengthGreaterThan(5), minimumMsg('RepeatedPassword', 6)],
   [hasCapitalLetter, capitalLetterMag('RepeatedPassword')],
-  [isEqual('password'), equalMsg('Password', 'RepeatPassword')]
+  [isEqual('password'), equalMsg('Password', 'RepeatPassword')],
 ]
 
-const validationRules = {
+export const basicValidationRules = {
   name: [
-    [isNotEmpty, 'Name should not be  empty.']
+    [isNotEmpty, 'Name should not be  empty.'],
   ],
   random: [
     [isLengthGreaterThan(7), 'Minimum Random length of 8 is required.'],
     [hasCapitalLetter, 'Random should contain at least one uppercase letter.'],
   ],
+}
+
+const validationRules = {
+  ...basicValidationRules,
   password: passwordValidationRule,
   repeatPassword: repeatPasswordValidationRule,
 }

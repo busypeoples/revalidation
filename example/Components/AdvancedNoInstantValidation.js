@@ -4,7 +4,7 @@ import Revalidation from '../../src/'
 import Form from './Form'
 import validationRules from '../validationRules'
 
-export default class AdvancedInstantValidation extends React.Component {
+export default class AdvancedNoInstantValidation extends React.Component {
 
   constructor(props) {
     super(props)
@@ -18,8 +18,8 @@ export default class AdvancedInstantValidation extends React.Component {
           initialState={this.state.form}
           rules={validationRules}
           updateForm={this.props.updateForm}
-          validateSingle={false}
-          instantValidation={true}
+          validateSingle={true}
+          instantValidation={false}
         />
     )
   }

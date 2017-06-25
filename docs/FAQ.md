@@ -4,7 +4,7 @@
 Revalidation provides a computed `valid` property when passing in the __reValidation__ prop. 
 Even when the form itself contains no errors yet, `valid` has the actual validation result.
 ```js
-const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}, onSubmit }) =>
+const Form = ({ reValidation : {form, valid, errors = {}, validateAll}, onSubmit }) =>
   (
     <div className='form'>
        {/* ...form fields */} 
@@ -18,39 +18,56 @@ const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}
   )
 ```
 
+#### How can I write predicate functions where the result depends on other form fields?
+The predicate function receives two arguments, the actual input as well as an object containing all form field values.
+
+```js
+
+const fieldsEqual = (a, all) => a === all.otherField
+
+const rules = {
+  foo: 
+  [
+    [fieldsEqual, 'Not Equal'],
+  ]
+}
+
+const state = {foo: 'foobar', otherField: 'foobar'}
+
+```
+
 #### How can I prevent empty optional fields from being validated?
 Don't provide any validation rules for the optional field.
 Revalidation only runs the validation against defined validation rules for given input.
 If no validation rules are provided the field will always be valid by default. 
 
 #### How can I prevent Revalidation from validating all the fields as soon as I edit the first field?
-Via the options object set the `validateSingle` option to true.
+Via the `validateSingle` option, set to to true (which is also the default setting).
 ```js
-const enhanced = Revalidation(
-  initialState,
-  validationRules,
-  ErrorComponent,
-  {validateSingle: true}
-)
+const EnhancedForm = revalidation(Form)
+
+<EnhancedForm 
+  validateSingle={true}
+/>
+
 ```
 
 #### How can I only validate updated form elements without validating any untouched elements?
-Via the options object set the `validateSingle` option to true.
-
+Via the `validateSingle` option, set to to true (which is also the default setting).
 ```js
-const enhanced = Revalidation(
-  initialState,
-  validationRules,
-  ErrorComponent,
-  {validateSingle: true}
-)
+const EnhancedForm = revalidation(Form)
+
+<EnhancedForm 
+  validateSingle={true}
+/>
+
 ```
 
 #### How can I validate all fields at once?
 Revalidation provides a `validateAll` function via the __reValidation__ prop.
 
 ```js
-const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}, onSubmit }) =>
+const Form = ({ reValidation : {form, valid, errors = {}, validateAll}, onSubmit }) =>
   (
     <div className='form'>
        {/* ...form fields */} 
@@ -66,7 +83,7 @@ Revalidation provides a `validateAll` function via the __reValidation__ prop.
 `validateAll` accepts a callback function as well as any data as arguments. 
 If the validation is successful Revalidation will call the callback with either the provided data or the current form values.
 ```js
-const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}, onSubmit }) =>
+const Form = ({ reValidation : {form, valid, errors = {}, validateAll}, onSubmit }) =>
   (
     <div className='form'>
        {/* ...form fields */} 
@@ -81,50 +98,35 @@ const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}
 ```
 
 #### How can I instantly validate the form as soon as props have been updated?
-Via the options object set the `instantValidation` option to true.
-```js
-const enhanced = Revalidation(
-  initialState,
-  validationRules,
-  ErrorComponent,
-  {validateSingle: false, instantValidation: true}
-)
+Via the `instantValidation` option, set to to true (which is also the default setting).
+const EnhancedForm = revalidation(Form)
+
+<EnhancedForm 
+  instantValidation={true}
+/>
+
 ```
 
 #### How can I trigger a success callback as soon as a field has been updated and is valid?
-Currently you have to call the `validate` and `validateAll` functions separately, f.e. via onChange.
-Taking this approach might have a performance impact on your application. 
-This scenario should be solved in an upcoming release.
+Not implemented. If there is a need for covering this issue, we would like to know why.
 
-```js
- <input
-    type='text'
-    className={errors.random ? 'error' : ''}
-    value={form.random}
-    onChange={e => {
-        validate('random', getValue(e)
-        validateAll(onSubmit)
-    }}
-/>
-```
 
 #### Can I define how the error is displayed for every field individually?
-Define how the errors should be transformed inside the error callback. 
-All error messages per field are passed into the callback function as an array.
+Define how the errors should look like inside the Form itself.
+Once a validation has run at some point inside the form, the `error` object will contain an array with all error messages.
 
 ```js
-// errorCallback = ({errorMsgs}) => errorMsgs
-{name: null, random: ['something is missing', 'invalid data']}
+{name: [], random: ['something is missing', 'invalid data']}
 ```
 
 Now you can do a manual error check per field basis and render the error message accordingly.
 ```js
-const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}, onSubmit }) =>
+const Form = ({ reValidation : {form, validate, errors = {}, validateAll}, onSubmit }) =>
   (
     <div className='form'>
       <div className='formGroup'>
         {/* some field */}
-        { errors.name ? <div>{errors.name.map((msg, i) => <span className='error' key={i}>{msg}</span>)} }
+        { isValid(errors.name) ? null : <div>{errors.name.map((msg, i) => <span className='error' key={i}>{msg}</span>)} }
       </div>
     </div>
   )
@@ -160,7 +162,7 @@ Revalidation only manages and validates the actual form state and provides the d
 ```js
 const getValue = e => e.target.value
 
-const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}, onSubmit }) =>
+const Form = ({ reValidation : {form, validate, errors = {}, validateAll}, onSubmit }) =>
   (
     <div className='form'>
       <div className='formGroup'>
@@ -168,7 +170,7 @@ const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}
         <input
           type='text'
           value={form.name}
-          onChange={e => validate('name', getValue(e))}
+          onChange={e => updateState('name', e.target.value)}
         />
         { errors.name }
       </div>
