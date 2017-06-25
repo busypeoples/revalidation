@@ -4,12 +4,16 @@ import React, { createElement } from 'react'
 import {
   curry,
   isEmpty,
+  keys,
   map,
+  prop,
   reduce,
+  zipObj,
 } from 'ramda'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import validate from './validate'
 import isValid from './utils/isValid'
+import debounce from './helpers/debounce'
 import updateFormValues from './updaters/updateFormValues'
 import updateSyncErrors from './updaters/updateSyncErrors'
 import updateAsyncErrors from './updaters/updateAsyncErrors'
@@ -64,13 +68,22 @@ function revalidation(
 
     constructor(props) {
       super(props)
-      this.state = { form: props.initialState, errors: {}, pending: false }
+      this.state = {
+        form: prop('initialState', props),
+        errors: {},
+        pending: false,
+        debounceFns: HigherOrderFormComponent.createDebounceFunctions(prop('initialState', props)),
+      }
     }
 
     componentWillReceiveProps({ updateForm }) {
       if (updateForm) {
         this.updateState(updateForm)
       }
+    }
+
+    static createDebounceFunctions(form: Array<Object>) {
+      return zipObj(keys(form), map(debounce, keys(form)))
     }
 
     validateAll = (cb: Function, data: Object):void => {
@@ -85,7 +98,7 @@ function revalidation(
           if (isEmpty(effects)) {
             if (isValid(this.state.errors) && cb) cb(data || this.state.form)
           } else {
-            map(f => f().then(x => this.setState(x, () => {
+            map(f => f().fork(() => {}, x => this.setState(x, () => {
               if (isValid(this.state.errors) && cb) cb(data || this.state.form)
             })), effects)
           }
@@ -101,24 +114,24 @@ function revalidation(
           [updatedState, effects] = runUpdates(this.updateFns, state, UPDATE_ALL, { ...props, value: newState })
           return updatedState
         },
-        () => map(f => f().then(x => this.setState(x)), effects) // eslint-disable-line comma-dangle
+        () => map(f => f().fork(() => {}, x => this.setState(x)), effects) // eslint-disable-line comma-dangle
       )
     }
 
-    updateValue = curry((name:string, value:any):void => {
+    updateValue = curry((name:string, value:any, type: string = UPDATE_FIELD):void => {
       let effects = []
       let updatedState = []
       this.setState(
         (state, props) => {
-          [updatedState, effects] = runUpdates(this.updateFns, state, UPDATE_FIELD, { ...props, name, value })
+          [updatedState, effects] = runUpdates(this.updateFns, state, type, { ...props, name, value })
           return updatedState
         },
-        () => map(f => f().then(result => this.setState(result)), effects) // eslint-disable-line comma-dangle
+        () => map(f => f().fork(() => {}, result => this.setState(result)), effects) // eslint-disable-line comma-dangle
       )
     })
 
     render() {
-      const { form, errors, pending } = this.state
+      const { form, errors, pending, debounceFns } = this.state
       /* eslint-disable no-unused-vars */
       const { rules, asyncRules, initialState, updateForm, validateSingle, instantValidation, ...rest } = this.props
       const valid = isValid(validate(rules, form)) && isValid(errors)
@@ -128,6 +141,7 @@ function revalidation(
         errors,
         pending,
         valid,
+        debounce: debounceFns,
         updateState: this.updateState,
         updateValue: this.updateValue,
         validateAll: this.validateAll,
