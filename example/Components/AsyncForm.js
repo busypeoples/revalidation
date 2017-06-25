@@ -3,19 +3,11 @@ import React from 'react'
 import Revalidation from '../../src/'
 
 const get = username => new Promise(res => {
+  const existingNames = ['foo', 'bar', 'baz', 'foobarbaz']
   setTimeout(() =>
       res({
         data: {
-          exists: [
-            'foo',
-            'bar',
-            'baz',
-            'foobarbaz',
-          ].indexOf(
-            username
-              .toLowerCase()
-              .trim() // eslint-disable-line comma-dangle
-          ) !== -1,
+          exists: existingNames.indexOf(username.toLowerCase().trim()) !== -1,
         },
       }),
     1000)
@@ -57,11 +49,6 @@ class SubmitPage extends React.Component<any, any> {
   constructor(props) {
     super(props)
     this.state = {form: {name: ''}}
-    this.onSubmit = this.onSubmit.bind(this)
-  }
-
-  onSubmit(newState) {
-    this.setState(state => ({form: newState}))
   }
 
   render() {
@@ -79,7 +66,7 @@ class SubmitPage extends React.Component<any, any> {
 
     return (
       <EnhancedSubmitForm
-        onSubmit={this.onSubmit}
+        onSubmit={this.props.onSubmit}
         rules={validationRules}
         initialState={this.state.form}
         asyncRules={asyncValidationRules}

@@ -3,107 +3,71 @@
 import React from 'react'
 import { render } from 'react-dom'
 
-import SimpleForm from './Components/SimpleForm'
-import Form from './Components/Form'
+import AdvancedInstantValidation from './Components/AdvancedInstantValidation'
+import AdvancedNoInstantValidation from './Components/AdvancedNoInstantValidation'
+import Basic from './Components/Basic'
+import BasicWithIsValid from './Components/BasicWithIsValid'
 import AsyncForm from './Components/AsyncForm'
-import validationRules, { basicValidationRules } from './validationRules'
-
 
 class Root extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { example: 0, message: '', formValues: { name: '', random: '' } }
-    this.onSubmit = this.onSubmit.bind(this)
-    this.changeExample = this.changeExample.bind(this)
-    this.updateProps = this.updateProps.bind(this)
-    this.getForm = this.getForm.bind(this)
+    this.state = { example: 1, message: '', formValues: { name: '', random: '' } }
   }
 
-  onSubmit(formValues) {
+  onSubmit = (formValues) => {
     const message = `Just updated: ${JSON.stringify(formValues, null, 4)}`
     this.setState(() => ({ formValues, message }))
   }
 
-  changeExample(example) {
-    if (example === this.state.example) {
-      return
+  changeExample = (example) => {
+    if (example !== this.state.example) {
+      this.setState(() => ({example, message: '', formValues: {}}))
     }
-    this.setState(() => ({ example, message: '', formValues: {} }))
   }
 
-  updateProps() {
+  updateProps = () => {
     this.setState(() => ({
       formValues: { name: 'foobarBaz', random: 'n' },
     }))
   }
 
-  getForm(example, formValues = {}) {
+  getForm = (example, formValues = {}) => {
     const initState = { name: '', password: '', repeatPassword: '', random: '' }
     const updatedValues = {...initState, ...formValues}
+
     switch (example) {
-      case 0:
-        return (
-          <AsyncForm />
-        )
 
-      case 1:
-        return (
-          <SimpleForm
-            onSubmit={this.onSubmit}
-            initialState={initState}
-            rules={basicValidationRules}
-            validateSingle={true}
-          />
-        )
+      case 1: return <Basic onSubmit={this.onSubmit} />
 
-      case 2:
-        return (<Form
-          onSubmit={this.onSubmit}
-          initialState={initState}
-          updateForm={updatedValues}
-          instantValidation={false}
-          rules={validationRules}
-        />
-        )
-      case 3:
-        return (
-          <Form
-            onSubmit={this.onSubmit}
-            initialState={initState}
-            rules={validationRules}
-            validateSingle={false}
-            instantValidation={true}
-            updateForm={updatedValues}
-          />
-        )
-      case 4:
-        return (
-          <SimpleForm
-            onSubmit={this.onSubmit}
-            initialState={initState}
-            rules={basicValidationRules}
-            disableButtonOption
-          />
-        )
-      default:
-        return (
-          <SimpleForm
-            onSubmit={this.onSubmit}
-            initialState={{ ...{ name: '', random: '' }, ...formValues }}
-            rules={basicValidationRules}
-            validateSingle={true}
-          />
-        )
+      case 2: return <BasicWithIsValid onSubmit={this.onSubmit} />
+
+      case 3: return <AdvancedNoInstantValidation onSubmit={this.onSubmit} updateForm={updatedValues} />
+
+      case 4: return <AdvancedInstantValidation onSubmit={this.onSubmit} updateForm={updatedValues} />
+
+      case 5: return <AsyncForm onSubmit={this.onSubmit} />
+
+      default: return <Basic onSubmit={this.onSubmit} />
     }
   }
 
   render() {
     const { example, message, formValues } = this.state
+
+    const examples = [
+      {id: 1, name: 'Basic'},
+      {id: 2, name: 'Basic (Disable Submit Button if Invalid)'},
+      {id: 3, name: 'Advanced (No dynamic prop updates validation)'},
+      {id: 4, name: 'Advanced (Dynamic prop updates validation)'},
+      {id: 5, name: 'Async Example'},
+    ]
+
     const selectedForm = this.getForm(example, formValues)
     const getClassName = id => (example === id) ? 'selected' : ''
     const getConfig = id => (id === 1)
-      ? { validateSingle: true }
-      : (id === 2)
+      ? { validateSingle: true, instantValidation: true }
+      : (id === 3)
         ? { validateSingle: false, instantValidation: false }
         : { validateSingle: false, instantValidation: true }
 
@@ -113,38 +77,13 @@ class Root extends React.Component {
         <h2>High Order Validation React Component</h2>
         <div id="example">
           <div className="switch">
-            <div
-              onClick={() => this.changeExample(1)}
-              className={getClassName(0)}
+            {examples.map(({id, name}) => <div
+              onClick={() => this.changeExample(id)}
+              className={getClassName(id)}
+              key={id}
             >
-              Async Example
-            </div>
-            <div
-              onClick={() => this.changeExample(1)}
-              className={getClassName(1)}
-            >
-            Basic
-            </div>
-            <div
-              onClick={() => this.changeExample(4)}
-              className={getClassName(4)}
-            >
-              Basic (Disable Submit Button if Invalid)
-            </div>
-            <div
-              onClick={() => this.changeExample(2)}
-              className={getClassName(2)}
-            >
-              Advanced (No dynamic prop updates validation)
-            </div>
-            <div
-              onClick={() => this.changeExample(3)}
-              className={getClassName(3)}
-            >
-              Advanced (Dynamic prop updates validation)
-            </div>
-          </div>
-          <div className="highlight">
+            {name}
+            </div>)}
           </div>
           <div className="result">
             <pre>configuration:
@@ -156,7 +95,7 @@ class Root extends React.Component {
             <pre>{message}</pre>
           </div>
           {selectedForm}
-          { (example === 2 || example === 3) && <button onClick={this.updateProps}>Update Props</button> }
+          { (example === 3 || example === 4) && <button onClick={this.updateProps}>Update Props</button> }
         </div>
       </div>
     )
