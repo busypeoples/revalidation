@@ -1,7 +1,8 @@
 /* @flow */
-/* eslint-disable no-nested-ternary */
+/* eslint-disable no-nested-ternary, no-unneeded-ternary */
 import React, { createElement } from 'react'
 import {
+  always,
   curry,
   isEmpty,
   keys,
@@ -36,6 +37,18 @@ const runUpdates = (updateFns, state, type, enhancedProps) => reduce((updatedSta
   updateFn(updatedState, type, enhancedProps), [state, []], updateFns)
 
 /**
+ * Maps an empty array to every item of the list and returns a map representing the items as keys
+ *
+ * @param {Array} form a collection of keys ['a', 'b', 'c']
+ * @returns {Array}
+ * @example
+ *
+ *    initializeErrors(['a', 'b']) //=> {a: [], b: []}
+ *
+ */
+const initializeErrors = form => zipObj(form, map(always([]), form))
+
+/**
  * revalidation expects a React Component and returns a React Component containing additional functions and props
  * for managing local component state as well validating that state, wrapping the originally provided Component.
  */
@@ -68,9 +81,14 @@ function revalidation(
 
     constructor(props) {
       super(props)
+
+      const form = prop('initialState', props)
+      const initErrors = initializeErrors(keys(form))
+
       this.state = {
-        form: prop('initialState', props),
-        errors: {},
+        form,
+        errors: initErrors,
+        asyncErrors: initErrors,
         pending: false,
         debounceFns: HigherOrderFormComponent.createDebounceFunctions(prop('initialState', props)),
       }
@@ -99,7 +117,7 @@ function revalidation(
             if (isValid(this.state.errors) && cb) cb(data || this.state.form)
           } else {
             map(f => f().fork(() => {}, x => this.setState(x, () => {
-              if (isValid(this.state.errors) && cb) cb(data || this.state.form)
+              if (isValid(this.state.errors) && isValid(this.state.asyncErrors) && cb) cb(data || this.state.form)
             })), effects)
           }
         } // eslint-disable-line comma-dangle
@@ -117,11 +135,11 @@ function revalidation(
           [updatedState, effects] = runUpdates(this.updateFns, state, getType(props), { ...props, value: newState })
           return updatedState
         },
-        () => map(f => f().fork(() => {}, x => this.setState(x)), effects) // eslint-disable-line comma-dangle
+        () => map(f => f().fork(() => {}, result => this.setState(result)), effects) // eslint-disable-line comma-dangle
       )
     }
 
-    updateValue = curry((name:string, value:any, type: string = null):void => {
+    updateValue = curry((name:string, value:any, type: Array<string> = null):void => {
       let effects = []
       let updatedState = []
       const getType = ({ instantValidation, validateSingle }) =>
@@ -133,7 +151,7 @@ function revalidation(
 
       this.setState(
         (state, props) => {
-          [updatedState, effects] = runUpdates(this.updateFns, state, type ? [type] : getType(props), { ...props, name, value })
+          [updatedState, effects] = runUpdates(this.updateFns, state, type ? type : getType(props), { ...props, name, value })
           return updatedState
         },
         () => map(f => f().fork(() => {}, result => this.setState(result)), effects) // eslint-disable-line comma-dangle
@@ -141,7 +159,7 @@ function revalidation(
     })
 
     render() {
-      const { form, errors, pending, debounceFns } = this.state
+      const { form, errors, asyncErrors, pending, debounceFns } = this.state
       /* eslint-disable no-unused-vars */
       const { rules, asyncRules, initialState, updateForm, validateSingle, instantValidation, ...rest } = this.props
       const valid = isValid(validate(rules, form)) && isValid(errors)
@@ -149,12 +167,14 @@ function revalidation(
       const reValidation = {
         form,
         errors,
+        asyncErrors,
         pending,
         valid,
         debounce: debounceFns,
         updateState: this.updateState,
         updateValue: this.updateValue,
         validateAll: this.validateAll,
+        settings: { instantValidation, validateSingle },
       }
 
       return createElement(Component, {
