@@ -8,6 +8,15 @@ const rules = {
   random: [[x => x.length > 6, 'Minimum length is seven.']]
 }
 
+const nestedRules = {
+  name: [[x => x.length > 3, 'Minimum length is four.']],
+  levelOne: {
+    levelTwo: {
+      random: [[x => x.length > 6, 'Minimum length is seven.']]
+    }
+  }
+}
+
 describe('updaters/updateSyncErrors', () => {
 
   it('should return an empty array when field value is valid', () => {
@@ -29,7 +38,7 @@ describe('updaters/updateSyncErrors', () => {
   })
 
   it('should only validate the field that has been updated when action=VALIDATE_FIELD', () => {
-    const expected = [{form: {name: 'foo', random: '1234567'}, errors: { random: [] }}, []]
+    const expected = [{form: {name: 'foo', random: '1234567'}, errors: {random: []}}, []]
     const result = updateSyncErrors([{form: {name: 'foo', random: '1234567'}, errors: {}}, []], [VALIDATE_FIELD], {
       rules,
       name: ['random']
@@ -75,6 +84,42 @@ describe('updaters/updateSyncErrors', () => {
     }, []]
     const result = updateSyncErrors([{form: {name: 'foo', random: 'random'}, errors: {}}, []], [UPDATE_ALL], {
       rules,
+    })
+    deepEqual(expected, result)
+  })
+
+  it('should should validate a deeply nested form field when action=VALIDATE_FIELD', () => {
+    const expected = [{
+      form: {name: 'foo', levelOne: {levelTwo: {random: 'bar'}}},
+      errors: {name: [], levelOne: {levelTwo: {random: ['Minimum length is seven.']}}},
+    }, []]
+    const result = updateSyncErrors([{
+      form: {
+        name: 'foo',
+        levelOne: {
+          levelTwo: {
+            random: 'bar'
+          }
+        }
+      },
+      errors: {name: [], levelOne: {levelTwo: {random: []}}},
+    }, []], VALIDATE_FIELD, {name: ['levelOne', 'levelTwo', 'random'], rules: nestedRules})
+    deepEqual(expected, result)
+  })
+
+  it('should should validate all deeply nested fields when action=VALIDATE_ALL', () => {
+    const expected = [{
+      form: {name: 'foo', levelOne: {levelTwo: {random: 'bar'}}},
+      errors: {name: ['Minimum length is four.'], levelOne: {levelTwo: {random: ['Minimum length is seven.']}}},
+    }, []]
+    const result = updateSyncErrors([{
+      form: {
+        name: 'foo',
+        levelOne: {levelTwo: {random: 'bar'}}
+      },
+      errors: {},
+    }, []], VALIDATE_ALL, {
+      rules: nestedRules,
     })
     deepEqual(expected, result)
   })
