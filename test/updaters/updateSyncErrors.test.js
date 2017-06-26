@@ -14,7 +14,7 @@ describe('updaters/updateSyncErrors', () => {
     const expected = [{form: {name: 'foobar'}, errors: {name: []}}, []]
     const result = updateSyncErrors([{form: {name: 'foobar'}, errors: {}}, []], [VALIDATE_FIELD], {
       rules,
-      name: 'name'
+      name: ['name']
     })
     deepEqual(expected, result)
   })
@@ -23,7 +23,7 @@ describe('updaters/updateSyncErrors', () => {
     const expected = [{form: {name: 'bar'}, errors: {name: ['Minimum length is four.']}}, []]
     const result = updateSyncErrors([{form: {name: 'bar'}, errors: {}}, []], [VALIDATE_FIELD], {
       rules,
-      name: 'name'
+      name: ['name']
     })
     deepEqual(expected, result)
   })
@@ -32,7 +32,7 @@ describe('updaters/updateSyncErrors', () => {
     const expected = [{form: {name: 'foo', random: '1234567'}, errors: { random: [] }}, []]
     const result = updateSyncErrors([{form: {name: 'foo', random: '1234567'}, errors: {}}, []], [VALIDATE_FIELD], {
       rules,
-      name: 'random'
+      name: ['random']
     })
     deepEqual(expected, result)
   })
@@ -41,7 +41,7 @@ describe('updaters/updateSyncErrors', () => {
     const expected = [{form: {name: 'foobar'}, errors: {name: []}}, []]
     const result = updateSyncErrors([{form: {name: 'foobar'}, errors: {}}, []], [VALIDATE_FIELD], {
       rules,
-      name: 'name'
+      name: ['name']
     })
     deepEqual(expected, result)
   })

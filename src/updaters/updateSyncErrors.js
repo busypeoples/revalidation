@@ -7,6 +7,7 @@ import {
   cond,
   contains,
   or,
+  path,
   prop,
   T,
 } from 'ramda'
@@ -24,14 +25,14 @@ import { VALIDATE_FIELD, VALIDATE_FIELD_SYNC, VALIDATE_ALL } from '../constants'
  * @returns {[Object, Array]}
  */
 export default function updateSyncErrors ([state, effects]: StateEffects, type: Array<string>, enhancedProps: EnhancedProps) {
-  const { name, rules } = enhancedProps
+  const { name = [], rules } = enhancedProps
   const errors = validate(rules, prop('form', state))
 
   /* eslint-disable no-shadow */
   const updateState = cond([
     [
       type => or(contains(VALIDATE_FIELD, type), (contains(VALIDATE_FIELD_SYNC, type))) && name,
-      always([assocPath(['errors', name], errors[name], state), effects]),
+      always([assocPath(['errors', ...name], path([...name], errors), state), effects]),
     ],
     [
       contains(VALIDATE_ALL),

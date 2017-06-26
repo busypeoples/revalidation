@@ -4,9 +4,12 @@ import React, { createElement } from 'react'
 import {
   always,
   curry,
+  ifElse,
+  is,
   isEmpty,
   keys,
   map,
+  partial,
   prop,
   propOr,
   reduce,
@@ -39,15 +42,18 @@ const runUpdates = (updateFns, state, type, enhancedProps) => reduce((updatedSta
 
 /**
  * Maps an empty array to every item of the list and returns a map representing the items as keys
+ * Also works with deep nested data.
  *
- * @param {Array} col a collection of keys ['a', 'b', 'c']
+ * @param {Array} obj the to object to convert
  * @returns {Array}
  * @example
  *
- *    initializeErrors(['a', 'b']) //=> {a: [], b: []}
+ *    initializeErrors({'a': null 'b': null}) //=> {a: [], b: []}
+ *
+ *    initializeErrors: [{'a': null, b: {c: {d: null}}}] //=> {'a': [], b: {c: {d: []}}}
  *
  */
-const initializeErrors = col => zipObj(col, map(always([]), col))
+const initializeErrors = obj => map(ifElse(is(Object), partial(initializeErrors, []), always([])), obj)
 
 /**
  * revalidation expects a React Component and returns a React Component containing additional functions and props
@@ -84,7 +90,7 @@ function revalidation(
       super(props)
 
       const form = propOr([], 'initialState', props)
-      const initErrors = initializeErrors(keys(form))
+      const initErrors = initializeErrors(form)
 
       this.state = {
         form,
@@ -140,7 +146,7 @@ function revalidation(
       )
     }
 
-    updateValue = curry((name:string, value:any, type: Array<string> = null):void => {
+    updateValue = curry((name:string|Array<string|number>, value:any, type: Array<string> = null):void => {
       let effects = []
       let updatedState = []
       const getType = ({ instantValidation, validateSingle }) =>
@@ -150,9 +156,11 @@ function revalidation(
             : [UPDATE_FIELD, VALIDATE_ALL]
           : [UPDATE_FIELD]
 
+      const fieldName = typeof name === 'string' ? [name] : name
+
       this.setState(
         (state, props) => {
-          [updatedState, effects] = runUpdates(this.updateFns, state, type ? type : getType(props), { ...props, name, value })
+          [updatedState, effects] = runUpdates(this.updateFns, state, type ? type : getType(props), { ...props, name: fieldName, value })
           return updatedState
         },
         () => map(f => f().fork(() => {}, result => this.setState(result)), effects) // eslint-disable-line comma-dangle

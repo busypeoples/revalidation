@@ -21,10 +21,10 @@ import { UPDATE_FIELD, UPDATE_ALL } from '../constants'
  * @returns {[Object, Array]}
  */
 export default function updateFormValues([state, effects]: StateEffects, type: Array<string>, enhancedProps: EnhancedProps) {
-  const { name = '', value } = enhancedProps
+  const { name = [], value } = enhancedProps
 
   const updateState = cond([
-    [contains(UPDATE_FIELD), always([assocPath(['form', name], value, state), effects])],
+    [contains(UPDATE_FIELD), always([assocPath(['form', ...name], value, state), effects])],
     [contains(UPDATE_ALL), always([assoc('form', value, state), effects])],
     [T, always([state, effects])],
   ])

@@ -20,7 +20,7 @@ describe('updaters/updateAsyncErrors', () => {
     const expected = [{form: {name: 'foobar'}, asyncErrors: {}}, []]
 
     deepEqual(expected, updateAsyncErrors([{form: {name: 'foobar'}, asyncErrors: {}}, []], VALIDATE_FIELD, {
-      name: 'name'
+      name: ['name']
     }))
   })
 
@@ -29,7 +29,7 @@ describe('updaters/updateAsyncErrors', () => {
 
     const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foobar'}, asyncErrors: {}}, []], VALIDATE_FIELD, {
       asyncRules,
-      name: 'name',
+      name: ['name'],
       value: 'foobar',
     })
 
@@ -45,7 +45,7 @@ describe('updaters/updateAsyncErrors', () => {
 
     const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'bar'}, asyncErrors: {}}, []], VALIDATE_FIELD, {
       asyncRules,
-      name: 'name',
+      name: ['name'],
       value: 'foo',
     })
 
@@ -61,7 +61,7 @@ describe('updaters/updateAsyncErrors', () => {
 
     const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foo'}, asyncErrors: {}}, []], UPDATE_FIELD, {
       asyncRules,
-      name: 'name',
+      name: ['name'],
       value: 'foo',
     })
 
@@ -74,7 +74,7 @@ describe('updaters/updateAsyncErrors', () => {
     const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foobar'}, asyncErrors: {}}, []], VALIDATE_FIELD, {
       asyncRules,
       validateSingle: true,
-      name: 'name',
+      name: ['name'],
       value: 'foobar',
     })
 
@@ -141,7 +141,7 @@ describe('updaters/updateAsyncErrors', () => {
 
     const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foo', random: 'random'}, asyncErrors: {}}, []], UPDATE_FIELD, {
       asyncRules,
-      name: 'name',
+      name: ['name'],
       value: 'foo',
     })
 

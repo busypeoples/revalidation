@@ -3,6 +3,7 @@
 import Task from 'data.task'
 import {
   assoc,
+  assocPath,
   concat,
   contains,
   keys,
@@ -59,7 +60,7 @@ export default function updateAsyncErrors(
   [state, effects]: StateEffects,
   type: Array<string>,
   {
-    name = '',
+    name = [],
     value,
     asyncRules,
   }: EnhancedProps // eslint-disable-line comma-dangle, indent
@@ -68,9 +69,9 @@ export default function updateAsyncErrors(
 
   if (or(contains(VALIDATE_FIELD, type), (contains(VALIDATE_FIELD_ASYNC, type)))
     && prop(name, asyncRules)
-    && (isValid(pathOr([], ['errors', name], state)))) {
+    && (isValid(pathOr([], ['errors', ...name], state)))) {
     const updatedState = assoc('pending', true, state)
-    const promises = createLazyPromises(asyncRules[name], value, prop('form', state))
+    const promises = createLazyPromises(path([...name], asyncRules), value, prop('form', state))
 
     const runPromises = () => sequence(Task.of, values(promises))
       .map(result => {
@@ -78,7 +79,7 @@ export default function updateAsyncErrors(
         return (prevState) => ({
           ...prevState,
           pending: false,
-          asyncErrors: assoc(name, asyncErrors, prop('asyncErrors', prevState)),
+          asyncErrors: assocPath([...name], asyncErrors, prop('asyncErrors', prevState)),
         })
       })
 

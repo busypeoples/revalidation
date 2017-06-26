@@ -7,7 +7,7 @@ describe('updaters/updateFormValues', () => {
 
   it('should change the field value according to the provided value when an input has been updated', () => {
     const expected = [{form: {name: 'bar'}}, []]
-    const result = updateFormValues([{form:{name: 'foo'}}, []], UPDATE_FIELD, {name: 'name', value: 'bar'})
+    const result = updateFormValues([{form:{name: 'foo'}}, []], UPDATE_FIELD, {name: ['name'], value: 'bar'})
     deepEqual(expected, result)
   })
 

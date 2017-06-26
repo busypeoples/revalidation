@@ -1,6 +1,6 @@
 export type Rule = Array<Function, string>
 export type EnhancedProps = {
-  name?: string,
+  name?: string|Array<string|number>,
   value?: any,
   validateSingle?: boolean,
   instantValidation?: boolean,
