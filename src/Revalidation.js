@@ -8,6 +8,7 @@ import {
   keys,
   map,
   prop,
+  propOr,
   reduce,
   zipObj,
 } from 'ramda'
@@ -82,7 +83,7 @@ function revalidation(
     constructor(props) {
       super(props)
 
-      const form = prop('initialState', props)
+      const form = propOr([], 'initialState', props)
       const initErrors = initializeErrors(keys(form))
 
       this.state = {
