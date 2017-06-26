@@ -17,7 +17,7 @@ const displayErrors = (errorMsgs) =>
   isValid(errorMsgs) ? null : <div className='error'>{errorMsgs[0]}</div>
 
 const Form = ({
-  reValidation: { form, validate, errors = {}, validateAll },
+  revalidation: { form, validate, errors = {}, validateAll },
   onSubmit,
 }) =>
   <div className='form'>
@@ -52,7 +52,7 @@ describe('revalidation', () => {
       />,
     )
     const output = renderer.getRenderOutput()
-    output.props.reValidation.validateAll(output.props.onSubmit)
+    output.props.revalidation.validateAll(output.props.onSubmit)
     equal(wasCallbackCalled, false)
   })
 })

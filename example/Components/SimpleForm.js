@@ -8,7 +8,7 @@ import createErrorMessage from './createErrorMessage'
 
 const { getValue } = helpers
 
-const Form = ({ reValidation: { form, updateValue, valid, errors = {}, validateAll }, onSubmit, disableButtonOption = false }) =>
+const Form = ({ revalidation: { form, updateValue, valid, errors = {}, validateAll }, onSubmit, disableButtonOption = false }) =>
   (
   <div className='form'>
     <div className='formGroup'>

@@ -18,7 +18,7 @@ const isUnusedUserName = (username) => get(username)
   .then(({ data }) => !data.exists)
 
 const SubmitForm = ({
-  reValidation: { form, updateValue, updateState, valid, asyncErrors, errors, validateAll, pending, debounce },
+  revalidation: { form, updateValue, updateState, valid, asyncErrors, errors, validateAll, pending, debounce },
   onSubmit,
   }) => {
   return (

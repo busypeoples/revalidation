@@ -34,7 +34,7 @@ Revalidation doesn't abstract away the form handling itself. The only configurat
 `instantValidation`, while the first enables to define if the predicates functions are against all fields or only that one updated,
 the latter enables to turn dynamic validation on and off all together. This is it. Everything is up to the form implementer.
 
-__Revalidation__ enhances the wrapped Component by passing a `reValidation` prop containing a number of properties and functions
+__Revalidation__ enhances the wrapped Component by passing a `revalidation` prop containing a number of properties and functions
 to manage the state. There are no automatic field updates, validations or onsubmit actions, Revalidation doesn't how 
 the form is implemented or how it should handlde user interactions.
 
@@ -182,7 +182,7 @@ const enhancedForm = revalidation(Form)
 
 ```
 
-This enables us to rewrite our Form component, which accepts a ___reValidation___ prop now.
+This enables us to rewrite our Form component, which accepts a ___revalidation___ prop now.
 
 ```js
 
@@ -193,7 +193,7 @@ const displayErrors = (errorMsgs) =>
 
 const getValue = e => e.target.value
 
-const Form = ({ reValidation : {form, updateValue, updateState, valid, errors = {}, validateAll}, onSubmit }) =>
+const Form = ({ revalidation : {form, updateValue, updateState, valid, errors = {}, validateAll}, onSubmit }) =>
   (
     <div className='form'>
       <div className='formGroup'>

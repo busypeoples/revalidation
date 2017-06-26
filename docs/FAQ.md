@@ -1,10 +1,10 @@
 # FAQ
 
 #### How can I disable the submit button when initially rendering the form with empty values?
-Revalidation provides a computed `valid` property when passing in the __reValidation__ prop. 
+Revalidation provides a computed `valid` property when passing in the __revalidation__ prop. 
 Even when the form itself contains no errors yet, `valid` has the actual validation result.
 ```js
-const Form = ({ reValidation : {form, valid, errors = {}, validateAll}, onSubmit }) =>
+const Form = ({ revalidation : {form, valid, errors = {}, validateAll}, onSubmit }) =>
   (
     <div className='form'>
        {/* ...form fields */} 
@@ -64,10 +64,10 @@ const EnhancedForm = revalidation(Form)
 ```
 
 #### How can I validate all fields at once?
-Revalidation provides a `validateAll` function via the __reValidation__ prop.
+Revalidation provides a `validateAll` function via the __revalidation__ prop.
 
 ```js
-const Form = ({ reValidation : {form, valid, errors = {}, validateAll}, onSubmit }) =>
+const Form = ({ revalidation : {form, valid, errors = {}, validateAll}, onSubmit }) =>
   (
     <div className='form'>
        {/* ...form fields */} 
@@ -79,11 +79,11 @@ const Form = ({ reValidation : {form, valid, errors = {}, validateAll}, onSubmit
 ```
 
 #### How can I define a callback as soon as a validation is successful?
-Revalidation provides a `validateAll` function via the __reValidation__ prop. 
+Revalidation provides a `validateAll` function via the __revalidation__ prop. 
 `validateAll` accepts a callback function as well as any data as arguments. 
 If the validation is successful Revalidation will call the callback with either the provided data or the current form values.
 ```js
-const Form = ({ reValidation : {form, valid, errors = {}, validateAll}, onSubmit }) =>
+const Form = ({ revalidation : {form, valid, errors = {}, validateAll}, onSubmit }) =>
   (
     <div className='form'>
        {/* ...form fields */} 
@@ -121,7 +121,7 @@ Once a validation has run at some point inside the form, the `error` object will
 
 Now you can do a manual error check per field basis and render the error message accordingly.
 ```js
-const Form = ({ reValidation : {form, validate, errors = {}, validateAll}, onSubmit }) =>
+const Form = ({ revalidation : {form, validate, errors = {}, validateAll}, onSubmit }) =>
   (
     <div className='form'>
       <div className='formGroup'>
@@ -134,10 +134,10 @@ const Form = ({ reValidation : {form, validate, errors = {}, validateAll}, onSub
 
 
 #### How can I pass the current form values to a callback function even when the state is not valid?
-Define a callback function and pass in the current form state provided via the __reValidation__ `form` property.
+Define a callback function and pass in the current form state provided via the __revalidation__ `form` property.
 
 ```js
-const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}, ownCallback }) =>
+const Form = ({ revalidation : {form, validate, valid, errors = {}, validateAll}, ownCallback }) =>
   (
     <div className='form'>
       <div className='formGroup'>
@@ -162,7 +162,7 @@ Revalidation only manages and validates the actual form state and provides the d
 ```js
 const getValue = e => e.target.value
 
-const Form = ({ reValidation : {form, validate, errors = {}, validateAll}, onSubmit }) =>
+const Form = ({ revalidation : {form, validate, errors = {}, validateAll}, onSubmit }) =>
   (
     <div className='form'>
       <div className='formGroup'>

@@ -39,14 +39,14 @@ const runUpdates = (updateFns, state, type, enhancedProps) => reduce((updatedSta
 /**
  * Maps an empty array to every item of the list and returns a map representing the items as keys
  *
- * @param {Array} form a collection of keys ['a', 'b', 'c']
+ * @param {Array} col a collection of keys ['a', 'b', 'c']
  * @returns {Array}
  * @example
  *
  *    initializeErrors(['a', 'b']) //=> {a: [], b: []}
  *
  */
-const initializeErrors = form => zipObj(form, map(always([]), form))
+const initializeErrors = col => zipObj(col, map(always([]), col))
 
 /**
  * revalidation expects a React Component and returns a React Component containing additional functions and props
@@ -164,7 +164,7 @@ function revalidation(
       const { rules, asyncRules, initialState, updateForm, validateSingle, instantValidation, ...rest } = this.props
       const valid = isValid(validate(rules, form)) && isValid(errors)
 
-      const reValidation = {
+      const revalidationProp = {
         form,
         errors,
         asyncErrors,
@@ -179,7 +179,7 @@ function revalidation(
 
       return createElement(Component, {
         ...rest,
-        reValidation,
+        revalidation: revalidationProp,
       })
     }
   }

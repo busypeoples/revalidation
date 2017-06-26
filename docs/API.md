@@ -11,7 +11,7 @@ Creates an enhanced React Component containing validation and state keeping capa
 
 #### &lt;HigherOrderComponentForm />
 
-`Higher Order React Component`: The provided component will be enhanced with a [`reValidation`](#revalidation) prop.
+`Higher Order React Component`: The provided component will be enhanced with a [`revalidation`](#revalidation) prop.
 
 
 
@@ -62,7 +62,7 @@ const displayErrors = (errorMsgs) =>
 
 const getValue = e => e.target.value
 
-const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}, onSubmit }) =>
+const Form = ({ revalidation : {form, validate, valid, errors = {}, validateAll}, onSubmit }) =>
   (
     <div className='form'>
       <div className='formGroup'>
@@ -113,17 +113,17 @@ const validationRules = {
 
 ```
 
-#### reValidation 
-An additional prop `reValidation` is provided to the enhanced component.
+#### revalidation 
+An additional prop `revalidation` is provided to the enhanced component.
 
-The following properties are provided by reValidation.
+The following properties are provided by revalidation.
 
 - __`form`__ *(Object)*: 
     
     Containing the current form values. f.e. input field name can be accessed via `form.name`
 
     ```js
-        const Form = ({ reValidation : {form, onSubmit }) =>
+        const Form = ({ revalidation : {form, onSubmit }) =>
           (
             <div className='form'>
               <div className='formGroup'>
