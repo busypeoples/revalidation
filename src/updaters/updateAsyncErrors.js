@@ -8,7 +8,7 @@ import {
   keys,
   map,
   mapObjIndexed,
-  mergeDeepWith,
+  or,
   path,
   prop,
   pathOr,
@@ -20,7 +20,7 @@ import {
 
 import isValid from '../utils/isValid'
 import type { EnhancedProps, StateEffects } from './types'
-import { VALIDATE_FIELD, VALIDATE_ALL } from '../constants'
+import { VALIDATE_FIELD, VALIDATE_FIELD_ASYNC, VALIDATE_ALL } from '../constants'
 
 /**
  * Converts a list of promises into a list of Tasks that when run will either return null or the error message
@@ -32,7 +32,13 @@ import { VALIDATE_FIELD, VALIDATE_ALL } from '../constants'
  */
 const createLazyPromises = (rules: Array<Function>, value: any, form: Object): Array<Function> =>
   map(([promise, errorMsg]) => new Task((rej, res) => {
-    promise(value, form).then(valid => res(valid ? null : errorMsg), rej)
+    promise(value, form).then(valid =>
+      res(valid
+        ? null
+        : typeof errorMsg === 'function'
+          ? errorMsg(value)
+          : errorMsg // eslint-disable-line comma-dangle
+      ), rej)
   }), rules)
 
 /**
@@ -60,7 +66,7 @@ export default function updateAsyncErrors(
 ) {
   if (!asyncRules) return [state, effects]
 
-  if (contains(VALIDATE_FIELD, type)
+  if (or(contains(VALIDATE_FIELD, type), (contains(VALIDATE_FIELD_ASYNC, type)))
     && prop(name, asyncRules)
     && (isValid(pathOr([], ['errors', name], state)))) {
     const updatedState = assoc('pending', true, state)
@@ -72,7 +78,7 @@ export default function updateAsyncErrors(
         return (prevState) => ({
           ...prevState,
           pending: false,
-          errors: assoc(name, concat(pathOr([], ['errors', name], prevState), asyncErrors), prop('errors', prevState)),
+          asyncErrors: assoc(name, asyncErrors, prop('asyncErrors', prevState)),
         })
       })
 
@@ -90,7 +96,7 @@ export default function updateAsyncErrors(
         return (prevState) => ({
           ...prevState,
           pending: false,
-          errors: mergeDeepWith(concat, prop('errors', prevState), asyncErrors),
+          asyncErrors,
         })
       })
 

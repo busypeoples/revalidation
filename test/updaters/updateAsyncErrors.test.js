@@ -17,60 +17,61 @@ const asyncRules = {
 describe('updaters/updateAsyncErrors', () => {
 
   it('should skip validation when no asyncRules are defined', () => {
-    const expected = [{form: {name: 'foobar'}, errors: {}}, []]
+    const expected = [{form: {name: 'foobar'}, asyncErrors: {}}, []]
 
-    deepEqual(expected, updateAsyncErrors([{form: {name: 'foobar'}, errors: {}}, []], VALIDATE_FIELD, {
+    deepEqual(expected, updateAsyncErrors([{form: {name: 'foobar'}, asyncErrors: {}}, []], VALIDATE_FIELD, {
       name: 'name'
     }))
   })
 
-  it('should return an empty array when field value is valid, asyncRules are defined and action=VALIDATE_FIELD', () => {
-    const expected = {form: {name: 'foobar'}, pending: false, errors: { name: [] }}
+  it('should return an empty array when field value is valid, asyncRules are defined and action=VALIDATE_FIELD', (done) => {
+    const expected = {form: {name: 'foobar'}, pending: false, asyncErrors: { name: [] }}
 
-    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foobar'}, errors: {}}, []], VALIDATE_FIELD, {
+    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foobar'}, asyncErrors: {}}, []], VALIDATE_FIELD, {
       asyncRules,
       name: 'name',
       value: 'foobar',
     })
 
     return runPromises().fork(() => {}, result => {
-      deepEqual(expected, result({form: {name: 'foobar'}, errors: {}}))
+      deepEqual(expected, result({form: {name: 'foobar'}, asyncErrors: {}}))
+      done()
     })
 
   })
 
-  it('should return an array containing the error messages when field value is invalid', () => {
-    const expected = {form: {name: 'bar'}, pending: false, errors: {name: ['Minimum length is four.']}}
+  it('should return an array containing the error messages when field value is invalid', (done) => {
+    const expected = {form: {name: 'bar'}, pending: false, asyncErrors: {name: ['Minimum length is four.']}}
 
-    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'bar'}, errors: {}}, []], VALIDATE_FIELD, {
+    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'bar'}, asyncErrors: {}}, []], VALIDATE_FIELD, {
       asyncRules,
       name: 'name',
       value: 'foo',
     })
 
-    return runPromises().fork(() => {}, result => {
-      deepEqual(expected, result({form: {name: 'bar'}, errors: {}}))
+    runPromises().fork(() => {}, result => {
+      deepEqual(expected, result({form: {name: 'bar'}, asyncErrors: {}}))
+      done()
     })
 
   })
 
   it('should skip validating when action=UPDATE_FIELD', () => {
-    const expected = {form: {name: 'foo'}, pending: false, errors: {}}
+    const expected = {form: {name: 'foo'}, pending: false, asyncErrors: {}}
 
-    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foo'}, errors: {}}, []], UPDATE_FIELD, {
+    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foo'}, asyncErrors: {}}, []], UPDATE_FIELD, {
       asyncRules,
       name: 'name',
       value: 'foo',
     })
 
     equal(null, runPromises)
-
   })
 
-  it('should return an empty array when field value is valid and action=VALIDATE_FIELD', () => {
-    const expected = {form: {name: 'foobar'}, pending: false, errors: {name: []}}
+  it('should return an empty array when field value is valid and action=VALIDATE_FIELD', (done) => {
+    const expected = {form: {name: 'foobar'}, pending: false, asyncErrors: {name: []}}
 
-    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foobar'}, errors: {}}, []], VALIDATE_FIELD, {
+    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foobar'}, asyncErrors: {}}, []], VALIDATE_FIELD, {
       asyncRules,
       validateSingle: true,
       name: 'name',
@@ -78,40 +79,42 @@ describe('updaters/updateAsyncErrors', () => {
     })
 
     return runPromises().fork(() => {}, result => {
-      deepEqual(expected, result({form: {name: 'foobar'}, errors: {}}))
+      deepEqual(expected, result({form: {name: 'foobar'}, asyncErrors: {}}))
+      done()
     })
   })
 
-  it('should validate all fields when the complete form state has been updated', () => {
+  it('should validate all fields when the complete form state has been updated', (done) => {
     const expected = {
       form: {name: 'foo', random: 'random'},
       pending: false,
-      errors: {name: ['Minimum length is four.'], random: ['Minimum length is seven.']}
+      asyncErrors: {name: ['Minimum length is four.'], random: ['Minimum length is seven.']}
     }
 
-    const [state, [runPromises]]  = updateAsyncErrors([{form: {name: 'foo', random: 'random'}, errors: {}}, []], VALIDATE_ALL, {
+    const [state, [runPromises]]  = updateAsyncErrors([{form: {name: 'foo', random: 'random'}, asyncErrors: {}}, []], VALIDATE_ALL, {
       asyncRules,
     })
 
     return runPromises().fork(() => {}, result => {
-      console.log(result)
-      deepEqual(expected, result({form: {name: 'foo', random: 'random'}, errors: {}}))
+      deepEqual(expected, result({form: {name: 'foo', random: 'random'}, asyncErrors: {}}))
+      done()
     })
   })
 
-  it('should validate all fields when action=VALIDATE_ALL', () => {
+  it('should validate all fields when action=VALIDATE_ALL', (done) => {
     const expected  = {
       form: {name: 'foo', random: 'random'},
       pending: false,
-      errors: {name: ['Minimum length is four.'], random: ['Minimum length is seven.']},
+      asyncErrors: {name: ['Minimum length is four.'], random: ['Minimum length is seven.']},
     }
 
-    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foo', random: 'random'}, errors: {}}, []], VALIDATE_ALL, {
+    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foo', random: 'random'}, asyncErrors: {}}, []], VALIDATE_ALL, {
       asyncRules,
     })
 
     return runPromises().fork(() => {}, result => {
-      deepEqual(expected, result({form: {name: 'foo', random: 'random'}, errors: {}}))
+      deepEqual(expected, result({form: {name: 'foo', random: 'random'}, asyncErrors: {}}))
+      done()
     })
   })
 
@@ -119,10 +122,10 @@ describe('updaters/updateAsyncErrors', () => {
     const expected = {
       form: {name: 'foo', random: 'random'},
       pending: false,
-      errors: {},
+      asyncErrors: {},
     }
 
-    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foo', random: 'random'}, errors: {}}, []], UPDATE_ALL, {
+    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foo', random: 'random'}, asyncErrors: {}}, []], UPDATE_ALL, {
       asyncRules,
     })
 
@@ -133,10 +136,10 @@ describe('updaters/updateAsyncErrors', () => {
     const expected = {
       form: {name: 'foo', random: 'random'},
       pending: false,
-      errors: {name: ['Some Sync Error']},
+      asyncErrors: {name: ['Some Sync Error']},
     }
 
-    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foo', random: 'random'}, errors: {}}, []], UPDATE_FIELD, {
+    const [state, [runPromises]] = updateAsyncErrors([{form: {name: 'foo', random: 'random'}, asyncErrors: {}}, []], UPDATE_FIELD, {
       asyncRules,
       name: 'name',
       value: 'foo',

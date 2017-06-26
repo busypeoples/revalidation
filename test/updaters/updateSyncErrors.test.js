@@ -10,7 +10,7 @@ const rules = {
 
 describe('updaters/updateSyncErrors', () => {
 
-  it('should return an empty array when field value is valid and validateSingle is set to true', () => {
+  it('should return an empty array when field value is valid', () => {
     const expected = [{form: {name: 'foobar'}, errors: {name: []}}, []]
     const result = updateSyncErrors([{form: {name: 'foobar'}, errors: {}}, []], [VALIDATE_FIELD], {
       rules,
@@ -37,7 +37,7 @@ describe('updaters/updateSyncErrors', () => {
     deepEqual(expected, result)
   })
 
-  it('should return an empty array when field value is valid and validateSingle is set to true and a validate field has been triggered', () => {
+  it('should return an empty array when field value is valid and action=VALIDATE_FIELD', () => {
     const expected = [{form: {name: 'foobar'}, errors: {name: []}}, []]
     const result = updateSyncErrors([{form: {name: 'foobar'}, errors: {}}, []], [VALIDATE_FIELD], {
       rules,
@@ -57,7 +57,7 @@ describe('updaters/updateSyncErrors', () => {
     deepEqual(expected, result)
   })
 
-  it('should validate all fields a validate all actions has been triggered', () => {
+  it('should validate all fields when action=VALIDATE_ALL', () => {
     const expected = [{
       form: {name: 'foo', random: 'random'},
       errors: {name: ['Minimum length is four.'], random: ['Minimum length is seven.']}
@@ -68,7 +68,7 @@ describe('updaters/updateSyncErrors', () => {
     deepEqual(expected, result)
   })
 
-  it('should skip validation when instantValidation is false and the action is not validate all', () => {
+  it('should skip validation when action=UPDATE_ALL', () => {
     const expected = [{
       form: {name: 'foo', random: 'random'},
       errors: {}
