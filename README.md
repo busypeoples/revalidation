@@ -201,7 +201,7 @@ const Form = ({ revalidation : {form, onChange, updateState, valid, errors = {},
         type='text'
         className={isValid(errors.name) ? '' : 'error'}
         value={form.name}
-        onChange={compose(updateValue('name'), getValue)}
+        onChange={compose(onChange('name'), getValue)}
       />
       <div className='errorPlaceholder'>{ createErrorMessage(errors.name) }</div>
     </div>
@@ -211,7 +211,7 @@ const Form = ({ revalidation : {form, onChange, updateState, valid, errors = {},
         type='text'
         className={isValid(errors.random) ? '' : 'error'}
         value={form.random}
-        onChange={compose(updateValue('random'), getValue)}
+        onChange={compose(onChange('random'), getValue)}
       />
       <div className='errorPlaceholder'>{ createErrorMessage(errors.random) }</div>
     </div>
@@ -222,7 +222,7 @@ const Form = ({ revalidation : {form, onChange, updateState, valid, errors = {},
 export default revalidation(Form)
 ```
 
-reValidtion returns an object containing:
+revalidtion returns an object containing:
 - __form__: form values
 - __onChange__: a function expecting form name and value, f.e. `onChange('name', 'foo')` 
 - __updateState__: a function expecting all the form values, f.e. Useful when wanting to reset the form. Depending on the setting either a validation will occur or not. 
@@ -279,7 +279,9 @@ an input field if any synchronous predicates have failed already. Needed conside
 (dynamically or on submit) and how often to trigger an async validation (immediately on every change or debounced) 
 
 
-Also check the [example](https://github.com/25th-floor/revalidation/tree/master/example) for more detailed insight into how to build more advanced forms, f.e. validating dependent fields.
+More: Revalidation also works with deep nested data structure (see the deep nested data example)
+
+check the [example](https://github.com/25th-floor/revalidation/tree/master/example) for more detailed insight into how to build more advanced forms, f.e. validating dependent fields.
 
 Clone the repository go to the examples folder and run the following commands:
 ```js
