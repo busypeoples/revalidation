@@ -18,7 +18,7 @@ const isUnusedUserName = (username) => get(username)
   .then(({ data }) => !data.exists)
 
 const SubmitForm = ({
-  revalidation: { form, updateValue, updateState, valid, asyncErrors, errors, validateAll, pending, debounce },
+  revalidation: { form, updateValue, updateState, valid, asyncErrors, errors, validateAll, loading, debounce },
   onSubmit,
   }) => {
   return (
@@ -36,7 +36,7 @@ const SubmitForm = ({
       </div>
       <div>
         <p>valid? {valid.toString()}</p>
-        <p>pending? {pending.toString()}</p>
+        <p>loading? {loading.toString()}</p>
         <p>valid? {valid.toString()}</p>
         <p>errors? {JSON.stringify(errors, null ,4)}</p>
         <p>asyncErrors? {JSON.stringify(asyncErrors, null ,4)}</p>
