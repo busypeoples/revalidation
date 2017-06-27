@@ -187,37 +187,39 @@ This enables us to rewrite our Form component, which accepts a ___revalidation__
 
 ```js
 
-const getValue = e => e.target.value
-
-const displayErrors = (errorMsgs) => 
+const createErrorMessage = (errorMsgs) => 
   isValid(errorMsgs) ? null : <div className='error'>{head(errorMsgs)}</div>
 
 const getValue = e => e.target.value
 
 const Form = ({ revalidation : {form, onChange, updateState, valid, errors = {}, validateAll}, onSubmit }) =>
   (
-    <div className='form'>
-      <div className='formGroup'>
-        <label>Name</label>
-        <input
-          type='text'
-          value={form.name}
-          onChange={e => validate('name', getValue(e))}
-        />
-        { displayErrors(errors.name) }
-      </div>
-      <div className='formGroup'>
-        <label>Random</label>
-        <input
-          type='text'
-          value={form.random}
-          onChange={e => (validate('random', getValue(e))}
-        />
-        { displayErrors(errors.random) }
-      </div>
-      <button onClick={() => validateAll(onSubmit)}>Submit</button>
+  <div className='form'>
+    <div className='formGroup'>
+      <label>Name</label>
+      <input
+        type='text'
+        className={isValid(errors.name) ? '' : 'error'}
+        value={form.name}
+        onChange={compose(updateValue('name'), getValue)}
+      />
+      <div className='errorPlaceholder'>{ createErrorMessage(errors.name) }</div>
     </div>
+    <div className='formGroup'>
+      <label>Random</label>
+      <input
+        type='text'
+        className={isValid(errors.random) ? '' : 'error'}
+        value={form.random}
+        onChange={compose(updateValue('random'), getValue)}
+      />
+      <div className='errorPlaceholder'>{ createErrorMessage(errors.random) }</div>
+    </div>
+    <button onClick={() => validateAll(onSubmit)}>Submit</button>
+  </div>
   )
+
+export default revalidation(Form)
 ```
 
 reValidtion returns an object containing:
