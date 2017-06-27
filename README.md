@@ -7,16 +7,6 @@ __Revalidation__ lets you write your forms as __stateless function components__,
 as well as the validation. Revalidation also works with classes and will support other React-like libraries like __Preact__ or __Inferno__
 in the future.
 
-
-### Getting started
-
-Install revalidation via npm or yarn.
-
-
-```
-npm install --save revalidation
-```
-
 ### Use Case
 Form handling sounds trivial sometimes, but let’s just take a second to think about what is involved in the process. 
 We need to define form fields, we need to validate the fields, 
@@ -92,7 +82,18 @@ should return
 ```
 
 Revalidate does exactly that, by defining an initial state and the validation rules it takes care of updating and validating 
-any React Form Component.
+any React Form Component. Revalidate also doesn't know how your form is built or if it is even a form for that matter. 
+This also means, a form library can be built on top Revalidation, making it a sort of meta form library.
+
+
+### Getting started
+
+Install revalidation via npm or yarn.
+
+
+```
+npm install --save revalidation
+```
 
 ### Example
 
