@@ -111,6 +111,10 @@ export default class AdvancedDeepNestedData extends React.Component {
           levelTwo: {
             random: '',
           }
+        },
+        someOtherValue: 'Not Used',
+        someOtherNestedStructure: {
+          otherNested: 'Not Used Either'
         }
       }
     }
