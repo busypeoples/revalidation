@@ -177,7 +177,7 @@ function revalidation(
         form,
         errors,
         asyncErrors,
-        pending,
+        loading: pending,
         valid,
         debounce: debounceFns,
         updateState: this.updateState,
