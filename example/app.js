@@ -5,6 +5,7 @@ import { render } from 'react-dom'
 
 import AdvancedInstantValidation from './Components/AdvancedInstantValidation'
 import AdvancedNoInstantValidation from './Components/AdvancedNoInstantValidation'
+import AdvancedDeepNestedData from './Components/AdvancedDeepNestedData'
 import Basic from './Components/Basic'
 import BasicWithIsValid from './Components/BasicWithIsValid'
 import AsyncForm from './Components/AsyncForm'
@@ -46,9 +47,11 @@ class Root extends React.Component {
 
       case 4: return <AdvancedInstantValidation onSubmit={this.onSubmit} updateForm={updatedValues} />
 
-      case 5: return <AsyncForm onSubmit={this.onSubmit} />
+      case 5: return <AdvancedDeepNestedData onSubmit={this.onSubmit} updateForm={updatedValues} />
 
-      default: return <Basic onSubmit={this.onSubmit} />
+      case 6: return <AsyncForm onSubmit={this.onSubmit} />
+
+      default: return <AdvancedDeepNestedData onSubmit={this.onSubmit} updateForm={updatedValues} />
     }
   }
 
@@ -60,16 +63,17 @@ class Root extends React.Component {
       {id: 2, name: 'Basic (Disable Submit Button if Invalid)'},
       {id: 3, name: 'Advanced (No dynamic prop updates validation)'},
       {id: 4, name: 'Advanced (Dynamic prop updates validation)'},
-      {id: 5, name: 'Async Example'},
+      {id: 5, name: 'Advanced (Deep Nested Input Data)'},
+      {id: 6, name: 'Async Example'},
     ]
 
     const selectedForm = this.getForm(example, formValues)
     const getClassName = id => (example === id) ? 'selected' : ''
     const getConfig = id => (id === 1)
-      ? { validateSingle: true, instantValidation: true }
+      ? { validateSingle: true, validateOnChange: true }
       : (id === 3)
-        ? { validateSingle: false, instantValidation: false }
-        : { validateSingle: false, instantValidation: true }
+        ? { validateSingle: false, validateOnChange: false }
+        : { validateSingle: false, validateOnChange: true }
 
     return (
       <div id="main">
@@ -95,7 +99,7 @@ class Root extends React.Component {
             <pre>{message}</pre>
           </div>
           {selectedForm}
-          { (example === 3 || example === 4) && <button onClick={this.updateProps}>Update Props</button> }
+          { ([3, 4].indexOf(example) !== -1) && <button onClick={this.updateProps}>Update Props</button> }
         </div>
       </div>
     )

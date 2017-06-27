@@ -7,16 +7,6 @@ __Revalidation__ lets you write your forms as __stateless function components__,
 as well as the validation. Revalidation also works with classes and will support other React-like libraries like __Preact__ or __Inferno__
 in the future.
 
-
-### Getting started
-
-Install revalidation via npm or yarn.
-
-
-```
-npm install --save revalidation
-```
-
 ### Use Case
 Form handling sounds trivial sometimes, but let’s just take a second to think about what is involved in the process. 
 We need to define form fields, we need to validate the fields, 
@@ -31,21 +21,21 @@ local form component state and validating against a defined set of rules. There 
 little is hidden away from user land. This approach has pros and cons obviously. The benefit we gain, but declaring an initial state 
 and a set of rules is that we can reuse parts of the spec and compose those specs to bigger specs. The downside is that 
 Revalidation doesn't abstract away the form handling itself. The only configurations available are `validateSingle` and
-`instantValidation`, while the first enables to define if the predicates functions are against all fields or only that one updated,
+`validateOnChange`, while the first enables to define if the predicates functions are against all fields or only that one updated,
 the latter enables to turn dynamic validation on and off all together. This is it. Everything is up to the form implementer.
 
-__Revalidation__ enhances the wrapped Component by passing a `reValidation` prop containing a number of properties and functions
+__Revalidation__ enhances the wrapped Component by passing a `revalidation` prop containing a number of properties and functions
 to manage the state. There are no automatic field updates, validations or onsubmit actions, Revalidation doesn't how 
 the form is implemented or how it should handlde user interactions.
 
 Let's see an example to get a better idea on how this could work. 
 For example we would like to define a number of validation rules for two inputs, _name_ and _random_.
-More often that not, inside an `updateValue(name, value)` f.e, we might start to hard code some rules and verify them against 
+More often that not, inside an `onChange(name, value)` f.e, we might start to hard code some rules and verify them against 
 the provided input:
 
 ```js
 
-updateValue(name, value) {
+onChange(name, value) {
   if (name === 'lastName') {
     if (hasCapitalLetter(lastName)) {
       // then do something 
@@ -92,7 +82,18 @@ should return
 ```
 
 Revalidate does exactly that, by defining an initial state and the validation rules it takes care of updating and validating 
-any React Form Component.
+any React Form Component. Revalidate also doesn't know how your form is built or if it is even a form for that matter. 
+This also means, a form library can be built on top Revalidation, making it a sort of meta form library.
+
+
+### Getting started
+
+Install revalidation via npm or yarn.
+
+
+```
+npm install --save revalidation
+```
 
 ### Example
 
@@ -159,7 +160,7 @@ Revalidation only needs the Component and returns a Higher Order Component accep
 
 - __`singleValue`__ *(Function)*
 
-- __`instantValidation`__: *(Function)*
+- __`validateOnChange`__: *(Function)*
 
 - __`asyncRules`__ *(Object)*
 
@@ -177,12 +178,12 @@ const enhancedForm = revalidation(Form)
   initialState={initialState}
   rules={validationRules}
   validateSingle={true}
-  instantValidation={true}
+  validateOnChange={true}
 />
 
 ```
 
-This enables us to rewrite our Form component, which accepts a ___reValidation___ prop now.
+This enables us to rewrite our Form component, which accepts a ___revalidation___ prop now.
 
 ```js
 
@@ -191,7 +192,7 @@ const createErrorMessage = (errorMsgs) =>
 
 const getValue = e => e.target.value
 
-const Form = ({ reValidation: { form, updateValue, valid, errors = {}, validateAll }, onSubmit, disableButtonOption = false }) =>
+const Form = ({ revalidation : {form, onChange, updateState, valid, errors = {}, validateAll}, onSubmit }) =>
   (
   <div className='form'>
     <div className='formGroup'>
@@ -200,7 +201,7 @@ const Form = ({ reValidation: { form, updateValue, valid, errors = {}, validateA
         type='text'
         className={isValid(errors.name) ? '' : 'error'}
         value={form.name}
-        onChange={compose(updateValue('name'), getValue)}
+        onChange={compose(onChange('name'), getValue)}
       />
       <div className='errorPlaceholder'>{ createErrorMessage(errors.name) }</div>
     </div>
@@ -210,7 +211,7 @@ const Form = ({ reValidation: { form, updateValue, valid, errors = {}, validateA
         type='text'
         className={isValid(errors.random) ? '' : 'error'}
         value={form.random}
-        onChange={compose(updateValue('random'), getValue)}
+        onChange={compose(onChange('random'), getValue)}
       />
       <div className='errorPlaceholder'>{ createErrorMessage(errors.random) }</div>
     </div>
@@ -221,9 +222,9 @@ const Form = ({ reValidation: { form, updateValue, valid, errors = {}, validateA
 export default revalidation(Form)
 ```
 
-reValidtion returns an object containing:
+revalidtion returns an object containing:
 - __form__: form values
-- __updateValue__: a function expecting form name and value, f.e. `updateValue('name', 'foo')` 
+- __onChange__: a function expecting form name and value, f.e. `onChange('name', 'foo')` 
 - __updateState__: a function expecting all the form values, f.e. Useful when wanting to reset the form. Depending on the setting either a validation will occur or not. 
 
     
@@ -268,7 +269,7 @@ const asyncRules = {name: [[isUnusedUserName, 'Username is not available']]}
   asyncRules={asyncRules}
   userNameExists={this.usernameExists}
   validateSingle={true}
-  instantValidation={true}
+  validateOnChange={true}
 />
 
 ```
@@ -278,7 +279,9 @@ an input field if any synchronous predicates have failed already. Needed conside
 (dynamically or on submit) and how often to trigger an async validation (immediately on every change or debounced) 
 
 
-Also check the [example](https://github.com/25th-floor/revalidation/tree/master/example) for more detailed insight into how to build more advanced forms, f.e. validating dependent fields.
+More: Revalidation also works with deep nested data structure (see the deep nested data example)
+
+check the [example](https://github.com/25th-floor/revalidation/tree/master/example) for more detailed insight into how to build more advanced forms, f.e. validating dependent fields.
 
 Clone the repository go to the examples folder and run the following commands:
 ```js

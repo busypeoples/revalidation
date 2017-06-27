@@ -8,7 +8,7 @@ import createErrorMessage from './createErrorMessage'
 
 const { getValue } = helpers
 
-const Form = ({ reValidation: { form, updateValue, errors = {}, validateAll }, onSubmit }) =>
+const Form = ({ revalidation: { form, onChange, errors = {}, validateAll }, onSubmit }) =>
   (
   <div className='form'>
     <div className='formGroup'>
@@ -16,7 +16,7 @@ const Form = ({ reValidation: { form, updateValue, errors = {}, validateAll }, o
       <input
         type='text'
         value={form.name}
-        onChange={compose(updateValue('name'), getValue)}
+        onChange={compose(onChange('name'), getValue)}
       />
       <div className='errorPlaceholder'>{ createErrorMessage(errors.name) }</div>
     </div>
@@ -25,7 +25,7 @@ const Form = ({ reValidation: { form, updateValue, errors = {}, validateAll }, o
       <input
         type='password'
         value={form.password}
-        onChange={compose(updateValue('password'), getValue)}
+        onChange={compose(onChange('password'), getValue)}
       />
       <div className='errorPlaceholder'>{ createErrorMessage(errors.password) }</div>
     </div>
@@ -34,7 +34,7 @@ const Form = ({ reValidation: { form, updateValue, errors = {}, validateAll }, o
       <input
         type='password'
         value={form.repeatPassword}
-        onChange={compose(updateValue('repeatPassword'), getValue)}
+        onChange={compose(onChange('repeatPassword'), getValue)}
       />
       <div className='errorPlaceholder'>{ createErrorMessage(errors.repeatPassword) }</div>
     </div>
@@ -43,7 +43,7 @@ const Form = ({ reValidation: { form, updateValue, errors = {}, validateAll }, o
       <input
         type='text'
         value={form.random}
-        onChange={compose(updateValue('random'), getValue)}
+        onChange={compose(onChange('random'), getValue)}
       />
       <div className='errorPlaceholder'>{ createErrorMessage(errors.random) }</div>
     </div>

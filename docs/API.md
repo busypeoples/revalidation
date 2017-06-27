@@ -11,7 +11,7 @@ Creates an enhanced React Component containing validation and state keeping capa
 
 #### &lt;HigherOrderComponentForm />
 
-`Higher Order React Component`: The provided component will be enhanced with a [`reValidation`](#revalidation) prop.
+`Higher Order React Component`: The provided component will be enhanced with a [`revalidation`](#revalidation) prop.
 
 
 
@@ -28,7 +28,7 @@ Creates an enhanced React Component containing validation and state keeping capa
 
     if you need validation per field you can set the option to true (default is true).
 
-- __`instantValidation`__: *(Function)*: 
+- __`validateOnChange`__: *(Function)*: 
 
     if you need instant validation as soon as props have changed set to true (default is true).
 
@@ -62,7 +62,7 @@ const displayErrors = (errorMsgs) =>
 
 const getValue = e => e.target.value
 
-const Form = ({ reValidation : {form, validate, valid, errors = {}, validateAll}, onSubmit }) =>
+const Form = ({ revalidation : {form, validate, valid, errors = {}, validateAll}, onSubmit }) =>
   (
     <div className='form'>
       <div className='formGroup'>
@@ -113,17 +113,17 @@ const validationRules = {
 
 ```
 
-#### reValidation 
-An additional prop `reValidation` is provided to the enhanced component.
+#### revalidation 
+An additional prop `revalidation` is provided to the enhanced component.
 
-The following properties are provided by reValidation.
+The following properties are provided by revalidation.
 
 - __`form`__ *(Object)*: 
     
     Containing the current form values. f.e. input field name can be accessed via `form.name`
 
     ```js
-        const Form = ({ reValidation : {form, onSubmit }) =>
+        const Form = ({ revalidation : {form, onSubmit }) =>
           (
             <div className='form'>
               <div className='formGroup'>
@@ -146,7 +146,7 @@ The following properties are provided by reValidation.
     <button {...{disabled : !valid}} onClick={() => submit()}>Submit</button>
     ```
 
-- __`updateValue(key, value)`__ *(Function)*: 
+- __`onChange(key, value)`__ *(Function)*: 
 
     Apply any changes to a field value and validate.
     
@@ -154,7 +154,7 @@ The following properties are provided by reValidation.
     <input
         type='text'
         value={form.name}
-        onChange={e => updateValue('name', e.targetValue)}
+        onChange={e => onChange('name', e.targetValue)}
     />
     ```
 
@@ -224,7 +224,7 @@ Use `isValid` to check if errors exist for an input.
   type='text'
   className={isValid(errors.name) ? '' : 'error'}
   value={form.name}
-  onChange={compose(updateValue('name'), getValue)}
+  onChange={compose(onChange('name'), getValue)}
 />
 
 ```

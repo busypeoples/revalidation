@@ -1,5 +1,5 @@
 /* @flow */
-import { UPDATE_FIELD, VALIDATE_FIELD } from '../constants'
+import { UPDATE_FIELD, VALIDATE_FIELD_SYNC, VALIDATE_FIELD_ASYNC } from '../constants'
 
 /**
  * Delay the execution of any asynchronous validations
@@ -15,9 +15,9 @@ export default function debounce(name: string) {
     return function f2(e) {
       e.preventDefault()
       const value = e.target.value
-      fn(name, value, UPDATE_FIELD)
+      fn(name, value, [UPDATE_FIELD, VALIDATE_FIELD_SYNC])
       clearTimeout(timeout)
-      timeout = setTimeout(() => fn(name, value, VALIDATE_FIELD), delay)
+      timeout = setTimeout(() => fn(name, value, [VALIDATE_FIELD_ASYNC]), delay)
     }
   }
 }

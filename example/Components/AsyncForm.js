@@ -18,7 +18,7 @@ const isUnusedUserName = (username) => get(username)
   .then(({ data }) => !data.exists)
 
 const SubmitForm = ({
-  reValidation: { form, updateValue, updateState, valid, errors, validateAll, pending, debounce },
+  revalidation: { form, onChange, updateState, valid, asyncErrors, errors, validateAll, loading, debounce },
   onSubmit,
   }) => {
   return (
@@ -28,14 +28,22 @@ const SubmitForm = ({
         <input
           type="text"
           value={form.name}
-          onChange={debounce.name(updateValue, 1000)}
+          onChange={debounce.name(onChange, 1000)}
         />
         {errors.name && errors.name.map((errMsg, index) => (<div className='error' key={index}>
-          {errMsg}
-        </div>))}
+          {errMsg}</div>))}
+         {asyncErrors.name && <div className='error'>{asyncErrors.name[0]}</div>}
       </div>
-      <p>valid? {valid.toString()}</p>
-      <p>pending? {pending.toString()}</p>
+      <div className="info" style={{padding: '10px'}}>
+        <i>To see the async validation fail type: "foobarbaz"</i>
+      </div>
+      <div>
+        <p>valid? {valid.toString()}</p>
+        <p>loading? {loading.toString()}</p>
+        <p>valid? {valid.toString()}</p>
+        <p>errors? {JSON.stringify(errors, null ,4)}</p>
+        <p>asyncErrors? {JSON.stringify(asyncErrors, null ,4)}</p>
+      </div>
       <button>Submit</button>
 
       <button onClick={() => updateState({ name: '', random: '' })}>Reset</button>
@@ -54,13 +62,13 @@ class SubmitPage extends React.Component<any, any> {
   render() {
     const validationRules = {
       name: [
-        [x => x.length >= 6, 'Minimum length of 6'],
+        [x =>  x && x.length >= 6, 'Minimum length of 6'],
       ],
     }
 
     const asyncValidationRules = {
       name: [
-        [isUnusedUserName, 'Username is not available']
+        [isUnusedUserName, name => `Username ${name} is not available`]
       ]
     }
 
@@ -72,7 +80,7 @@ class SubmitPage extends React.Component<any, any> {
         asyncRules={asyncValidationRules}
         userNameExists={this.usernameExists}
         validateSingle={true}
-        instantValidation={true}
+        validateOnChange={true}
       />
     )
   }

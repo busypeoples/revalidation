@@ -19,7 +19,7 @@ export default class Basic extends React.Component {
           initialState={this.state.form}
           rules={basicValidationRules}
           validateSingle={true}
-          instantValidation={true}
+          validateOnChange={true}
         />
       </div>
     )

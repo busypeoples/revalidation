@@ -1,12 +1,17 @@
 /* @flow */
-/* eslint-disable no-nested-ternary */
+/* eslint-disable no-nested-ternary, no-unneeded-ternary */
 import React, { createElement } from 'react'
 import {
+  always,
   curry,
+  ifElse,
+  is,
   isEmpty,
   keys,
   map,
+  partial,
   prop,
+  propOr,
   reduce,
   zipObj,
 } from 'ramda'
@@ -36,6 +41,21 @@ const runUpdates = (updateFns, state, type, enhancedProps) => reduce((updatedSta
   updateFn(updatedState, type, enhancedProps), [state, []], updateFns)
 
 /**
+ * Maps an empty array to every item of the list and returns a map representing the items as keys
+ * Also works with deep nested data.
+ *
+ * @param {Array} obj the to object to convert
+ * @returns {Array}
+ * @example
+ *
+ *    initializeErrors({'a': null 'b': null}) //=> {a: [], b: []}
+ *
+ *    initializeErrors: [{'a': null, b: {c: {d: null}}}] //=> {'a': [], b: {c: {d: []}}}
+ *
+ */
+const initializeErrors = obj => map(ifElse(is(Object), partial(initializeErrors, []), always([])), obj)
+
+/**
  * revalidation expects a React Component and returns a React Component containing additional functions and props
  * for managing local component state as well validating that state, wrapping the originally provided Component.
  */
@@ -54,23 +74,28 @@ function revalidation(
       rules: Object,
       asyncRules?: Object,
       validateSingle?: boolean,
-      instantValidation?: boolean,
+      validateOnChange?: boolean,
       updateForm?: Object
     }
 
     static defaultProps = {
       initialState: {},
       validateSingle: true,
-      instantValidation: true,
+      validateOnChange: true,
     }
 
     updateFns: Array<Function> = [updateFormValues, updateSyncErrors, updateAsyncErrors]
 
     constructor(props) {
       super(props)
+
+      const form = propOr([], 'initialState', props)
+      const initErrors = initializeErrors(form)
+
       this.state = {
-        form: prop('initialState', props),
-        errors: {},
+        form,
+        errors: initErrors,
+        asyncErrors: initErrors,
         pending: false,
         debounceFns: HigherOrderFormComponent.createDebounceFunctions(prop('initialState', props)),
       }
@@ -99,7 +124,7 @@ function revalidation(
             if (isValid(this.state.errors) && cb) cb(data || this.state.form)
           } else {
             map(f => f().fork(() => {}, x => this.setState(x, () => {
-              if (isValid(this.state.errors) && cb) cb(data || this.state.form)
+              if (isValid(this.state.errors) && isValid(this.state.asyncErrors) && cb) cb(data || this.state.form)
             })), effects)
           }
         } // eslint-disable-line comma-dangle
@@ -109,31 +134,33 @@ function revalidation(
     updateState = (newState: Object) => {
       let effects = []
       let updatedState = []
-      const getType = ({ instantValidation }) =>
-        instantValidation ? [UPDATE_ALL, VALIDATE_ALL] : [UPDATE_ALL]
+      const getType = ({ validateOnChange }) =>
+        validateOnChange ? [UPDATE_ALL, VALIDATE_ALL] : [UPDATE_ALL]
 
       this.setState(
         (state, props) => {
           [updatedState, effects] = runUpdates(this.updateFns, state, getType(props), { ...props, value: newState })
           return updatedState
         },
-        () => map(f => f().fork(() => {}, x => this.setState(x)), effects) // eslint-disable-line comma-dangle
+        () => map(f => f().fork(() => {}, result => this.setState(result)), effects) // eslint-disable-line comma-dangle
       )
     }
 
-    updateValue = curry((name:string, value:any, type: string = null):void => {
+    updateValue = curry((name:string|Array<string|number>, value:any, type: Array<string> = null):void => {
       let effects = []
       let updatedState = []
-      const getType = ({ instantValidation, validateSingle }) =>
-        instantValidation
+      const getType = ({ validateOnChange, validateSingle }) =>
+        validateOnChange
           ? validateSingle
             ? [UPDATE_FIELD, VALIDATE_FIELD]
             : [UPDATE_FIELD, VALIDATE_ALL]
           : [UPDATE_FIELD]
 
+      const fieldName = typeof name === 'string' ? [name] : name
+
       this.setState(
         (state, props) => {
-          [updatedState, effects] = runUpdates(this.updateFns, state, type ? [type] : getType(props), { ...props, name, value })
+          [updatedState, effects] = runUpdates(this.updateFns, state, type ? type : getType(props), { ...props, name: fieldName, value })
           return updatedState
         },
         () => map(f => f().fork(() => {}, result => this.setState(result)), effects) // eslint-disable-line comma-dangle
@@ -141,25 +168,27 @@ function revalidation(
     })
 
     render() {
-      const { form, errors, pending, debounceFns } = this.state
+      const { form, errors, asyncErrors, pending, debounceFns } = this.state
       /* eslint-disable no-unused-vars */
-      const { rules, asyncRules, initialState, updateForm, validateSingle, instantValidation, ...rest } = this.props
+      const { rules, asyncRules, initialState, updateForm, validateSingle, validateOnChange, ...rest } = this.props
       const valid = isValid(validate(rules, form)) && isValid(errors)
 
-      const reValidation = {
+      const revalidationProp = {
         form,
         errors,
-        pending,
+        asyncErrors,
+        loading: pending,
         valid,
         debounce: debounceFns,
         updateState: this.updateState,
-        updateValue: this.updateValue,
+        onChange: this.updateValue,
         validateAll: this.validateAll,
+        settings: { validateOnChange, validateSingle },
       }
 
       return createElement(Component, {
         ...rest,
-        reValidation,
+        revalidation: revalidationProp,
       })
     }
   }

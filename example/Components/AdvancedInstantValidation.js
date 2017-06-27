@@ -19,7 +19,7 @@ export default class AdvancedInstantValidation extends React.Component {
           rules={validationRules}
           updateForm={this.props.updateForm}
           validateSingle={false}
-          instantValidation={true}
+          validateOnChange={true}
         />
     )
   }
