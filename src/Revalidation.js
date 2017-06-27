@@ -74,14 +74,14 @@ function revalidation(
       rules: Object,
       asyncRules?: Object,
       validateSingle?: boolean,
-      instantValidation?: boolean,
+      validateOnChange?: boolean,
       updateForm?: Object
     }
 
     static defaultProps = {
       initialState: {},
       validateSingle: true,
-      instantValidation: true,
+      validateOnChange: true,
     }
 
     updateFns: Array<Function> = [updateFormValues, updateSyncErrors, updateAsyncErrors]
@@ -134,8 +134,8 @@ function revalidation(
     updateState = (newState: Object) => {
       let effects = []
       let updatedState = []
-      const getType = ({ instantValidation }) =>
-        instantValidation ? [UPDATE_ALL, VALIDATE_ALL] : [UPDATE_ALL]
+      const getType = ({ validateOnChange }) =>
+        validateOnChange ? [UPDATE_ALL, VALIDATE_ALL] : [UPDATE_ALL]
 
       this.setState(
         (state, props) => {
@@ -149,8 +149,8 @@ function revalidation(
     updateValue = curry((name:string|Array<string|number>, value:any, type: Array<string> = null):void => {
       let effects = []
       let updatedState = []
-      const getType = ({ instantValidation, validateSingle }) =>
-        instantValidation
+      const getType = ({ validateOnChange, validateSingle }) =>
+        validateOnChange
           ? validateSingle
             ? [UPDATE_FIELD, VALIDATE_FIELD]
             : [UPDATE_FIELD, VALIDATE_ALL]
@@ -170,7 +170,7 @@ function revalidation(
     render() {
       const { form, errors, asyncErrors, pending, debounceFns } = this.state
       /* eslint-disable no-unused-vars */
-      const { rules, asyncRules, initialState, updateForm, validateSingle, instantValidation, ...rest } = this.props
+      const { rules, asyncRules, initialState, updateForm, validateSingle, validateOnChange, ...rest } = this.props
       const valid = isValid(validate(rules, form)) && isValid(errors)
 
       const revalidationProp = {
@@ -181,9 +181,9 @@ function revalidation(
         valid,
         debounce: debounceFns,
         updateState: this.updateState,
-        updateValue: this.updateValue,
+        onChange: this.updateValue,
         validateAll: this.validateAll,
-        settings: { instantValidation, validateSingle },
+        settings: { validateOnChange, validateSingle },
       }
 
       return createElement(Component, {

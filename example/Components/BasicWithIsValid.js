@@ -19,7 +19,7 @@ export default class BasicWithIsValid extends React.Component {
           initialState={this.state.form}
           rules={basicValidationRules}
           validateSingle={false}
-          instantValidation={true}
+          validateOnChange={true}
           disableButtonOption
         />
       </div>

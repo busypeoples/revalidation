@@ -18,7 +18,7 @@ const isUnusedUserName = (username) => get(username)
   .then(({ data }) => !data.exists)
 
 const SubmitForm = ({
-  revalidation: { form, updateValue, updateState, valid, asyncErrors, errors, validateAll, loading, debounce },
+  revalidation: { form, onChange, updateState, valid, asyncErrors, errors, validateAll, loading, debounce },
   onSubmit,
   }) => {
   return (
@@ -28,11 +28,14 @@ const SubmitForm = ({
         <input
           type="text"
           value={form.name}
-          onChange={debounce.name(updateValue, 1000)}
+          onChange={debounce.name(onChange, 1000)}
         />
         {errors.name && errors.name.map((errMsg, index) => (<div className='error' key={index}>
           {errMsg}</div>))}
          {asyncErrors.name && <div className='error'>{asyncErrors.name[0]}</div>}
+      </div>
+      <div className="info" style={{padding: '10px'}}>
+        <i>To see the async validation fail type: "foobarbaz"</i>
       </div>
       <div>
         <p>valid? {valid.toString()}</p>
@@ -77,7 +80,7 @@ class SubmitPage extends React.Component<any, any> {
         asyncRules={asyncValidationRules}
         userNameExists={this.usernameExists}
         validateSingle={true}
-        instantValidation={true}
+        validateOnChange={true}
       />
     )
   }

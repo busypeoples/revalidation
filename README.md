@@ -31,7 +31,7 @@ local form component state and validating against a defined set of rules. There 
 little is hidden away from user land. This approach has pros and cons obviously. The benefit we gain, but declaring an initial state 
 and a set of rules is that we can reuse parts of the spec and compose those specs to bigger specs. The downside is that 
 Revalidation doesn't abstract away the form handling itself. The only configurations available are `validateSingle` and
-`instantValidation`, while the first enables to define if the predicates functions are against all fields or only that one updated,
+`validateOnChange`, while the first enables to define if the predicates functions are against all fields or only that one updated,
 the latter enables to turn dynamic validation on and off all together. This is it. Everything is up to the form implementer.
 
 __Revalidation__ enhances the wrapped Component by passing a `revalidation` prop containing a number of properties and functions
@@ -40,12 +40,12 @@ the form is implemented or how it should handlde user interactions.
 
 Let's see an example to get a better idea on how this could work. 
 For example we would like to define a number of validation rules for two inputs, _name_ and _random_.
-More often that not, inside an `updateValue(name, value)` f.e, we might start to hard code some rules and verify them against 
+More often that not, inside an `onChange(name, value)` f.e, we might start to hard code some rules and verify them against 
 the provided input:
 
 ```js
 
-updateValue(name, value) {
+onChange(name, value) {
   if (name === 'lastName') {
     if (hasCapitalLetter(lastName)) {
       // then do something 
@@ -159,7 +159,7 @@ Revalidation only needs the Component and returns a Higher Order Component accep
 
 - __`singleValue`__ *(Function)*
 
-- __`instantValidation`__: *(Function)*
+- __`validateOnChange`__: *(Function)*
 
 - __`asyncRules`__ *(Object)*
 
@@ -177,7 +177,7 @@ const enhancedForm = revalidation(Form)
   initialState={initialState}
   rules={validationRules}
   validateSingle={true}
-  instantValidation={true}
+  validateOnChange={true}
 />
 
 ```
@@ -193,7 +193,7 @@ const displayErrors = (errorMsgs) =>
 
 const getValue = e => e.target.value
 
-const Form = ({ revalidation : {form, updateValue, updateState, valid, errors = {}, validateAll}, onSubmit }) =>
+const Form = ({ revalidation : {form, onChange, updateState, valid, errors = {}, validateAll}, onSubmit }) =>
   (
     <div className='form'>
       <div className='formGroup'>
@@ -221,7 +221,7 @@ const Form = ({ revalidation : {form, updateValue, updateState, valid, errors = 
 
 reValidtion returns an object containing:
 - __form__: form values
-- __updateValue__: a function expecting form name and value, f.e. `updateValue('name', 'foo')` 
+- __onChange__: a function expecting form name and value, f.e. `onChange('name', 'foo')` 
 - __updateState__: a function expecting all the form values, f.e. Useful when wanting to reset the form. Depending on the setting either a validation will occur or not. 
 
     
@@ -266,7 +266,7 @@ const asyncRules = {name: [[isUnusedUserName, 'Username is not available']]}
   asyncRules={asyncRules}
   userNameExists={this.usernameExists}
   validateSingle={true}
-  instantValidation={true}
+  validateOnChange={true}
 />
 
 ```

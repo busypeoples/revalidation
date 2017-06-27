@@ -11,7 +11,7 @@ const {
   getValue,
 } = helpers
 
-const Form = ({ revalidation: { form, updateValue, errors = {}, validateAll }, onSubmit }) =>
+const Form = ({ revalidation: { form, onChange, errors = {}, validateAll }, onSubmit }) =>
   (
     <div className='form'>
       <div className='formGroup'>
@@ -19,7 +19,7 @@ const Form = ({ revalidation: { form, updateValue, errors = {}, validateAll }, o
         <input
           type='text'
           value={form.name}
-          onChange={e => updateValue('name', getValue(e))}
+          onChange={e => onChange('name', getValue(e))}
         />
         <div className='errorPlaceholder'>{ createErrorMessage(errors.name) }</div>
       </div>
@@ -28,7 +28,7 @@ const Form = ({ revalidation: { form, updateValue, errors = {}, validateAll }, o
         <input
           type='password'
           value={form.settings.password}
-          onChange={e => updateValue(['settings', 'password'], getValue(e))}
+          onChange={e => onChange(['settings', 'password'], getValue(e))}
         />
         <div className='errorPlaceholder'>{ createErrorMessage(errors.settings.password) }</div>
       </div>
@@ -37,7 +37,7 @@ const Form = ({ revalidation: { form, updateValue, errors = {}, validateAll }, o
         <input
           type='password'
           value={form.settings.repeatPassword}
-          onChange={e => updateValue(['settings', 'repeatPassword'], getValue(e))}
+          onChange={e => onChange(['settings', 'repeatPassword'], getValue(e))}
         />
         <div className='errorPlaceholder'>{ createErrorMessage(errors.settings.repeatPassword) }</div>
       </div>
@@ -46,7 +46,7 @@ const Form = ({ revalidation: { form, updateValue, errors = {}, validateAll }, o
         <input
           type='text'
           value={form.levelOne.levelTwo.random}
-          onChange={e => updateValue(['levelOne', 'levelTwo', 'random'], getValue(e))}
+          onChange={e => onChange(['levelOne', 'levelTwo', 'random'], getValue(e))}
         />
         <div className='errorPlaceholder'>{ createErrorMessage(errors.levelOne.levelTwo.random) }</div>
       </div>
@@ -128,7 +128,7 @@ export default class AdvancedDeepNestedData extends React.Component {
         rules={nestedValidationRules}
         updateForm={this.props.updateForm}
         validateSingle={true}
-        instantValidation={true}
+        validateOnChange={true}
       />
     )
   }

@@ -98,11 +98,11 @@ const Form = ({ revalidation : {form, valid, errors = {}, validateAll}, onSubmit
 ```
 
 #### How can I instantly validate the form as soon as props have been updated?
-Via the `instantValidation` option, set to to true (which is also the default setting).
+Via the `validateOnChange` option, set to to true (which is also the default setting).
 const EnhancedForm = revalidation(Form)
 
 <EnhancedForm 
-  instantValidation={true}
+  validateOnChange={true}
 />
 
 ```

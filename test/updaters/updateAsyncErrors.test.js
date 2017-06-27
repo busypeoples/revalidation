@@ -118,7 +118,7 @@ describe('updaters/updateAsyncErrors', () => {
     })
   })
 
-  it('should skip validation when instantValidation action !== UPDATE_ALL', () => {
+  it('should skip validation when validateOnChange action !== UPDATE_ALL', () => {
     const expected = {
       form: {name: 'foo', random: 'random'},
       pending: false,

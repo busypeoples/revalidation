@@ -28,7 +28,7 @@ Creates an enhanced React Component containing validation and state keeping capa
 
     if you need validation per field you can set the option to true (default is true).
 
-- __`instantValidation`__: *(Function)*: 
+- __`validateOnChange`__: *(Function)*: 
 
     if you need instant validation as soon as props have changed set to true (default is true).
 
@@ -146,7 +146,7 @@ The following properties are provided by revalidation.
     <button {...{disabled : !valid}} onClick={() => submit()}>Submit</button>
     ```
 
-- __`updateValue(key, value)`__ *(Function)*: 
+- __`onChange(key, value)`__ *(Function)*: 
 
     Apply any changes to a field value and validate.
     
@@ -154,7 +154,7 @@ The following properties are provided by revalidation.
     <input
         type='text'
         value={form.name}
-        onChange={e => updateValue('name', e.targetValue)}
+        onChange={e => onChange('name', e.targetValue)}
     />
     ```
 
@@ -224,7 +224,7 @@ Use `isValid` to check if errors exist for an input.
   type='text'
   className={isValid(errors.name) ? '' : 'error'}
   value={form.name}
-  onChange={compose(updateValue('name'), getValue)}
+  onChange={compose(onChange('name'), getValue)}
 />
 
 ```

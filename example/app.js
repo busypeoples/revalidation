@@ -70,10 +70,10 @@ class Root extends React.Component {
     const selectedForm = this.getForm(example, formValues)
     const getClassName = id => (example === id) ? 'selected' : ''
     const getConfig = id => (id === 1)
-      ? { validateSingle: true, instantValidation: true }
+      ? { validateSingle: true, validateOnChange: true }
       : (id === 3)
-        ? { validateSingle: false, instantValidation: false }
-        : { validateSingle: false, instantValidation: true }
+        ? { validateSingle: false, validateOnChange: false }
+        : { validateSingle: false, validateOnChange: true }
 
     return (
       <div id="main">
@@ -99,7 +99,7 @@ class Root extends React.Component {
             <pre>{message}</pre>
           </div>
           {selectedForm}
-          { ([2, 3, 4].indexOf(example) !== -1) && <button onClick={this.updateProps}>Update Props</button> }
+          { ([3, 4].indexOf(example) !== -1) && <button onClick={this.updateProps}>Update Props</button> }
         </div>
       </div>
     )
