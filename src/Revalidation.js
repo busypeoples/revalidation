@@ -81,8 +81,8 @@ function revalidation(
 
     static defaultProps = {
       initialState: {},
-      validateSingle: true,
-      validateOnChange: true,
+      validateSingle: false,
+      validateOnChange: false,
     }
 
     updateFns: Array<Function> = [updateFormValues, updateSyncErrors]
