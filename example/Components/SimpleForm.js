@@ -8,7 +8,22 @@ import createErrorMessage from './createErrorMessage'
 
 const { getValue } = helpers
 
-const Form = ({ revalidation: { form, onChange, valid, errors = {}, validateAll }, onSubmit, disableButtonOption = false }) =>
+const Form = ({
+  revalidation: {
+    form,
+    onChange,
+    validate,
+    valid,
+    run,
+    errors = {},
+    onSubmit,
+    submitted,
+    UPDATE_FIELD,
+    VALIDATE,
+  },
+  onSubmit: submitCb,
+  disableButtonOption = false
+}) =>
   (
   <div className='form'>
     <div className='formGroup'>
@@ -26,15 +41,16 @@ const Form = ({ revalidation: { form, onChange, valid, errors = {}, validateAll 
       <input
         type='text'
         className={isValid(errors.random) ? '' : 'error'}
+        onBlur={e => onChange('random', getValue(e), [VALIDATE])}
         value={form.random}
-        onChange={compose(onChange('random'), getValue)}
+        onChange={e => onChange('random', getValue(e), [UPDATE_FIELD])}
       />
       <div className='errorPlaceholder'>{ createErrorMessage(errors.random) }</div>
     </div>
     <button
       {...{ disabled: disableButtonOption && !valid ? 'disabled' : false }}
       className={disableButtonOption && !valid ? 'inactive' : 'active' }
-      onClick={() => validateAll(onSubmit)}>Submit
+      onClick={() => onSubmit(submitCb)}>Submit
     </button>
   </div>
   )

@@ -13,22 +13,20 @@ const get = username => new Promise(res => {
     1000)
 })
 
-// we need to check if user name exists
-const isUnusedUserName = (username) => get(username)
-  .then(({ data }) => !data.exists)
-
 const SubmitForm = ({
-  revalidation: { form, onChange, updateState, valid, asyncErrors, errors, validateAll, loading, debounce },
-  onSubmit,
+  revalidation: { form, onChange, updateState, valid, asyncErrors, errors, onSubmit, debounce },
+  onSubmit: submitCb,
+  pendingNameCheck,
+  usernameExists,
   }) => {
   return (
-    <form onSubmit={(e) => { e.preventDefault(); validateAll(onSubmit) }}>
+    <form onSubmit={(e) => { e.preventDefault(); onSubmit(submitCb) }}>
       <div className="formGroup">
         <label>ID</label>
         <input
           type="text"
           value={form.name}
-          onChange={debounce.name(onChange, 1000)}
+          onChange={debounce.name(usernameExists, 1000)}
         />
         {errors.name && errors.name.map((errMsg, index) => (<div className='error' key={index}>
           {errMsg}</div>))}
@@ -39,7 +37,7 @@ const SubmitForm = ({
       </div>
       <div>
         <p>valid? {valid.toString()}</p>
-        <p>loading? {loading.toString()}</p>
+        <p>loading? {pendingNameCheck.toString()}</p>
         <p>valid? {valid.toString()}</p>
         <p>errors? {JSON.stringify(errors, null ,4)}</p>
         <p>asyncErrors? {JSON.stringify(asyncErrors, null ,4)}</p>
@@ -56,7 +54,31 @@ const EnhancedSubmitForm = Revalidation(SubmitForm)
 class SubmitPage extends React.Component<any, any> {
   constructor(props) {
     super(props)
-    this.state = {form: {name: ''}}
+    this.state = {form: {name: ''}, pendingNameCheck: false, pendingSubmit: false, asyncErrors:{}}
+  }
+
+  onSubmit = (data) => {
+    this.setState(state => ({pendingSubmit: true}))
+    // something went wrong...
+    setTimeout(() => {
+      this.setState(state =>
+        ({ asyncErrors: {
+          name: ['Something went wrong, username is not available'],
+          pendingSubmit: false,
+        }}))
+    }, 1000)
+  }
+
+  isUnusedUserName = (username, {errors}) => {
+    if (errors.name.length > 0) return 
+    this.setState(state => ({pendingNameCheck: true}))
+    get(username)
+    .then(({ data }) => data).then(data => {
+      const asyncErrors = data.exists
+        ? { name: [`Username ${name} is not available`] }
+        : { name: [] }
+      this.setState({ asyncErrors, pendingNameCheck: false })
+    })
   }
 
   render() {
@@ -66,21 +88,17 @@ class SubmitPage extends React.Component<any, any> {
       ],
     }
 
-    const asyncValidationRules = {
-      name: [
-        [isUnusedUserName, name => `Username ${name} is not available`]
-      ]
-    }
-
     return (
       <EnhancedSubmitForm
-        onSubmit={this.props.onSubmit}
+        onSubmit={this.onSubmit}
         rules={validationRules}
         initialState={this.state.form}
-        asyncRules={asyncValidationRules}
-        userNameExists={this.usernameExists}
+        asyncErrors={this.state.asyncErrors}
+        usernameExists={this.isUnusedUserName}
         validateSingle={true}
         validateOnChange={true}
+        pendingNameCheck={this.state.pendingNameCheck}
+        pendingSubmit={this.state.pendingSubmit}
       />
     )
   }
