@@ -166,9 +166,10 @@ function revalidation(
       this.updateValue(name, value, [UPDATE_FIELD])
     })
 
-    runAsync = (asyncFn: Function, name: string, value: any): void => {
+    runAsync = (asyncFn: Function, name: Array<string>|string, value: any): void => {
       // clear the current async errors for the field
-      this.setState(state => assocPath(['asyncErrors', ...name], [], state))
+      const fieldName = typeof name === 'string' ? [name] : name
+      this.setState(state => assocPath(['asyncErrors', ...fieldName], [], state))
       asyncFn(value, this.state)
     }
 
