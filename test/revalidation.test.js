@@ -38,7 +38,7 @@ const initialState = { name: '' }
 const EnhancedForm = Revalidation(Form) // eslint-disable-line no-unused-vars
 
 describe('revalidation', () => {
-  it('callback passed to `validateAll` is not called when the form has errors', () => {
+  it('callback passed to `onSubmit` is not called when the form has errors', () => {
     const renderer = new ShallowRenderer()
     let wasCallbackCalled = false
     renderer.render(
@@ -52,7 +52,7 @@ describe('revalidation', () => {
       />,
     )
     const output = renderer.getRenderOutput()
-    output.props.revalidation.validateAll(output.props.onSubmit)
+    output.props.revalidation.onSubmit(output.props.onSubmit)
     equal(wasCallbackCalled, false)
   })
 })

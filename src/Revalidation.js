@@ -3,12 +3,14 @@
 import React, { createElement } from 'react'
 import {
   always,
+  assoc,
+  assocPath,
   curry,
   ifElse,
   is,
-  isEmpty,
   keys,
   map,
+  mergeDeepRight,
   partial,
   prop,
   propOr,
@@ -21,7 +23,6 @@ import isValid from './utils/isValid'
 import debounce from './helpers/debounce'
 import updateFormValues from './updaters/updateFormValues'
 import updateSyncErrors from './updaters/updateSyncErrors'
-import updateAsyncErrors from './updaters/updateAsyncErrors'
 
 import { UPDATE_FIELD, UPDATE_ALL, VALIDATE_FIELD, VALIDATE_ALL } from './constants'
 
@@ -38,7 +39,7 @@ import { UPDATE_FIELD, UPDATE_ALL, VALIDATE_FIELD, VALIDATE_ALL } from './consta
  * @returns {Object} return the new state that needs to be set.
  */
 const runUpdates = (updateFns, state, type, enhancedProps) => reduce((updatedState, updateFn) =>
-  updateFn(updatedState, type, enhancedProps), [state, []], updateFns)
+  updateFn(updatedState, type, enhancedProps), state, updateFns)
 
 /**
  * Maps an empty array to every item of the list and returns a map representing the items as keys
@@ -66,13 +67,13 @@ function revalidation(
     state:{
       form: Object,
       errors: Object,
-      pending: boolean,
+      asyncErrors: Object,
     }
 
     props:{
       initialState: Object,
       rules: Object,
-      asyncRules?: Object,
+      asyncErrors?: Object,
       validateSingle?: boolean,
       validateOnChange?: boolean,
       updateForm?: Object
@@ -84,7 +85,7 @@ function revalidation(
       validateOnChange: true,
     }
 
-    updateFns: Array<Function> = [updateFormValues, updateSyncErrors, updateAsyncErrors]
+    updateFns: Array<Function> = [updateFormValues, updateSyncErrors]
 
     constructor(props) {
       super(props)
@@ -96,79 +97,87 @@ function revalidation(
         form,
         errors: initErrors,
         asyncErrors: initErrors,
-        pending: false,
-        debounceFns: HigherOrderFormComponent.createDebounceFunctions(prop('initialState', props)),
+        debounceFns: this.createDebounceFunctions(prop('initialState', props)),
+        submitted: false,
       }
     }
 
-    componentWillReceiveProps({ updateForm }) {
-      if (updateForm) {
-        this.updateState(updateForm)
-      }
+    componentWillReceiveProps(nextProps) {
+      const { updateForm, asyncErrors = {} } = nextProps
+      const type = this.getValidateOnChange(this.props.validateOnChange)
+        ? [UPDATE_ALL, VALIDATE_ALL]
+        : [UPDATE_ALL]
+
+      this.setState((state, props) => {
+        const nextState = updateForm
+          ? runUpdates(this.updateFns, state, type, { ...props, value: updateForm })
+          : state
+
+        const updatedState = assoc('asyncErrors', mergeDeepRight(prop('asyncErrors', state), asyncErrors), nextState)
+        return updatedState
+      })
     }
 
-    static createDebounceFunctions(form: Array<Object>) {
-      return zipObj(keys(form), map(debounce, keys(form)))
+    createDebounceFunctions(form: Array<Object>) {
+      return zipObj(keys(form),
+        map(name => debounce(name, this.updateValue, this.runAsync), keys(form)) // eslint-disable-line comma-dangle
+      )
+    }
+
+    update = (type, data = {}, cb = () => {}) => {
+      this.setState(
+        (state, props) =>
+          runUpdates(this.updateFns, state, type, { ...props, ...data }),
+        cb // eslint-disable-line comma-dangle
+      )
     }
 
     validateAll = (cb: Function, data: Object):void => {
-      let effects = []
-      let updatedState = []
-      this.setState(
-        (state, props) => {
-          [updatedState, effects] = runUpdates(this.updateFns, state, [VALIDATE_ALL], { ...props })
-          return updatedState
-        },
-        () => {
-          if (isEmpty(effects)) {
-            if (isValid(this.state.errors) && cb) cb(data || this.state.form)
-          } else {
-            map(f => f().fork(() => {}, x => this.setState(x, () => {
-              if (isValid(this.state.errors) && isValid(this.state.asyncErrors) && cb) cb(data || this.state.form)
-            })), effects)
-          }
-        } // eslint-disable-line comma-dangle
+      this.update(
+        [VALIDATE_ALL],
+        {},
+        () => { if (isValid(this.state.errors) && cb) cb(data || this.state.form) } // eslint-disable-line comma-dangle
       )
     }
 
-    updateState = (newState: Object) => {
-      let effects = []
-      let updatedState = []
-      const getType = ({ validateOnChange }) =>
-        validateOnChange ? [UPDATE_ALL, VALIDATE_ALL] : [UPDATE_ALL]
+    updateState = (nextState: Object) => {
+      const type = this.getValidateOnChange(this.props.validateOnChange)
+        ? [UPDATE_ALL, VALIDATE_ALL]
+        : [UPDATE_ALL]
 
-      this.setState(
-        (state, props) => {
-          [updatedState, effects] = runUpdates(this.updateFns, state, getType(props), { ...props, value: newState })
-          return updatedState
-        },
-        () => map(f => f().fork(() => {}, result => this.setState(result)), effects) // eslint-disable-line comma-dangle
-      )
+      this.update(type, { value: nextState })
     }
 
     updateValue = curry((name:string|Array<string|number>, value:any, type: Array<string> = null):void => {
-      let effects = []
-      let updatedState = []
-      const getType = ({ validateOnChange, validateSingle }) =>
-        validateOnChange
-          ? validateSingle
-            ? [UPDATE_FIELD, VALIDATE_FIELD]
-            : [UPDATE_FIELD, VALIDATE_ALL]
+      const updateType =
+        this.getValidateOnChange(this.props.validateOnChange)
+          ? type
+            ? type
+            : this.props.validateSingle
+              ? [UPDATE_FIELD, VALIDATE_FIELD]
+              : [UPDATE_FIELD, VALIDATE_ALL]
           : [UPDATE_FIELD]
 
       const fieldName = typeof name === 'string' ? [name] : name
-
-      this.setState(
-        (state, props) => {
-          [updatedState, effects] = runUpdates(this.updateFns, state, type ? type : getType(props), { ...props, name: fieldName, value })
-          return updatedState
-        },
-        () => map(f => f().fork(() => {}, result => this.setState(result)), effects) // eslint-disable-line comma-dangle
-      )
+      this.update(updateType, { name: fieldName, value })
     })
 
+    onChange = curry((name:string|Array<string|number>, value:any): void => {
+      this.updateValue(name, value, [UPDATE_FIELD])
+    })
+
+    runAsync = (asyncFn: Function, name: string, value: any): void => {
+      // clear the current async errors for the field
+      this.setState(state => assocPath(['asyncErrors', ...name], [], state))
+      asyncFn(value, this.state)
+    }
+
+    getValidateOnChange = (validateOnChange) => is(Function, validateOnChange)
+      ? validateOnChange({ submitted: this.state.submitted })
+      : validateOnChange
+
     render() {
-      const { form, errors, asyncErrors, pending, debounceFns } = this.state
+      const { form, errors, asyncErrors, debounceFns, submitted } = this.state
       /* eslint-disable no-unused-vars */
       const { rules, asyncRules, initialState, updateForm, validateSingle, validateOnChange, ...rest } = this.props
       const valid = isValid(validate(rules, form)) && isValid(errors)
@@ -177,13 +186,16 @@ function revalidation(
         form,
         errors,
         asyncErrors,
-        loading: pending,
         valid,
+        submitted,
+        run: this.run,
         debounce: debounceFns,
         updateState: this.updateState,
         onChange: this.updateValue,
-        validateAll: this.validateAll,
-        settings: { validateOnChange, validateSingle },
+        onSubmit: this.validateAll,
+        settings: { validateOnChange: this.getValidateOnChange(validateOnChange), validateSingle },
+        UPDATE_FIELD,
+        VALIDATE: validateSingle ? VALIDATE_FIELD : VALIDATE_ALL,
       }
 
       return createElement(Component, {
