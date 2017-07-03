@@ -136,7 +136,15 @@ function revalidation(
       this.update(
         [VALIDATE_ALL],
         {},
-        () => { if (isValid(this.state.errors) && cb) cb(data || this.state.form) } // eslint-disable-line comma-dangle
+        () => {
+          if (isValid(this.state.errors) &&
+            (
+              this.getValidateOnChange(this.props.validateOnChange) &&
+              isValid(this.state.asyncErrors)
+            ) &&
+            cb
+          ) cb(data || this.state.form)
+        } // eslint-disable-line comma-dangle
       )
     }
 
@@ -181,7 +189,10 @@ function revalidation(
       const { form, errors, asyncErrors, debounceFns, submitted } = this.state
       /* eslint-disable no-unused-vars */
       const { rules, asyncRules, initialState, updateForm, validateSingle, validateOnChange, ...rest } = this.props
-      const valid = isValid(validate(rules, form)) && isValid(errors)
+      const validateOnChangeResult = this.getValidateOnChange(validateOnChange)
+      const valid = isValid(validate(rules, form)) &&
+        isValid(errors) &&
+        (validateOnChangeResult && isValid(asyncErrors))
 
       const revalidationProp = {
         form,
@@ -194,7 +205,7 @@ function revalidation(
         updateState: this.updateState,
         onChange: this.updateValue,
         onSubmit: this.validateAll,
-        settings: { validateOnChange: this.getValidateOnChange(validateOnChange), validateSingle },
+        settings: { validateOnChange: validateOnChangeResult, validateSingle },
         UPDATE_FIELD,
         VALIDATE: validateSingle ? VALIDATE_FIELD : VALIDATE_ALL,
       }
