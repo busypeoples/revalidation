@@ -158,9 +158,9 @@ Revalidation only needs the Component and returns a Higher Order Component accep
 
 - __`rules`__ *(Object)*
 
-- __`singleValue`__ *(Function)*
+- __`singleValue`__ *(Boolean)*
 
-- __`validateOnChange`__: *(Function)*
+- __`validateOnChange`__: *(Boolean|Function)*
 
 - __`asyncErrors`__ *(Object)*
 
@@ -179,6 +179,10 @@ const enhancedForm = revalidation(Form)
   rules={validationRules}
   validateSingle={true}
   validateOnChange={true}
+  {/*
+    alternatively pass in a function, i.e. enable validationOnChange after a submit.
+    validateOnChange={(submitted) => submitted}
+  */}
 />
 
 ```
