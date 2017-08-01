@@ -158,7 +158,7 @@ Revalidation only needs the Component and returns a Higher Order Component accep
 
 - __`rules`__ *(Object)*
 
-- __`singleValue`__ *(Boolean)*
+- __`validateSingle`__ *(Boolean)*
 
 - __`validateOnChange`__: *(Boolean|Function)*
 
@@ -239,7 +239,70 @@ revalidtion returns an object containing:
 - __valid__: calculated validation state, f.e. initially disabling the submit button when a form is rendered.
 - __submitted__: set to true once the form has been submitted.
 - __errors__: the errors object containing an array for every form field.
-- __onSubmit__: validates all fields at once, also accepts a callback function that will be called in case of a valid state.
+- __onSubmit__: validates all fields at once, also accepts a callback function that will be called after the a validation state has been calculated. The callback function receives the current state including the valid state.
+
+```js
+<button
+  onClick={() => onSubmit(({form, valid}) => valid ? submitCb(form) : console.log('something went wrong!'))}
+>
+  Submit
+</button>
+```
+
+- __settings__: access the current settings: `{ validateOnChange: true, validateSingle: true }`
+
+Additionally revalidation offers a number of helper functions to quickly update any values or validations.
+
+- __debounce__: a helper function for triggering asynchronous validations. The passed in asynchronous validation can be debounced by a specified time. i.e. 1000 ms.
+
+```js
+<input
+  type="text"
+  value={form.name}
+  onChange={debounce.name(usernameExists, 1000)}
+/>
+```
+
+- __updateValue__: update a specific field value. Important to note that no validation will run. Use _updateValueAndValidate_ if you need to update and validate of field. A name attribute must be defined on the element for _updateValue_ to update the value.
+
+```js
+  <input
+    type='text'
+    className={isValid(errors.random) ? '' : 'error'}
+    name='random'
+    value={form.random}
+    onChange={updateValue}
+  />
+```
+
+- __validateValue__: validates a specific field. Useful when validation should happen after an *onBlur* i.e.
+A name attribute must be defined on the element for _validateValue_ to validate the value.
+
+```js
+  <input
+    type='text'
+    className={isValid(errors.random) ? '' : 'error'}
+    name='random'
+    onBlur={validateValue}
+    value={form.random}
+    onChange={updateValue}
+  />
+```
+
+- __updateValueAndValidate__: Updates and validates the value for the specified element.
+A name attribute must be defined on the element for _updateValueAndValidate_ to update the value.
+
+```js
+  <input
+    type='text'
+    className={isValid(errors.random) ? '' : 'error'}
+    name='random'
+    onBlur={validateValue}
+    value={form.random}
+    onChange={updateValue}
+  />
+```
+
 
 Where and how to display the errors and when and how to validate is responsibility of the form not Revalidation.
 Another aspect is that the form props can be updated when needed.
@@ -288,6 +351,7 @@ More: Revalidation also works with deep nested data structure (see the deep nest
 check the [example](https://github.com/25th-floor/revalidation/tree/master/example) for more detailed insight into how to build more advanced forms, f.e. validating dependent fields.
 
 Clone the repository go to the examples folder and run the following commands:
+
 ```js
 yarn install
 npm start.
