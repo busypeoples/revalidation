@@ -70,7 +70,7 @@ class SubmitPage extends React.Component<any, any> {
   }
 
   isUnusedUserName = (username, {errors}) => {
-    if (errors.name.length > 0) return 
+    if (errors.name.length > 0) return
     this.setState(state => ({pendingNameCheck: true}))
     get(username)
     .then(({ data }) => data).then(data => {

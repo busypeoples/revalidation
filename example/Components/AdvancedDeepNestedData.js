@@ -50,7 +50,7 @@ const Form = ({ revalidation: { form, onChange, errors = {}, onSubmit }, onSubmi
         />
         <div className='errorPlaceholder'>{ createErrorMessage(errors.levelOne.levelTwo.random) }</div>
       </div>
-      <button onClick={() => onSubmit(submitCb)}>Submit</button>
+      <button onClick={() => onSubmit(({valid, form}) => valid ? submitCb(form) : null )}>Submit</button>
     </div>
   )
 
