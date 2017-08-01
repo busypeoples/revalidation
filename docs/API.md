@@ -24,7 +24,7 @@ Creates an enhanced React Component containing validation and state keeping capa
 
     An object of rules, consisting of arrays containing predicate function / error message tuple, f.e. `{name: [[a => a.length > 2, 'Minimum length 3.']]}`
 
-- __`singleValue`__ *(Boolean)*:
+- __`validateSingle`__ *(Boolean)*:
 
     if you need validation per field you can set the option to true (default is false).
 
@@ -178,14 +178,14 @@ The following properties are provided by revalidation.
      <button onClick={() => updateState({ name: '', random: '' })}>Reset</button>
     ```
 
-- __`onSubmit([cb], [data])`__ *(Function)*:
+- __`onSubmit([cb])`__ *(Function)*:
 
     Function for validating all fields. For example when submitting a form.
-    To enable an action after successful validation, provide a success `callback`, optionally specific `data` can be passed to the callback.
-    If no `data` provided is, the current form state will be passed in.
+    To enable an action after successful validation, provide a `callback`.
+    Thee current state (including errors) as well as the calculated valid state will be passed to the provided callback function.
 
     ```js
-    <button onClick={() => onSubmit(onSubmitCb)}>Submit</button>
+    <button onClick={() => onSubmit(({valid, form}) => valid ? onSubmitCb(form): doSomethingElse())}>Submit</button>
     ```
 
 - __`errors`__ *(Object)*:
@@ -219,6 +219,65 @@ The following properties are provided by revalidation.
       />
       { displayErrors(errors.random) }
     </div>
+    ```
+- __`settings`__ *(Object)*:
+    Access the current settings: `{ validateOnChange: true, validateSingle: true }`
+
+
+Additionally revalidation offers a number of helper functions to quickly update any values or validations.
+
+- __`debounce`__ *(Function)*:
+    A helper function for triggering asynchronous validations. The passed in asynchronous validation can be debounced by a specified time. i.e. 1000 ms.
+
+    ```js
+    <input
+      type="text"
+      value={form.name}
+      onChange={debounce.name(usernameExists, 1000)}
+    />
+    ```
+
+- __`updateValue`__ *(Function)*:
+    Update a specific field value. Important to note that no validation will run. Use _updateValueAndValidate_ if you need to update and validate of field. A name attribute must be defined on the element for _updateValue_ to update the value.
+
+    ```js
+      <input
+        type='text'
+        className={isValid(errors.random) ? '' : 'error'}
+        name='random'
+        value={form.random}
+        onChange={updateValue}
+      />
+    ```
+
+- __`validateValue`__ *(Function)*:
+    Validates a specific field. Useful when validation should happen after an *onBlur* i.e.
+    A name attribute must be defined on the element for _validateValue_ to validate the value.
+
+    ```js
+      <input
+        type='text'
+        className={isValid(errors.random) ? '' : 'error'}
+        name='random'
+        onBlur={validateValue}
+        value={form.random}
+        onChange={updateValue}
+      />
+    ```
+
+- __`updateValueAndValidate`__ *(Function)*:
+    Updates and validates the value for the specified element.
+    A name attribute must be defined on the element for _updateValueAndValidate_ to update the value.
+
+    ```js
+      <input
+        type='text'
+        className={isValid(errors.random) ? '' : 'error'}
+        name='random'
+        onBlur={validateValue}
+        value={form.random}
+        onChange={updateValue}
+      />
     ```
 
 
