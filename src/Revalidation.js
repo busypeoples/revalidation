@@ -74,8 +74,8 @@ function revalidation(
       initialState: Object,
       rules: Object,
       asyncErrors?: Object,
-      validateSingle?: boolean,
-      validateOnChange?: boolean,
+      validateSingle?: boolean|Function,
+      validateOnChange?: boolean|Function,
       updateForm?: Object
     }
 
@@ -120,7 +120,7 @@ function revalidation(
 
     createDebounceFunctions(form: Array<Object>) {
       return zipObj(keys(form),
-        map(name => debounce(name, this.updateValue, this.runAsync), keys(form)) // eslint-disable-line comma-dangle
+        map(name => debounce(name, this.updateField, this.runAsync), keys(form)) // eslint-disable-line comma-dangle
       )
     }
 
@@ -132,18 +132,18 @@ function revalidation(
       )
     }
 
-    validateAll = (cb: Function, data: Object):void => {
+    validateAll = (cb: Function):void => {
       this.update(
         [VALIDATE_ALL],
         {},
         () => {
-          if (isValid(this.state.errors) &&
+          if (!cb) return
+          const valid = isValid(this.state.errors) &&
             (
-              this.getValidateOnChange(this.props.validateOnChange) &&
+              !this.getValidateOnChange(this.props.validateOnChange) ||
               isValid(this.state.asyncErrors)
-            ) &&
-            cb
-          ) cb(data || this.state.form)
+            )
+          cb({ ...this.state, valid })
         } // eslint-disable-line comma-dangle
       )
     }
@@ -156,7 +156,7 @@ function revalidation(
       this.update(type, { value: nextState })
     }
 
-    updateValue = curry((name:string|Array<string|number>, value:any, type: Array<string> = null):void => {
+    updateField = curry((name:string|Array<string|number>, value:any, type: Array<string> = null):void => {
       const updateType =
         this.getValidateOnChange(this.props.validateOnChange)
           ? type
@@ -171,7 +171,7 @@ function revalidation(
     })
 
     onChange = curry((name:string|Array<string|number>, value:any): void => {
-      this.updateValue(name, value, [UPDATE_FIELD])
+      this.updateField(name, value, [UPDATE_FIELD])
     })
 
     runAsync = (asyncFn: Function, name: Array<string>|string, value: any): void => {
@@ -179,6 +179,28 @@ function revalidation(
       const fieldName = typeof name === 'string' ? [name] : name
       this.setState(state => assocPath(['asyncErrors', ...fieldName], [], state))
       asyncFn(value, this.state)
+    }
+
+    updateValue = event => {
+      const { name, value } = this.extractNameAndValue(event)
+      this.updateField(name, value, [UPDATE_FIELD])
+    }
+
+    validateValue = event => {
+      const { name, value } = this.extractNameAndValue(event)
+      this.updateField(name, value, [VALIDATE_FIELD])
+    }
+
+    updateValueAndValidate = event => {
+      const { name, value } = this.extractNameAndValue(event)
+      this.updateField(name, value, [UPDATE_FIELD, VALIDATE_FIELD])
+    }
+
+    extractNameAndValue = event => {
+      const target = event.target
+      const value = target.type === 'checkbox' ? target.checked : target.value
+      const name = target.name
+      return { name, value }
     }
 
     getValidateOnChange = (validateOnChange) => is(Function, validateOnChange)
@@ -200,14 +222,17 @@ function revalidation(
         asyncErrors,
         valid,
         submitted,
-        run: this.run,
         debounce: debounceFns,
         updateState: this.updateState,
-        onChange: this.updateValue,
+        onChange: this.updateField,
         onSubmit: this.validateAll,
         settings: { validateOnChange: validateOnChangeResult, validateSingle },
         UPDATE_FIELD,
         VALIDATE: validateSingle ? VALIDATE_FIELD : VALIDATE_ALL,
+        // short cut functions
+        updateValue: this.updateValue,
+        validateValue: this.validateValue,
+        updateValueAndValidate: this.updateValueAndValidate,
       }
 
       return createElement(Component, {
