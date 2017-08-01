@@ -25,8 +25,8 @@ Revalidation doesn't abstract away the form handling itself. The only configurat
 the latter enables to turn dynamic validation on and off all together. This is it. Everything is up to the form implementer.
 
 __Revalidation__ enhances the wrapped Component by passing a `revalidation` prop containing a number of properties and functions
-to manage the state. There are no automatic field updates, validations or onsubmit actions, Revalidation doesn't how
-the form is implemented or how it should handlde user interactions.
+to manage the state. There are no automatic field updates, validations or _onsubmit_ actions, Revalidation doesn't know how
+the form is implemented or how it should handle user interactions.
 
 Let's see an example to get a better idea on how this could work.
 For example we would like to define a number of validation rules for two inputs, _name_ and _random_.
@@ -325,9 +325,7 @@ __Revalidation__ also enables to pass in asynchronous error messages via the `as
 
 ```js
 
-// isUnusedUserName is function returning a promise and sends a request to validate if the username is available f.e.
-
-const asyncRules = {name: [[isUnusedUserName, 'Username is not available']]}
+// i.e. userNameExists is a function returning a promise and sends a request to validate if the username is available.
 
 <EnhancedSubmitForm
   onSubmit={this.onSubmit}
