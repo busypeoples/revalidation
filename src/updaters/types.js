@@ -6,6 +6,3 @@ export type EnhancedProps = {
   validateOnChange?: boolean,
   rules?: Array<Rule>,
 }
-
-export type Effects = Function
-export type StateEffects = [Object, Array<Effects>]

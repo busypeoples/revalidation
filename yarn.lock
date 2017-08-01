@@ -3212,9 +3212,9 @@ spdx-license-ids@^1.0.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-1.2.2.tgz#c9df7a3424594ade6bd11900d596696dc06bac57"
 
-spected@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/spected/-/spected-0.3.0.tgz#df12ddb75c646abad3b26555cf78c808453c72d0"
+spected@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/spected/-/spected-0.4.0.tgz#7c6223e3e3a7e0f606379f2edebb26756608e4bb"
   dependencies:
     ramda "^0.24.1"
 

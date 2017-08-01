@@ -11,7 +11,7 @@ const {
   getValue,
 } = helpers
 
-const Form = ({ revalidation: { form, onChange, errors = {}, validateAll }, onSubmit }) =>
+const Form = ({ revalidation: { form, onChange, errors = {}, onSubmit }, onSubmit: submitCb }) =>
   (
     <div className='form'>
       <div className='formGroup'>
@@ -50,7 +50,7 @@ const Form = ({ revalidation: { form, onChange, errors = {}, validateAll }, onSu
         />
         <div className='errorPlaceholder'>{ createErrorMessage(errors.levelOne.levelTwo.random) }</div>
       </div>
-      <button onClick={() => validateAll(onSubmit)}>Submit</button>
+      <button onClick={() => onSubmit(({valid, form}) => valid ? submitCb(form) : null )}>Submit</button>
     </div>
   )
 

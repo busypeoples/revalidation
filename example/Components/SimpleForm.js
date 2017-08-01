@@ -8,16 +8,33 @@ import createErrorMessage from './createErrorMessage'
 
 const { getValue } = helpers
 
-const Form = ({ revalidation: { form, onChange, valid, errors = {}, validateAll }, onSubmit, disableButtonOption = false }) =>
-  (
+const Form = ({
+  revalidation: {
+    form,
+    onChange,
+    validate,
+    valid,
+    run,
+    errors = {},
+    onSubmit,
+    submitted,
+    updateValue,
+    validateValue,
+    updateValueAndValidate,
+  },
+  onSubmit: submitCb,
+  disableButtonOption = false
+}) =>
+(
   <div className='form'>
     <div className='formGroup'>
       <label>Name</label>
       <input
         type='text'
         className={isValid(errors.name) ? '' : 'error'}
+        name='name'
         value={form.name}
-        onChange={compose(onChange('name'), getValue)}
+        onChange={updateValueAndValidate}
       />
       <div className='errorPlaceholder'>{ createErrorMessage(errors.name) }</div>
     </div>
@@ -26,17 +43,21 @@ const Form = ({ revalidation: { form, onChange, valid, errors = {}, validateAll 
       <input
         type='text'
         className={isValid(errors.random) ? '' : 'error'}
+        name='random'
+        onBlur={validateValue}
         value={form.random}
-        onChange={compose(onChange('random'), getValue)}
+        onChange={updateValue}
       />
       <div className='errorPlaceholder'>{ createErrorMessage(errors.random) }</div>
     </div>
     <button
       {...{ disabled: disableButtonOption && !valid ? 'disabled' : false }}
       className={disableButtonOption && !valid ? 'inactive' : 'active' }
-      onClick={() => validateAll(onSubmit)}>Submit
+      onClick={() => onSubmit(({valid, form}) => valid ? submitCb(form) : null )}
+    >
+      Submit
     </button>
   </div>
-  )
+)
 
 export default revalidation(Form)

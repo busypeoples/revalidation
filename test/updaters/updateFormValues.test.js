@@ -6,14 +6,14 @@ import { UPDATE_FIELD, UPDATE_ALL, VALIDATE_FIELD, VALIDATE_ALL } from '../../sr
 describe('updaters/updateFormValues', () => {
 
   it('should change the field value according to the provided value when an input has been updated', () => {
-    const expected = [{form: {name: 'bar'}}, []]
-    const result = updateFormValues([{form: {name: 'foo'}}, []], UPDATE_FIELD, {name: ['name'], value: 'bar'})
+    const expected = {form: {name: 'bar'}}
+    const result = updateFormValues({form: {name: 'foo'}}, UPDATE_FIELD, {name: ['name'], value: 'bar'})
     deepEqual(expected, result)
   })
 
   it('should change the field value according to the provided value when the complete form state has been updated', () => {
-    const expected = [{form: {name: '', random: ''}}, []]
-    const result = updateFormValues([{form: {name: 'foo', random: 'bar'}}, []], UPDATE_ALL, {
+    const expected = {form: {name: '', random: ''}}
+    const result = updateFormValues({form: {name: 'foo', random: 'bar'}}, UPDATE_ALL, {
       value: {
         name: '',
         random: ''
@@ -23,8 +23,8 @@ describe('updaters/updateFormValues', () => {
   })
 
   it('should not change the form state when action=VALIDATE_FIELD', () => {
-    const expected = [{form: {name: 'foo', random: 'bar'}}, []]
-    const result = updateFormValues([{form: {name: 'foo', random: 'bar'}}, []], VALIDATE_FIELD, {
+    const expected = {form: {name: 'foo', random: 'bar'}}
+    const result = updateFormValues({form: {name: 'foo', random: 'bar'}}, VALIDATE_FIELD, {
       value: {
         name: '',
         random: ''
@@ -34,8 +34,8 @@ describe('updaters/updateFormValues', () => {
   })
 
   it('should not change the form state when action=VALIDATE_ALL', () => {
-    const expected = [{form: {name: 'foo', random: 'bar'}}, []]
-    const result = updateFormValues([{form: {name: 'foo', random: 'bar'}}, []], VALIDATE_ALL, {
+    const expected = {form: {name: 'foo', random: 'bar'}}
+    const result = updateFormValues({form: {name: 'foo', random: 'bar'}}, VALIDATE_ALL, {
       value: {
         name: '',
         random: ''
@@ -45,8 +45,8 @@ describe('updaters/updateFormValues', () => {
   })
 
   it('should should update a deeply nested form field when action=UPDATE_FIELD', () => {
-    const expected = [{form: {name: 'foo', levelOne: {levelTwo: {random: 'foobar'}}}}, []]
-    const result = updateFormValues([{
+    const expected = {form: {name: 'foo', levelOne: {levelTwo: {random: 'foobar'}}}}
+    const result = updateFormValues({
       form: {
         name: 'foo',
         levelOne: {
@@ -55,18 +55,18 @@ describe('updaters/updateFormValues', () => {
           }
         }
       }
-    }, []], UPDATE_FIELD, {name: ['levelOne', 'levelTwo', 'random'], value: 'foobar'})
+    }, UPDATE_FIELD, {name: ['levelOne', 'levelTwo', 'random'], value: 'foobar'})
     deepEqual(expected, result)
   })
 
   it('should should update a deeply nested form when action=UPDATE_ALL', () => {
-    const expected = [{form: {name: 'foo', levelOne: {levelTwo: {random: 'bar'}}}}, []]
-    const result = updateFormValues([{
+    const expected = {form: {name: 'foo', levelOne: {levelTwo: {random: 'bar'}}}}
+    const result = updateFormValues({
       form: {
         name: 'oldName',
         levelOne: {levelTwo: {random: 'oldRandom'}}
       }
-    }, []], UPDATE_ALL, {
+    }, UPDATE_ALL, {
       value: {
         name: 'foo',
         levelOne: {

@@ -20,8 +20,8 @@ const nestedRules = {
 describe('updaters/updateSyncErrors', () => {
 
   it('should return an empty array when field value is valid', () => {
-    const expected = [{form: {name: 'foobar'}, errors: {name: []}}, []]
-    const result = updateSyncErrors([{form: {name: 'foobar'}, errors: {}}, []], [VALIDATE_FIELD], {
+    const expected = {form: {name: 'foobar'}, errors: {name: []}}
+    const result = updateSyncErrors({form: {name: 'foobar'}, errors: {}}, [VALIDATE_FIELD], {
       rules,
       name: ['name']
     })
@@ -29,8 +29,8 @@ describe('updaters/updateSyncErrors', () => {
   })
 
   it('should return an array containing the error messages when field value is invalid', () => {
-    const expected = [{form: {name: 'bar'}, errors: {name: ['Minimum length is four.']}}, []]
-    const result = updateSyncErrors([{form: {name: 'bar'}, errors: {}}, []], [VALIDATE_FIELD], {
+    const expected = {form: {name: 'bar'}, errors: {name: ['Minimum length is four.']}}
+    const result = updateSyncErrors({form: {name: 'bar'}, errors: {}}, [VALIDATE_FIELD], {
       rules,
       name: ['name']
     })
@@ -38,8 +38,8 @@ describe('updaters/updateSyncErrors', () => {
   })
 
   it('should only validate the field that has been updated when action=VALIDATE_FIELD', () => {
-    const expected = [{form: {name: 'foo', random: '1234567'}, errors: {random: []}}, []]
-    const result = updateSyncErrors([{form: {name: 'foo', random: '1234567'}, errors: {}}, []], [VALIDATE_FIELD], {
+    const expected = {form: {name: 'foo', random: '1234567'}, errors: {random: []}}
+    const result = updateSyncErrors({form: {name: 'foo', random: '1234567'}, errors: {}}, [VALIDATE_FIELD], {
       rules,
       name: ['random']
     })
@@ -47,8 +47,8 @@ describe('updaters/updateSyncErrors', () => {
   })
 
   it('should return an empty array when field value is valid and action=VALIDATE_FIELD', () => {
-    const expected = [{form: {name: 'foobar'}, errors: {name: []}}, []]
-    const result = updateSyncErrors([{form: {name: 'foobar'}, errors: {}}, []], [VALIDATE_FIELD], {
+    const expected = {form: {name: 'foobar'}, errors: {name: []}}
+    const result = updateSyncErrors({form: {name: 'foobar'}, errors: {}}, [VALIDATE_FIELD], {
       rules,
       name: ['name']
     })
@@ -56,44 +56,46 @@ describe('updaters/updateSyncErrors', () => {
   })
 
   it('should validate all fields when the complete form state has been updated', () => {
-    const expected = [{
+    const expected = {
       form: {name: 'foo', random: 'random'},
-      errors: {name: ['Minimum length is four.'], random: ['Minimum length is seven.']}
-    }, []]
-    const result = updateSyncErrors([{form: {name: 'foo', random: 'random'}, errors: {}}, []], [VALIDATE_ALL], {
+      errors: {name: ['Minimum length is four.'], random: ['Minimum length is seven.']},
+      submitted: true,
+    }
+    const result = updateSyncErrors({form: {name: 'foo', random: 'random'}, errors: {}}, [VALIDATE_ALL], {
       rules,
     })
     deepEqual(expected, result)
   })
 
   it('should validate all fields when action=VALIDATE_ALL', () => {
-    const expected = [{
+    const expected = {
       form: {name: 'foo', random: 'random'},
-      errors: {name: ['Minimum length is four.'], random: ['Minimum length is seven.']}
-    }, []]
-    const result = updateSyncErrors([{form: {name: 'foo', random: 'random'}, errors: {}}, []], [VALIDATE_ALL], {
+      errors: {name: ['Minimum length is four.'], random: ['Minimum length is seven.']},
+      submitted: true,
+    }
+    const result = updateSyncErrors({form: {name: 'foo', random: 'random'}, errors: {}}, [VALIDATE_ALL], {
       rules,
     })
     deepEqual(expected, result)
   })
 
   it('should skip validation when action=UPDATE_ALL', () => {
-    const expected = [{
+    const expected = {
       form: {name: 'foo', random: 'random'},
       errors: {}
-    }, []]
-    const result = updateSyncErrors([{form: {name: 'foo', random: 'random'}, errors: {}}, []], [UPDATE_ALL], {
+    }
+    const result = updateSyncErrors({form: {name: 'foo', random: 'random'}, errors: {}}, [UPDATE_ALL], {
       rules,
     })
     deepEqual(expected, result)
   })
 
   it('should should validate a deeply nested form field when action=VALIDATE_FIELD', () => {
-    const expected = [{
+    const expected = {
       form: {name: 'foo', levelOne: {levelTwo: {random: 'bar'}}},
       errors: {name: [], levelOne: {levelTwo: {random: ['Minimum length is seven.']}}},
-    }, []]
-    const result = updateSyncErrors([{
+    }
+    const result = updateSyncErrors({
       form: {
         name: 'foo',
         levelOne: {
@@ -103,22 +105,23 @@ describe('updaters/updateSyncErrors', () => {
         }
       },
       errors: {name: [], levelOne: {levelTwo: {random: []}}},
-    }, []], VALIDATE_FIELD, {name: ['levelOne', 'levelTwo', 'random'], rules: nestedRules})
+    }, VALIDATE_FIELD, {name: ['levelOne', 'levelTwo', 'random'], rules: nestedRules})
     deepEqual(expected, result)
   })
 
   it('should should validate all deeply nested fields when action=VALIDATE_ALL', () => {
-    const expected = [{
+    const expected = {
       form: {name: 'foo', levelOne: {levelTwo: {random: 'bar'}}},
       errors: {name: ['Minimum length is four.'], levelOne: {levelTwo: {random: ['Minimum length is seven.']}}},
-    }, []]
-    const result = updateSyncErrors([{
+      submitted: true,
+    }
+    const result = updateSyncErrors({
       form: {
         name: 'foo',
         levelOne: {levelTwo: {random: 'bar'}}
       },
       errors: {},
-    }, []], VALIDATE_ALL, {
+    }, VALIDATE_ALL, {
       rules: nestedRules,
     })
     deepEqual(expected, result)
