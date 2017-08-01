@@ -54,8 +54,6 @@ const Form = ({
       <div className='errorPlaceholder'>{ createErrorMessage(errors.random) }</div>
     </div>
     <button
-      {...{ disabled: valid ? 'disabled' : false }}
-      className={valid ? 'inactive' : 'active' }
       onClick={() => onSubmit(({form, valid}) => valid ? submitCb(form) : console.log('something went wrong!'))}>Submit
     </button>
     <hr />
