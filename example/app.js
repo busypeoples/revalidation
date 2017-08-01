@@ -9,6 +9,7 @@ import AdvancedDeepNestedData from './Components/AdvancedDeepNestedData'
 import Basic from './Components/Basic'
 import BasicWithIsValid from './Components/BasicWithIsValid'
 import AsyncForm from './Components/AsyncForm'
+import ServerSideErrors from './Components/ServerSideErrors'
 
 class Root extends React.Component {
   constructor(props) {
@@ -51,6 +52,8 @@ class Root extends React.Component {
 
       case 6: return <AsyncForm onSubmit={this.onSubmit} />
 
+      case 7: return <ServerSideErrors />
+
       default: return <AdvancedDeepNestedData onSubmit={this.onSubmit} updateForm={updatedValues} />
     }
   }
@@ -65,6 +68,7 @@ class Root extends React.Component {
       {id: 4, name: 'Advanced (Dynamic prop updates validation)'},
       {id: 5, name: 'Advanced (Deep Nested Input Data)'},
       {id: 6, name: 'Async Example'},
+      {id: 7, name: 'Sever Side Errors'},
     ]
 
     const selectedForm = this.getForm(example, formValues)
