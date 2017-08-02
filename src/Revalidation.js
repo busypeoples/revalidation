@@ -10,6 +10,7 @@ import {
   is,
   keys,
   map,
+  merge,
   mergeDeepRight,
   partial,
   prop,
@@ -132,6 +133,20 @@ function revalidation(
       )
     }
 
+    updateErrors = (errorsState) => {
+      this.setState(state => {
+        const nextErrorsState = merge(prop('errors', state), errorsState)
+        return assoc('errors', nextErrorsState, state)
+      })
+    }
+
+    updateAsyncErrors = (asyncErrorsState) => {
+      this.setState(state => {
+        const nextAsyncErrorsState = merge(prop('asyncErrors', state), asyncErrorsState)
+        return assoc('asyncErrors', nextAsyncErrorsState, state)
+      })
+    }
+
     validateAll = (cb: Function):void => {
       this.update(
         [VALIDATE_ALL],
@@ -227,6 +242,8 @@ function revalidation(
         onChange: this.updateField,
         onSubmit: this.validateAll,
         settings: { validateOnChange: validateOnChangeResult, validateSingle },
+        updateErrors: this.updateErrors,
+        updateAsyncErrors: this.updateAsyncErrors,
         UPDATE_FIELD,
         VALIDATE: validateSingle ? VALIDATE_FIELD : VALIDATE_ALL,
         // short cut functions
