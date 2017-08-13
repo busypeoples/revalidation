@@ -10,6 +10,7 @@ import {
   is,
   keys,
   map,
+  merge,
   mergeDeepRight,
   partial,
   prop,
@@ -132,6 +133,20 @@ function revalidation(
       )
     }
 
+    updateErrors = (errorsState) => {
+      this.setState(state => {
+        const nextErrorsState = merge(prop('errors', state), errorsState)
+        return assoc('errors', nextErrorsState, state)
+      })
+    }
+
+    updateAsyncErrors = (asyncErrorsState) => {
+      this.setState(state => {
+        const nextAsyncErrorsState = merge(prop('asyncErrors', state), asyncErrorsState)
+        return assoc('asyncErrors', nextAsyncErrorsState, state)
+      })
+    }
+
     validateAll = (cb: Function):void => {
       this.update(
         [VALIDATE_ALL],
@@ -156,7 +171,7 @@ function revalidation(
       this.update(type, { value: nextState })
     }
 
-    updateField = curry((name:string|Array<string|number>, value:any, type: Array<string> = null):void => {
+    updateField = curry((name:string|Array<string|number>, value:any, type: Array<string> = null, cb: Function):void => {
       const updateType =
         this.getValidateOnChange(this.props.validateOnChange)
           ? type
@@ -167,7 +182,19 @@ function revalidation(
           : [UPDATE_FIELD]
 
       const fieldName = typeof name === 'string' ? [name] : name
-      this.update(updateType, { name: fieldName, value })
+      this.update(
+        updateType,
+        { name: fieldName, value },
+        () => {
+          if (!cb) return
+          const valid = isValid(this.state.errors) &&
+            (
+              !this.getValidateOnChange(this.props.validateOnChange) ||
+              isValid(this.state.asyncErrors)
+            )
+          cb({ ...this.state, valid })
+        } // eslint-disable-line comma-dangle
+      )
     })
 
     onChange = curry((name:string|Array<string|number>, value:any): void => {
@@ -227,6 +254,8 @@ function revalidation(
         onChange: this.updateField,
         onSubmit: this.validateAll,
         settings: { validateOnChange: validateOnChangeResult, validateSingle },
+        updateErrors: this.updateErrors,
+        updateAsyncErrors: this.updateAsyncErrors,
         UPDATE_FIELD,
         VALIDATE: validateSingle ? VALIDATE_FIELD : VALIDATE_ALL,
         // short cut functions
