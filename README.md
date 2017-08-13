@@ -228,13 +228,22 @@ export default revalidation(Form)
 
 revalidtion returns an object containing:
 - __form__: form values
-- __onChange__: a function expecting form name and value, f.e. `onChange('name', 'foo')`
+- __onChange__: a function expecting form name and value, additionally one can specify if the value and/or the validation should be updated and also accepts a callback function that will be run after an update has occurred. i.e.
+
+```js
+onChange('name', 'foo')
+// or
+onChange('name', 'foo', [UPDATE_FIELD])
+// or
+onChange('name', 'foo', null, ({valid, form}) => valid ? submitCb(form) : null )
+```
+
 - __updateState__: a function expecting all the form values, f.e. Useful when wanting to reset the form. Depending on the setting either a validation will occur or not.
 
 
-    ```js
-     <button onClick={() => updateState({ name: '', random: '' })}>Reset</button>
-    ```
+```js
+ <button onClick={() => updateState({ name: '', random: '' })}>Reset</button>
+```
 
 - __valid__: calculated validation state, f.e. initially disabling the submit button when a form is rendered.
 - __submitted__: set to true once the form has been submitted.
@@ -247,6 +256,32 @@ revalidtion returns an object containing:
 >
   Submit
 </button>
+```
+
+- __updateErrors__: Enables to update any errors.
+
+
+- __updateAsyncErrors__: Enables to update any asynchronous errors. Useful when working with asynchronous validations.
+Pass the `updateAsyncErrors` to a callback, once the validation is finished set the result manually.
+
+```js
+<button
+  onClick={() => onSubmit(({form, valid}) => valid ? submitCb(form, updateAsyncErrors) : console.log('something went wrong!'))}>Submit
+</button>
+
+// use in another Component...
+class HigherUpComponent extends React.Component {
+  onSubmit = (formValues, updateAsyncErrors) => {
+    setTimeout(() => {
+      // something went wrong...
+      updateAsyncErrors({ name: ['Username is not available'] })
+    }, 1000)
+  }
+
+  render() {
+    {/* ... */}
+  }
+}
 ```
 
 - __settings__: access the current settings: `{ validateOnChange: true, validateSingle: true }`
