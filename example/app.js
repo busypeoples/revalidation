@@ -60,7 +60,7 @@ class Root extends React.Component {
 
       case 9: return <BasicWithoutSubmitButton onSubmit={this.onSubmit} />
 
-      default: return <BasicWithoutSubmitButton onSubmit={this.onSubmit} />
+      default: return <Basic onSubmit={this.onSubmit} />
     }
   }
 
