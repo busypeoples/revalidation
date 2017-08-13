@@ -171,7 +171,7 @@ function revalidation(
       this.update(type, { value: nextState })
     }
 
-    updateField = curry((name:string|Array<string|number>, value:any, type: Array<string> = null):void => {
+    updateField = curry((name:string|Array<string|number>, value:any, type: Array<string> = null, cb: Function):void => {
       const updateType =
         this.getValidateOnChange(this.props.validateOnChange)
           ? type
@@ -182,7 +182,19 @@ function revalidation(
           : [UPDATE_FIELD]
 
       const fieldName = typeof name === 'string' ? [name] : name
-      this.update(updateType, { name: fieldName, value })
+      this.update(
+        updateType,
+        { name: fieldName, value },
+        () => {
+          if (!cb) return
+          const valid = isValid(this.state.errors) &&
+            (
+              !this.getValidateOnChange(this.props.validateOnChange) ||
+              isValid(this.state.asyncErrors)
+            )
+          cb({ ...this.state, valid })
+        } // eslint-disable-line comma-dangle
+      )
     })
 
     onChange = curry((name:string|Array<string|number>, value:any): void => {
