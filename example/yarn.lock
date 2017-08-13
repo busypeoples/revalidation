@@ -2877,14 +2877,14 @@ requires-port@1.0.x, requires-port@1.x.x:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
 
-revalidation@^0.11.0:
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/revalidation/-/revalidation-0.11.0.tgz#ae22c746d3710cdf6a06e2c6fc0601e1af170720"
+revalidation@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/revalidation/-/revalidation-0.12.0.tgz#133df4f5883dbaa52abd8af8e4d5daa94b6115f1"
   dependencies:
     data.task "^3.1.1"
     hoist-non-react-statics "^1.2.0"
     ramda "^0.24.1"
-    spected "^0.4.0"
+    spected "^0.5.0"
 
 right-align@^0.1.1:
   version "0.1.3"
@@ -3065,9 +3065,9 @@ spdy@^3.4.1:
     select-hose "^2.0.0"
     spdy-transport "^2.0.18"
 
-spected@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/spected/-/spected-0.4.0.tgz#7c6223e3e3a7e0f606379f2edebb26756608e4bb"
+spected@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/spected/-/spected-0.5.0.tgz#0bf56bb8b9a13c0733e078d320fb7180921c2259"
   dependencies:
     ramda "^0.24.1"
 
