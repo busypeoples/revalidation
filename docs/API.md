@@ -158,7 +158,7 @@ The following properties are provided by revalidation.
 
     Set to true after the form has been submitted.
 
-- __`onChange(key, value)`__ *(Function)*:
+- __`onChange(key, value, [type], [callback])`__ *(Function)*:
 
     Apply any changes to a field value and validate.
 
@@ -167,6 +167,15 @@ The following properties are provided by revalidation.
         type='text'
         value={form.name}
         onChange={e => onChange('name', e.targetValue)}
+    />
+    ```    
+    Additionally on can pass in a callback function.
+
+    ```js
+    <input
+        type='text'
+        value={form.name}
+        onChange={e => onChange('name', e.targetValue, null, ({valid, form}) => valid ? submitCb(form) : null )}
     />
     ```
 
@@ -220,6 +229,33 @@ The following properties are provided by revalidation.
       { displayErrors(errors.random) }
     </div>
     ```
+
+- __`updateErrors`__*(Function)*: Enables to update any errors.
+
+
+- __`updateAsyncErrors`__*(Function)*: Enables to update any asynchronous errors. Useful when working with asynchronous validations.
+    Pass the `updateAsyncErrors` to a callback, once the validation is finished set the result manually.
+
+    ```js
+    <button
+      onClick={() => onSubmit(({form, valid}) => valid ? submitCb(form, updateAsyncErrors) : console.log('something went wrong!'))}>Submit
+    </button>
+
+    // use in another Component...
+    class HigherUpComponent extends React.Component {
+      onSubmit = (formValues, updateAsyncErrors) => {
+        setTimeout(() => {
+          // something went wrong...
+          updateAsyncErrors({ name: ['Username is not available'] })
+        }, 1000)
+      }
+
+      render() {
+        {/* ... */}
+      }
+    }
+    ```
+
 - __`settings`__ *(Object)*:
     Access the current settings: `{ validateOnChange: true, validateSingle: true }`
 
