@@ -71,7 +71,7 @@ const EnhancedForm = revalidation(Form)
 class SetAsyncErrorsExample extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { form: { name: '', random: '' }, pendingSubmit: false, asyncErrors:{} }
+    this.state = { form: { name: '', random: '' }, pendingSubmit: false }
   }
 
   onSubmit = (formValues, updateAsyncErrors) => {
@@ -85,7 +85,7 @@ class SetAsyncErrorsExample extends React.Component {
   }
 
   render() {
-    const { asyncErrors, form, message, pendingSubmit } = this.state
+    const { form, message, pendingSubmit } = this.state
     return (
       <div>
         <div>
@@ -95,7 +95,6 @@ class SetAsyncErrorsExample extends React.Component {
           onSubmit={this.onSubmit}
           initialState={form}
           rules={basicValidationRules}
-          asyncErrors={asyncErrors}
           pendingSubmit={pendingSubmit}
           validateSingle={true}
           validateOnChange={({submitted}) => submitted}
