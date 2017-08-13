@@ -20,7 +20,7 @@ const SubmitForm = ({
   usernameExists,
   }) => {
   return (
-    <form onSubmit={(e) => { e.preventDefault(); onSubmit(submitCb) }}>
+    <form onSubmit={(e) => { e.preventDefault(); onSubmit(({valid, form}) => valid ? submitCb(form) : null ) }}>
       <div className="formGroup">
         <label>ID</label>
         <input
@@ -44,7 +44,7 @@ const SubmitForm = ({
       </div>
       <button>Submit</button>
 
-      <button onClick={() => updateState({ name: '', random: '' })}>Reset</button>
+      <button onClick={() => updateState({ name: '' })}>Reset</button>
     </form>
   )
 }
@@ -61,11 +61,8 @@ class SubmitPage extends React.Component<any, any> {
     this.setState(state => ({pendingSubmit: true}))
     // something went wrong...
     setTimeout(() => {
-      this.setState(state =>
-        ({ asyncErrors: {
-          name: ['Something went wrong, username is not available'],
-          pendingSubmit: false,
-        }}))
+      this.setState(state => ({ pendingSubmit: false }))
+      this.props.onSubmit(data)
     }, 1000)
   }
 

@@ -11,6 +11,7 @@ import BasicWithIsValid from './Components/BasicWithIsValid'
 import AsyncForm from './Components/AsyncForm'
 import ServerSideErrors from './Components/ServerSideErrors'
 import SetAsyncErrorsExample from './Components/SetAsyncErrorsExample'
+import BasicWithoutSubmitButton from './Components/BasicWithoutSubmitButton'
 
 class Root extends React.Component {
   constructor(props) {
@@ -57,7 +58,9 @@ class Root extends React.Component {
 
       case 8: return <SetAsyncErrorsExample />
 
-      default: return <AdvancedDeepNestedData onSubmit={this.onSubmit} updateForm={updatedValues} />
+      case 9: return <BasicWithoutSubmitButton onSubmit={this.onSubmit} />
+
+      default: return <BasicWithoutSubmitButton onSubmit={this.onSubmit} />
     }
   }
 
@@ -73,6 +76,7 @@ class Root extends React.Component {
       {id: 6, name: 'Async Example'},
       {id: 7, name: 'Sever Side Errors'},
       {id: 8, name: 'setAsyncErrors Example'},
+      {id: 9, name: 'Basic without Submit Button'},
     ]
 
     const selectedForm = this.getForm(example, formValues)
