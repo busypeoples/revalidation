@@ -169,7 +169,7 @@ The following properties are provided by revalidation.
         onChange={e => onChange('name', e.targetValue)}
     />
     ```    
-    Additionally on can pass in a callback function.
+    Additionally one can pass in a callback function.
 
     ```js
     <input
