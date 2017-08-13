@@ -1,6 +1,6 @@
 {
   "name": "revalidation",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Higher Order Component for Form Validation in React",
   "main": "lib/index.js",
   "author": "25th-floor",
