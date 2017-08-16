@@ -7,7 +7,7 @@ import {
 
 /* eslint-disable no-mixed-operators, indent */
 
-const isObject = a => (is(Object, a) && !is(Array, a) && !is(Function, a))
+const isObject = a => (is(Object, a) && !is(Function, a))
 
 /**
  * check if object keys contain any string, function, non empty array or object values.
@@ -19,9 +19,7 @@ export default function isValid(obj:Object|Array<any> = {}):boolean {
   const a = filter(i => i &&
     isObject(i)
       ? !isValid(i)
-      : (typeof i === 'string' ||
-         typeof i === 'function' ||
-         (is(Array, i) && !isEmpty(i)))
+      : typeof i === 'string' || typeof i === 'function'
     , obj // eslint-disable-line comma-dangle
   )
 

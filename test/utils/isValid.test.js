@@ -52,20 +52,20 @@ describe('utils/isValid', () => {
     ok(isValid(undefined))
   })
 
-  it('should return true when validating deeply nested data: {name: [], levelOne: {random: []}}', () => {
-    ok(isValid({name: [], levelOne: {random: []}}))
+  it('should return true when validating deeply nested data: {name: [], levelOne: {random: [], nestedArray: [[], [], []]}}', () => {
+    ok(isValid({name: [], levelOne: {random: [], nestedArray: [[], [], []]}}))
   })
 
-  it('should return true when validating deeply nested data: {name: [], levelOne: {levelTwo: {random: []}}}', () => {
-    ok(isValid({name: [], levelOne: {levelTwo: {random: []}}}))
+  it('should return true when validating deeply nested data: {name: [], levelOne: {levelTwo: {random: [], nestedArray: [[], [], []]}}}', () => {
+    ok(isValid({name: [], levelOne: {levelTwo: {random: [], nestedArray: [[], [], []]}}}))
   })
 
-  it('should return false when validating deeply nested data: {name: [], levelOne: {random: ["foo"]}}', () => {
-    ok(!isValid({name: [], levelOne: {random: ['foo']}}))
+  it('should return false when validating deeply nested data: {name: [], levelOne: {random: ["foo"], nestedArray: [["bar"], [], ["baz"]]}}', () => {
+    ok(!isValid({name: [], levelOne: {random: ['foo'], nestedArray: [['bar'], [], ['baz']]}}))
   })
 
-  it('should return false when validating deeply nested data: {name: [], levelOne: {levelTwo: {random: ["foo"]}}}', () => {
-    ok(!isValid({name: [], levelOne: {levelTwo: {random: ['foo']}}}))
+  it('should return false when validating deeply nested data: {name: [], levelOne: {levelTwo: {random: ["foo"], nestedArray: [["bar"], [], ["baz"]]}}}', () => {
+    ok(!isValid({name: [], levelOne: {levelTwo: {random: ['foo'], nestedArray: [['bar'], [], ['baz']]}}}))
   })
 
 })
