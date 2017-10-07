@@ -1,6 +1,6 @@
 /* @flow */
 import React from 'react'
-import revalidation from '../../src/'
+import revalidation, { isValid } from '../../src/'
 import helpers from '../helpers'
 import createErrorMessage from './createErrorMessage'
 
@@ -11,47 +11,96 @@ const {
   getValue,
 } = helpers
 
-const Form = ({ revalidation: { form, onChange, errors = {}, onSubmit }, onSubmit: submitCb }) =>
+const Form = ({ revalidation: { form, onChange, errors = {}, required = {}, onSubmit }, onSubmit: submitCb }) =>
   (
-    <div className='form'>
+    <form className='form' noValidate onSubmit={(e) => { e.preventDefault(); onSubmit(({valid, form}) => valid ? submitCb(form) : null ) }}>
       <div className='formGroup'>
-        <label>Name</label>
+        <label htmlFor='name'>Name</label>
         <input
+          id='name'
           type='text'
           value={form.name}
+          autoFocus
+          required={required.name}
+          aria-required={required.name ? 'true' : null}
+          aria-errormessage='name-error'
+          aria-invalid={isValid(errors.name) ? null : 'true'}
           onChange={e => onChange('name', getValue(e))}
         />
-        <div className='errorPlaceholder'>{ createErrorMessage(errors.name) }</div>
+        <div 
+          id='name-error' 
+          className='errorPlaceholder'
+          aria-live='assertive' 
+          aria-atomic='true'
+          aria-relevant='additions text'>
+            <a href='#name'>{ createErrorMessage(errors.name) }</a>
+        </div>
       </div>
       <div className='formGroup'>
-        <label>Password</label>
+        <label htmlFor='password'>Password</label>
         <input
-          type='password'
+          id='password'
+          type='password'          
           value={form.settings.password}
+          required={required.settings.password}
+          aria-required={required.settings.password ? 'true' : null}
+          aria-errormessage='password-error'
+          aria-invalid={isValid(errors.settings.password) ? null : 'true'}
           onChange={e => onChange(['settings', 'password'], getValue(e))}
         />
-        <div className='errorPlaceholder'>{ createErrorMessage(errors.settings.password) }</div>
+        <div 
+          id='password-error' 
+          className='errorPlaceholder'
+          aria-live='assertive' 
+          aria-atomic='true'
+          aria-relevant='additions text'>
+            <a href='#password'>{ createErrorMessage(errors.settings.password) }</a>
+        </div>
       </div>
       <div className='formGroup'>
-        <label>Repeat Password</label>
+        <label htmlFor='repeatPassword'>Repeat Password</label>
         <input
-          type='password'
+          id='repeatPassword'
+          type='password'          
           value={form.settings.repeatPassword}
+          required={required.settings.repeatPassword}
+          aria-required={required.settings.repeatPassword ? 'true' : null}
+          aria-errormessage='repeatPassword-error'
+          aria-invalid={isValid(errors.settings.repeatPassword) ? null : 'true'}
           onChange={e => onChange(['settings', 'repeatPassword'], getValue(e))}
         />
-        <div className='errorPlaceholder'>{ createErrorMessage(errors.settings.repeatPassword) }</div>
+        <div 
+          id='password-error' 
+          className='errorPlaceholder'
+          aria-live='assertive' 
+          aria-atomic='true'
+          aria-relevant='additions text'>
+            <a href='#repeatPassword'>{ createErrorMessage(errors.settings.repeatPassword) }</a>
+        </div>
       </div>
       <div className='formGroup'>
         <label>Random</label>
         <input
+          id='random'
           type='text'
           value={form.levelOne.levelTwo.random}
+          required={required.levelOne.levelTwo.random}
+          aria-required={required.levelOne.levelTwo.random ? 'true' : null}
+          aria-errormessage='random-error'
+          aria-invalid={isValid(errors.levelOne.levelTwo.random) ? null : 'true'}
           onChange={e => onChange(['levelOne', 'levelTwo', 'random'], getValue(e))}
         />
-        <div className='errorPlaceholder'>{ createErrorMessage(errors.levelOne.levelTwo.random) }</div>
+        <div 
+          id='random-error' 
+          className='errorPlaceholder'
+          aria-live='assertive' 
+          aria-atomic='true'
+          aria-relevant='additions text'>
+            <a href='#random'>{ createErrorMessage(errors.levelOne.levelTwo.random) }</a>
+        </div>        
       </div>
       <button onClick={() => onSubmit(({valid, form}) => valid ? submitCb(form) : null )}>Submit</button>
-    </div>
+    </form>
   )
 
 const NestedForm = revalidation(Form)

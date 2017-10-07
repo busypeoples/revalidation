@@ -28,7 +28,6 @@
     }
 
     input {
-      outline: 0;
       background: #f2f2f2;
       color:  #343d46;
       width: 100%;
@@ -39,13 +38,17 @@
       font-size: 16px;
     }
 
-    .error {
+    .errorPlaceholder {
+      height: 30px;
+    }
+
+    .errorPlaceholder * {
       color: darkred;
       text-decoration: none;
     }
 
-    .errorPlaceholder {
-      height: 30px;
+    .errorPlaceholder *:empty {
+      display: none;
     }
 
     .switch {
@@ -65,7 +68,6 @@
       cursor:pointer;
       background-color: #343d46;
       color:white;
-      outline: 0;
       font-size: 16px;
       padding:16px;
       margin-top:5px;
@@ -76,7 +78,7 @@
       background: #3498db;
     }
 
-    button:disabled {
+    button[aria-disabled] {
       background: #eff1f5;
       cursor: default;
     }

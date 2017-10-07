@@ -8,7 +8,7 @@ export default class BasicWithIsValid extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = {form: {name: '', random: ''}}
+    this.state = {form: {name: '', random: '', comment: ''}}
   }
 
   render() {

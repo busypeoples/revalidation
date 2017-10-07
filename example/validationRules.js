@@ -3,6 +3,7 @@ import helpers from './helpers'
 const {
   isNotEmpty,
   isLengthGreaterThan,
+  isLengthLessThan,
   hasCapitalLetter,
 } = helpers
 
@@ -35,6 +36,9 @@ export const basicValidationRules = {
   random: [
     [isLengthGreaterThan(7), 'Minimum Random length of 8 is required.'],
     [hasCapitalLetter, 'Random should contain at least one uppercase letter.'],
+  ],
+  comment: [
+    [isLengthLessThan(141), 'Comments must be 140 characters or less.']
   ],
 }
 

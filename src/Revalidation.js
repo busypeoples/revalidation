@@ -2,17 +2,14 @@
 /* eslint-disable no-nested-ternary, no-unneeded-ternary */
 import React, { createElement } from 'react'
 import {
-  always,
   assoc,
   assocPath,
   curry,
-  ifElse,
   is,
   keys,
   map,
   merge,
   mergeDeepRight,
-  partial,
   prop,
   propOr,
   reduce,
@@ -21,6 +18,7 @@ import {
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import validate from './validate'
 import isValid from './utils/isValid'
+import initializeValue from './utils/initializeValue'
 import debounce from './helpers/debounce'
 import updateFormValues from './updaters/updateFormValues'
 import updateSyncErrors from './updaters/updateSyncErrors'
@@ -43,21 +41,6 @@ const runUpdates = (updateFns, state, type, enhancedProps) => reduce((updatedSta
   updateFn(updatedState, type, enhancedProps), state, updateFns)
 
 /**
- * Maps an empty array to every item of the list and returns a map representing the items as keys
- * Also works with deep nested data.
- *
- * @param {Array} obj the to object to convert
- * @returns {Array}
- * @example
- *
- *    initializeErrors({'a': null 'b': null}) //=> {a: [], b: []}
- *
- *    initializeErrors: [{'a': null, b: {c: {d: null}}}] //=> {'a': [], b: {c: {d: []}}}
- *
- */
-const initializeErrors = obj => map(ifElse(is(Object), partial(initializeErrors, []), always([])), obj)
-
-/**
  * revalidation expects a React Component and returns a React Component containing additional functions and props
  * for managing local component state as well validating that state, wrapping the originally provided Component.
  */
@@ -68,6 +51,7 @@ function revalidation(
     state:{
       form: Object,
       errors: Object,
+      required: Object,
       asyncErrors: Object,
     }
 
@@ -92,11 +76,13 @@ function revalidation(
       super(props)
 
       const form = propOr([], 'initialState', props)
-      const initErrors = initializeErrors(form)
+      const initErrors = initializeValue([], form)
+      const initRequired = initializeValue(false, form)
 
       this.state = {
         form,
         errors: initErrors,
+        required: initRequired,
         asyncErrors: initErrors,
         debounceFns: this.createDebounceFunctions(prop('initialState', props)),
         submitted: false,
@@ -242,10 +228,12 @@ function revalidation(
       const valid = isValid(validate(rules, form)) &&
         isValid(errors) &&
         (validateOnChangeResult && isValid(asyncErrors))
+      const required = validate(rules, initializeValue('', form))
 
       const revalidationProp = {
         form,
         errors,
+        required,
         asyncErrors,
         valid,
         submitted,

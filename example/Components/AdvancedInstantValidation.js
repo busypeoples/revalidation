@@ -8,7 +8,7 @@ export default class AdvancedInstantValidation extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = {form: { name: '', password: '', repeatPassword: '', random: '' }}
+    this.state = {form: { name: '', password: '', repeatPassword: '', random: '', comment: '' }}
   }
 
   render() {

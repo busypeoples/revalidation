@@ -16,6 +16,7 @@ const Form = ({
     valid,
     run,
     errors = {},
+    required = {},
     onSubmit,
     submitted,
     updateValue,
