@@ -27,11 +27,6 @@ var config = {
   },
   external: ['react', 'react-dom'],
   plugins: [
-    flow(),
-    commonjs(),
-    nodeResolve({
-      jsnext: true,
-    }),
     babel({
       babelrc: false,
       presets: [["es2015", { "modules": false }], "stage-0"],
@@ -43,6 +38,11 @@ var config = {
         'transform-react-jsx',
       ],
       exclude: 'node_modules/**',
+    }),
+    flow(),
+    commonjs(),
+    nodeResolve({
+      jsnext: true,
     }),
     replace({
       'process.env.NODE_ENV': JSON.stringify(env)
@@ -57,8 +57,8 @@ if (env === 'production') {
         pure_getters: true,
         unsafe: true,
         unsafe_comps: true,
-        warnings: false,
-      }
+      },
+      warnings: false,
     })
   )
 }
